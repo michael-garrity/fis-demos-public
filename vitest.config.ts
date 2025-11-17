@@ -12,5 +12,6 @@ export default defineConfig({
     globals: true,
     // Path to your setup file
     setupFiles: "./vitest.setup.ts",
+    exclude: ["e2e", "node_modules"],
   },
 });
