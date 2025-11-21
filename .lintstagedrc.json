@@ -1,3 +1,4 @@
 {
-  "**/*": ["npm run lint"]
+  "**/*.{js,ts,jsx,tsx}": ["eslint"],
+  "**/*.sql": ["./scripts/sqlfluff lint", "supabase db lint"]
 }

@@ -1,0 +1,17 @@
+#!/usr/bin/env sh
+
+# SQLFluff Wrapper
+# https://docs.sqlfluff.com/en/stable/index.html
+
+if ! command -v sqlfluff >/dev/null 2>&1; then
+  echo "SQLFluff is not installed (try \`brew install sqlfluff\`). Skipping SQL lint."
+  exit 0
+fi
+
+if [ $# -eq 0 ]; then
+  sqlfluff
+else
+  sqlfluff "$@"
+fi
+
+exit $?

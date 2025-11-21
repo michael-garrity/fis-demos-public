@@ -6,13 +6,18 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
+    "fix": "eslint --fix",
+    "fix:sql": "./scripts/sqlfluff fix",
     "lint": "eslint",
+    "lint:db": "supabase db lint",
+    "lint:sql": "./scripts/sqlfluff lint",
     "test:unit": "vitest spec",
     "test:integration": "vitest test",
     "test": "vitest --reporter=html --coverage",
     "e2e": "playwright test",
     "e2e:report": "playwright show-report",
-    "prepare": "husky"
+    "prepare": "husky",
+    "db:migrate": "supabase migration up"
   },
   "dependencies": {
     "@heroui/react": "^2.8.5",
@@ -43,6 +48,7 @@
     "husky": "^9.1.7",
     "jsdom": "^27.2.0",
     "lint-staged": "^16.2.7",
+    "supabase": "^2.60.2",
     "tailwindcss": "^4",
     "typescript": "^5",
     "vite-tsconfig-paths": "^5.1.4",

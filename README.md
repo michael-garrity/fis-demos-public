@@ -18,6 +18,28 @@ You can start editing the page by modifying `app/page.tsx`. The page auto-update
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
+## Supabase
+
+[Supabase](https://supabase.com/docs) is a Postgres-based backend as a service. The backend for this project is in the [fis-demos-backend project](https://supabase.com/dashboard/project/xinjcpftgvjwpiunyixq).
+
+While the `./supabase` directory in this repo could be elsewhere (e.g. it's own repo), we've opted to keep it together until we have a case for moving it.
+
+### Migrations
+
+Generate migrations using the [Supabase CLI](https://supabase.com/docs/guides/local-development/cli/getting-started):
+
+```
+npx supabase migration new [name_of_migration]
+```
+
+Open the file generated and write the migration, considering best practices for data (constraints, indexes, unique indexes, timestamps, etc). When your migration is ready, lint and format it with `npm run lint:sql`, then perform the migration locally:
+
+```
+npx supabase migration up
+```
+
+When merged to `main`, the migration will run automatically in the Supabase production environment.
+
 ## Development
 
 ### Prerequisites
@@ -28,6 +50,7 @@ This project uses [`next/font`](https://nextjs.org/docs/app/building-your-applic
 
 Configure your text editor with the following linters:
 - [ESLint](https://eslint.org/)
+- [SQLFluff](https://www.sqlfluff.com/) NOTE: this is not included as a direct dependency of the project. You can install it with [Homebrew](https://formulae.brew.sh/formula/sqlfluff).
 
 ### Pre-commit
 
