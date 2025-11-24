@@ -40,6 +40,10 @@ npx supabase migration up
 
 When merged to `main`, the migration will run automatically in the Supabase production environment.
 
+### DB lint & test
+
+The Supabase CLI includes [tools to test and lint the DB](https://supabase.com/docs/guides/local-development/cli/testing-and-linting).
+
 ## Development
 
 ### Prerequisites
