@@ -8,7 +8,7 @@
     "start": "next start",
     "fix": "eslint --fix",
     "fix:sql": "./scripts/sqlfluff fix",
-    "lint": "eslint",
+    "lint": "eslint src",
     "lint:db": "supabase db lint",
     "lint:sql": "./scripts/sqlfluff lint",
     "lint:yaml": "./scripts/yamllint .",
