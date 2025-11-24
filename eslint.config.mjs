@@ -19,13 +19,18 @@ const eslintConfig = defineConfig([
     plugins: { markdown },
     extends: ["markdown/recommended"],
   },
-  // Override default ignores of eslint-config-next.
+  {
+    rules: {
+      "eol-last": ["error", "always"]
+    }
+  },
   globalIgnores([
-    // Default ignores of eslint-config-next:
     ".next/**",
-    "out/**",
     "build/**",
+    "coverage/**",
+    "html/**",
     "next-env.d.ts",
+    "out/**",
   ]),
 ]);
 
