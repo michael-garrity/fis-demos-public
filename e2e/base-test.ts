@@ -6,7 +6,7 @@ import { ROUTES } from "./routes";
 import { NavigationPage } from "./pages/navigation.pom";
 import { ManagePersonasPage } from "./pages/managePersonas.pom";
 import { QuizGeneratorPage } from "./pages/demos/quizGenerator.pom";
-import { ContentMappingPage } from "./pages/demos/contentMapping.pom";
+import { CourseOutlinePage } from "./pages/demos/courseOutline.pom";
 import { PersonalizedContentPage } from "./pages/demos/personalizedContent.pom";
 import { ProfilePage } from "./pages/profile.pom";
 import { MobileNavigationPage } from "./pages/mobileNavigation.pom";
@@ -24,7 +24,7 @@ type CustomFixtures = {
   // Demos
   quizGeneratorPage: QuizGeneratorPage;
   personalizedContentPage: PersonalizedContentPage;
-  contentMappingPage: ContentMappingPage;
+  courseOutlinePage: CourseOutlinePage;
 };
 
 // 📝 Define the global setup here
@@ -58,8 +58,8 @@ export const test = base.extend<CustomFixtures>({
     const profilePage = new ProfilePage(page);
     await use(profilePage);
   },
-  contentMappingPage: async ({ page }, use) => {
-    const contentMappingPage = new ContentMappingPage(page);
+  courseOutlinePage: async ({ page }, use) => {
+    const contentMappingPage = new CourseOutlinePage(page);
     await use(contentMappingPage);
   },
   personalizedContentPage: async ({ page }, use) => {

@@ -22,9 +22,9 @@ export default function Home() {
           ></DemoCard>
           <DemoCard
             imageSource="/content-mapping-thumbnail.png"
-            title="Lesson Planning"
-            description={`Quickly generate a full, adaptable course outline and get instant, detailed lesson plans—all tailored to one person's learning style.`}
-            href="/content-mapping"
+            title="Course Outline"
+            description={`Quickly generate a full, adaptable course outline.`}
+            href="/course-outline"
           ></DemoCard>
           <DemoCard
             imageSource="/personalized-content-thumbnail.png"

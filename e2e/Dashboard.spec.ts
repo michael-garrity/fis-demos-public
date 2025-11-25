@@ -37,9 +37,7 @@ test("3. Shows the correct description for each tool", async ({ page }) => {
   ).toBeVisible();
 
   await expect(
-    page.getByText(
-      /Quickly generate a full, adaptable course outline and get instant/i
-    )
+    page.getByText(/Quickly generate a full, adaptable course outline./i)
   ).toBeVisible();
 
   await expect(
@@ -68,8 +66,9 @@ test("4. Quiz Generator card navigates to /quiz-generator and verifies the headi
   ).toBeVisible();
 });
 
-test("5. Content Mapping card navigates to /content-mapping and verifies the heading", async ({
+test("5. Content Mapping card navigates to /course-outline and verifies the heading", async ({
   page,
+  courseOutlinePage,
 }) => {
   // Find the button inside the Content Mapping card (second button on the page)
   const contentCardButton = page
@@ -79,12 +78,10 @@ test("5. Content Mapping card navigates to /content-mapping and verifies the hea
   await contentCardButton.click();
 
   // ASSERTION: Verify URL change
-  await expect(page).toHaveURL(ROUTES.contentMapping);
+  await expect(page).toHaveURL(ROUTES.courseOutline);
 
   // ASSERTION: Verify the content on the new page
-  await expect(
-    page.getByRole("heading", { name: "Content Mapping Demo" })
-  ).toBeVisible();
+  await expect(courseOutlinePage.heading).toBeVisible();
 });
 
 test("6. Personalized Content card navigates to /personalized-content and verifies the heading", async ({
