@@ -40,6 +40,7 @@ vi.mock("@heroui/react", () => ({
       {children}
     </a>
   )),
+  Skeleton: vi.fn(() => <div data-testid="skeleton" />),
 }));
 
 // --- TEST DATA ---
@@ -52,8 +53,9 @@ const MOCK_RECORDS: TestRecord[] = [
 const MOCK_PROPS = {
   records: MOCK_RECORDS,
   title: "Product List",
-  createHref: "/products/new",
+  createNewRoute: "/products/new",
   RenderItem: MockRenderItem,
+  isLoading: false,
 };
 
 describe("ListView Component", () => {
@@ -83,7 +85,7 @@ describe("ListView Component", () => {
 
     expect(createButton).toBeInTheDocument();
     expect(createButton).toHaveAttribute("href", "/products/new");
-    expect(createButton).toHaveTextContent("+ Create New");
+    expect(createButton).toHaveTextContent("Create New");
   });
 
   // --- Empty State Test ---
@@ -113,36 +115,14 @@ describe("ListView Component", () => {
     expect(screen.getByText("Product B")).toBeInTheDocument();
   });
 
-  it("generates and passes the correct view and edit links to RenderItem", () => {
-    render(<ListView {...MOCK_PROPS} />);
+  it("displays a skeleton loading view when isLoading is true", () => {
+    render(<ListView {...MOCK_PROPS} isLoading={true} />);
 
-    // 1. Check props passed for the first record (id: "101")
-    const firstCall = MockRenderItem.mock.calls[0][0]; // arguments of first call
+    // Check that the skeleton wrapper is in the document
+    const skeletonWrapper = screen.getByTestId("list-skeleton-wrapper");
+    expect(skeletonWrapper).toBeInTheDocument();
 
-    // Base URL should be '/products' (stripped of '/new')
-    expect(firstCall.record.id).toBe("101");
-    expect(firstCall.viewHref).toBe("/products/101");
-    expect(firstCall.editHref).toBe("/products/101/edit");
-
-    // 2. Check props passed for the second record (id: "102")
-    const secondCall = MockRenderItem.mock.calls[1][0]; // arguments of second call
-
-    expect(secondCall.record.id).toBe("102");
-    expect(secondCall.viewHref).toBe("/products/102");
-    expect(secondCall.editHref).toBe("/products/102/edit");
-  });
-
-  it("handles createHref with URL parameters when generating links", () => {
-    const propsWithParams = {
-      ...MOCK_PROPS,
-      createHref: "/products/new?page=1", // Test stripping params
-    };
-    render(<ListView {...propsWithParams} />);
-
-    const firstCall = MockRenderItem.mock.calls[0][0];
-
-    // Base URL should correctly strip both '/new' and '?page=1' to get '/products'
-    expect(firstCall.viewHref).toBe("/products/101");
-    expect(firstCall.editHref).toBe("/products/101/edit");
+    // Ensure no records are rendered while loading
+    expect(screen.queryByTestId("list-item-card")).not.toBeInTheDocument();
   });
 });

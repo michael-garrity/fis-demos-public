@@ -11,16 +11,17 @@ export interface ListViewProps<T extends BaseListRecord> {
   title: string;
 
   // Href for the 'Create New' button (e.g., "/products/new")
-  createHref: string;
+  createNewRoute: string;
 
   // A component to handle how each individual record is rendered.
   // It receives the record data, edit link, and view link.
   RenderItem: React.FC<RenderItemProps<T>>;
+
+  // Loading state to indicate if data is being fetched
+  isLoading: boolean;
 }
 
 // Props passed to the custom component responsible for rendering a single item.
 export interface RenderItemProps<T extends BaseListRecord> {
   record: T;
-  editHref: string;
-  viewHref: string;
 }
