@@ -4,6 +4,11 @@ export interface CourseOutlineRecord extends BaseListRecord {
   title: string;
   description: string;
   numberOfLessons: number;
-  timePerLesson: string;
-  learnerProfile: string | number;
+  durationValue: number;
+  durationUnit: "minutes" | "hours";
+  learnerProfileId: string;
+}
+
+export interface CourseOutlineFormState extends CourseOutlineRecord {
+  customization: string;
 }

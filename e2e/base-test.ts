@@ -6,10 +6,11 @@ import { ROUTES } from "./routes";
 import { NavigationPage } from "./pages/navigation.pom";
 import { ManagePersonasPage } from "./pages/managePersonas.pom";
 import { QuizGeneratorPage } from "./pages/demos/quizGenerator.pom";
-import { CourseOutlinePage } from "./pages/demos/courseOutline.pom";
+import { CourseOutlineListPage } from "./pages/demos/course-outline/courseOutlineList.pom";
 import { PersonalizedContentPage } from "./pages/demos/personalizedContent.pom";
 import { ProfilePage } from "./pages/profile.pom";
 import { MobileNavigationPage } from "./pages/mobileNavigation.pom";
+import { CourseOutlineCreatePage } from "./pages/demos/course-outline/courseOutlineCreate.pom";
 
 type CustomFixtures = {
   // Dashboard
@@ -24,7 +25,10 @@ type CustomFixtures = {
   // Demos
   quizGeneratorPage: QuizGeneratorPage;
   personalizedContentPage: PersonalizedContentPage;
-  courseOutlinePage: CourseOutlinePage;
+
+  // Course Outline Generator
+  courseOutlineListPage: CourseOutlineListPage;
+  courseOutlineCreatePage: CourseOutlineCreatePage;
 };
 
 // 📝 Define the global setup here
@@ -58,13 +62,19 @@ export const test = base.extend<CustomFixtures>({
     const profilePage = new ProfilePage(page);
     await use(profilePage);
   },
-  courseOutlinePage: async ({ page }, use) => {
-    const contentMappingPage = new CourseOutlinePage(page);
-    await use(contentMappingPage);
-  },
   personalizedContentPage: async ({ page }, use) => {
     const personalizedContentPage = new PersonalizedContentPage(page);
     await use(personalizedContentPage);
+  },
+
+  // Course Outline Generator
+  courseOutlineListPage: async ({ page }, use) => {
+    const courseOutlineListPage = new CourseOutlineListPage(page);
+    await use(courseOutlineListPage);
+  },
+  courseOutlineCreatePage: async ({ page }, use) => {
+    const courseOutlineCreatePage = new CourseOutlineCreatePage(page);
+    await use(courseOutlineCreatePage);
   },
 
   // Global/Default Page Setup

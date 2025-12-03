@@ -1,6 +1,6 @@
 // Define a base interface that all records must adhere to.
 export interface BaseListRecord {
-  id: string | number;
+  id: string;
   // All records must have an ID for keys and linking
 }
 

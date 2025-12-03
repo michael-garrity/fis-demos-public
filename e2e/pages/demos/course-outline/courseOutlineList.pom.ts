@@ -1,10 +1,11 @@
 import { Locator, Page } from "@playwright/test";
 
-export class CourseOutlinePage {
+export class CourseOutlineListPage {
   readonly heading: Locator;
 
   readonly skeletonWrapper: Locator;
   readonly recordsContainer: Locator;
+  readonly allCards: Locator;
 
   readonly exampleRecordCard: Locator;
   readonly exampleRecordTitle: Locator;
@@ -20,6 +21,7 @@ export class CourseOutlinePage {
 
     this.skeletonWrapper = page.getByTestId("list-skeleton-wrapper");
     this.recordsContainer = page.getByTestId("record-list-container");
+    this.allCards = page.getByTestId("list-item-card");
 
     this.exampleRecordCard = page.getByTestId("list-item-card").first();
     this.exampleRecordTitle = this.exampleRecordCard.getByTestId(
@@ -47,5 +49,11 @@ export class CourseOutlinePage {
 
   async goto() {
     await this.page.goto("/course-outline");
+  }
+
+  async getNumberOfRecords() {
+    const records = await this.allCards.all();
+
+    return records.length;
   }
 }

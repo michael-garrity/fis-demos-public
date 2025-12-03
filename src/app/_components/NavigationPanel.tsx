@@ -32,6 +32,10 @@ export default function NavigationPanel() {
   const router = useRouter();
   const pathname = usePathname();
 
+  function closeMenu() {
+    setIsMenuOpen(false);
+  }
+
   const menuItems: Array<MobileMenuItem> = [
     { label: "Dashboard", href: "/" },
     { label: "Manage Personas", href: "/personas" },
@@ -44,7 +48,7 @@ export default function NavigationPanel() {
   ];
 
   return (
-    <Navbar isBordered className="bg-background">
+    <Navbar isBordered className="bg-background" isMenuOpen={isMenuOpen}>
       <NavbarMenuToggle
         aria-label={isMenuOpen ? "Close menu" : "Open menu"}
         className="sm:hidden cursor-pointer"
@@ -89,6 +93,7 @@ export default function NavigationPanel() {
               color={color ?? (pathname === href ? "primary" : "foreground")}
               href={href}
               size="lg"
+              onClick={closeMenu}
             >
               {label}
             </Link>

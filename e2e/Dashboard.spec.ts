@@ -17,7 +17,7 @@ test("2. Renders all three Demo Cards with correct titles and links", async ({
 }) => {
   // Test 1: Verify all three demo card titles are visible
   await expect(dashboardPage.quizGeneratorCardButton).toBeVisible();
-  await expect(dashboardPage.contentMappingCardButton).toBeVisible();
+  await expect(dashboardPage.courseOutlineCardButton).toBeVisible();
   await expect(dashboardPage.personalizedContentCardButton).toBeVisible();
 
   // Test 2: Verify the Quiz Generator card is linked correctly and has the description
@@ -68,7 +68,7 @@ test("4. Quiz Generator card navigates to /quiz-generator and verifies the headi
 
 test("5. Content Mapping card navigates to /course-outline and verifies the heading", async ({
   page,
-  courseOutlinePage,
+  courseOutlineListPage,
 }) => {
   // Find the button inside the Content Mapping card (second button on the page)
   const contentCardButton = page
@@ -81,7 +81,7 @@ test("5. Content Mapping card navigates to /course-outline and verifies the head
   await expect(page).toHaveURL(ROUTES.courseOutline);
 
   // ASSERTION: Verify the content on the new page
-  await expect(courseOutlinePage.heading).toBeVisible();
+  await expect(courseOutlineListPage.heading).toBeVisible();
 });
 
 test("6. Personalized Content card navigates to /personalized-content and verifies the heading", async ({

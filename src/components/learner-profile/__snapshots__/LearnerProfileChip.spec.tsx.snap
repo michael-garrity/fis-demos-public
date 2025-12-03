@@ -1,0 +1,88 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`LearnerProfileChip > Snapshot Tests > should match snapshot in Loading state 1`] = `
+<div>
+  <div
+    data-testid="learner-profile-chip"
+  >
+    <div
+      class="px-2"
+      classnames="[object Object]"
+      data-testid="mock-spinner"
+    />
+    <span>
+      Loading
+    </span>
+  </div>
+</div>
+`;
+
+exports[`LearnerProfileChip > Snapshot Tests > should match snapshot in Success state (Profile Found) 1`] = `
+<div>
+  <div>
+    <div
+      data-testid="popover-trigger"
+    >
+      <div
+        class="cursor-pointer transition-transform hover:scale-[1.03] gap-2 px-2 undefined"
+        classnames="[object Object]"
+        color="primary"
+        data-testid="mock-chip"
+      >
+        <svg
+          aria-hidden="true"
+          class="lucide lucide-circle-user-round"
+          fill="none"
+          height="18"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+          width="18"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M18 20a6 6 0 0 0-12 0"
+          />
+          <circle
+            cx="12"
+            cy="10"
+            r="4"
+          />
+          <circle
+            cx="12"
+            cy="12"
+            r="10"
+          />
+        </svg>
+        <span>
+          Advanced Pythonista
+        </span>
+      </div>
+    </div>
+    <div
+      data-testid="popover-content"
+    >
+      <div
+        data-testid="mock-profile-card"
+      >
+        Card for: 
+        Advanced Pythonista
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`LearnerProfileChip > Snapshot Tests > should match snapshot in Unknown Learner state 1`] = `
+<div>
+  <div
+    data-testid="mock-chip"
+  >
+    <span>
+      Unknown Learner
+    </span>
+  </div>
+</div>
+`;

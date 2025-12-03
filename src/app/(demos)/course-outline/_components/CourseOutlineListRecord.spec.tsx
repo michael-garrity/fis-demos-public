@@ -3,18 +3,19 @@ import { render, screen } from "@testing-library/react";
 import CourseOutlineListRecord from "./CourseOutlineListRecord";
 import * as HeroUI from "@heroui/react";
 import LearnerProfileChip from "@/components/learner-profile/LearnerProfileChip";
+import { CourseOutlineRecord } from "@/types";
 
 // --- MOCK DATA ---
 // Create a mock record matching the expected structure of CourseOutlineRecord
 const MOCK_COURSE_RECORD = {
-  id: 1,
+  id: "1",
   title: "Introduction to JavaScript",
   description:
     "A comprehensive course covering JS fundamentals and DOM manipulation.",
   numberOfLessons: 15,
-  timePerLesson: "45 min",
-  // IMPORTANT: Assuming 'learnerProfile' contains the ID required by LearnerProfileChip
-  learnerProfile: 101,
+  durationValue: 45,
+  durationUnit: "minutes" as "minutes" | "hours",
+  learnerProfileId: "101",
 };
 
 // --- MOCKING DEPENDENCIES ---
@@ -58,10 +59,27 @@ describe("CourseOutlineListRecord", () => {
     ).toBeInTheDocument();
 
     // Time per lesson
-    expect(screen.getByText(/45 min per lesson/i)).toBeInTheDocument();
+    expect(screen.getByText(/45 minutes per lesson/i)).toBeInTheDocument();
 
     // Total lessons
     expect(screen.getByText(/15 total lessons/i)).toBeInTheDocument();
+  });
+
+  it("handles singular unit correctly when the plural ends in 's' (e.g., 'days' -> 'day')", () => {
+    // Test case: 1 day (singular)
+    const singularRecord: CourseOutlineRecord = {
+      ...MOCK_COURSE_RECORD,
+      durationValue: 1,
+      durationUnit: "hours", // Plural unit provided
+    };
+    render(<CourseOutlineListRecord record={singularRecord} />);
+
+    const durationElement = screen.getByTestId(
+      "course-outline-list-time-per-lesson"
+    );
+    // "days" should be sliced to "day"
+    expect(durationElement).toHaveTextContent("1 hour per lesson");
+    expect(durationElement).not.toHaveTextContent("1 hours per lesson");
   });
 
   // --- CHILD COMPONENT ASSERTIONS ---
@@ -76,7 +94,7 @@ describe("CourseOutlineListRecord", () => {
     // 2. Check that the component received the correct ID prop
     expect(MockLearnerProfileChip).toHaveBeenCalledWith(
       expect.objectContaining({
-        learnerProfileId: MOCK_COURSE_RECORD.learnerProfile,
+        learnerProfileId: MOCK_COURSE_RECORD.learnerProfileId,
         className: "mt-2",
       }),
       undefined

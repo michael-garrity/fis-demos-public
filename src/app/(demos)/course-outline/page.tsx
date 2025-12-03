@@ -3,7 +3,7 @@
 import { CourseOutlineRecord } from "@/types/demos/course-outline";
 import ListView from "../_components/List";
 import CourseOutlineListRecord from "./_components/CourseOutlineListRecord";
-import { useCourseOutlines } from "@/hooks/stores/useCourseOutlines";
+import { useCourseOutlines } from "@demos/course-outline/_store";
 
 export default function CourseOutlineDemoPage() {
   const { data: outlines, isLoading, isError, error } = useCourseOutlines();
@@ -16,7 +16,7 @@ export default function CourseOutlineDemoPage() {
     <ListView<CourseOutlineRecord>
       records={outlines ?? []}
       title="Course Outlines"
-      createNewRoute="/course-outline/new"
+      createNewRoute="/course-outline/create"
       RenderItem={CourseOutlineListRecord}
       isLoading={isLoading}
     />

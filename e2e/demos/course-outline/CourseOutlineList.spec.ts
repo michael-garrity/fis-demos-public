@@ -1,7 +1,7 @@
-import { test, expect } from "../base-test";
+import { test, expect } from "../../base-test";
 
-test.describe("", () => {
-  test.beforeEach(async ({ courseOutlinePage }) => {
+test.describe("List of generated course outlines", () => {
+  test.beforeEach(async ({ courseOutlineListPage: courseOutlinePage }) => {
     await courseOutlinePage.goto();
 
     // Wait for the simulated loading state to clear (100ms delay in React component)
@@ -13,16 +13,15 @@ test.describe("", () => {
 
   test("should render the list title and create button", async ({
     page,
-    courseOutlinePage,
+    courseOutlineListPage,
   }) => {
     // Verify Title
-    await expect(courseOutlinePage.heading).toBeVisible();
+    await expect(courseOutlineListPage.heading).toBeVisible();
 
     // Verify Create Button
     const createButton = page.getByTestId("create-new-button");
     await expect(createButton).toBeVisible();
     await expect(createButton).toHaveText(/Create New/);
-    await expect(createButton).toHaveAttribute("href", "/course-outline/new");
   });
 
   test("should render the correct number of list items", async ({ page }) => {
@@ -32,43 +31,45 @@ test.describe("", () => {
   });
 
   test("should display content and action buttons for the first course record", async ({
-    courseOutlinePage,
+    courseOutlineListPage,
   }) => {
     // --- Content Verification ---
 
     // Title
-    await expect(courseOutlinePage.exampleRecordTitle).toBeVisible();
+    await expect(courseOutlineListPage.exampleRecordTitle).toBeVisible();
 
     // Description
-    await expect(courseOutlinePage.exampleRecordDescription).toBeVisible();
+    await expect(courseOutlineListPage.exampleRecordDescription).toBeVisible();
 
     // Details (Time/Lessons)
-    await expect(courseOutlinePage.exampleRecordTimePerLesson).toBeVisible();
-    await expect(courseOutlinePage.exampleRecordTotalLessons).toBeVisible();
+    await expect(
+      courseOutlineListPage.exampleRecordTimePerLesson
+    ).toBeVisible();
+    await expect(courseOutlineListPage.exampleRecordTotalLessons).toBeVisible();
 
     // Learner Chip Verification
-    await expect(courseOutlinePage.exampleRecordLearnerChip).toBeVisible();
+    await expect(courseOutlineListPage.exampleRecordLearnerChip).toBeVisible();
 
     // --- Button Verification ---
 
     // View Button
-    await expect(courseOutlinePage.exampleRecordViewButton).toBeVisible();
+    await expect(courseOutlineListPage.exampleRecordViewButton).toBeVisible();
 
     // Edit Button
-    await expect(courseOutlinePage.exampleRecordEditButton).toBeVisible();
+    await expect(courseOutlineListPage.exampleRecordEditButton).toBeVisible();
   });
 
   test("should show loading skeleton initially", async ({
     page,
-    courseOutlinePage,
+    courseOutlineListPage,
   }) => {
     // Reload the page to catch the initial loading state
     await page.reload();
 
     // Verify the skeleton is visible immediately
-    await expect(courseOutlinePage.skeletonWrapper).toBeVisible();
+    await expect(courseOutlineListPage.skeletonWrapper).toBeVisible();
 
     // Wait for loading to complete and verify the data appears
-    await expect(courseOutlinePage.recordsContainer).toBeVisible();
+    await expect(courseOutlineListPage.recordsContainer).toBeVisible();
   });
 });

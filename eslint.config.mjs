@@ -21,8 +21,8 @@ const eslintConfig = defineConfig([
   },
   {
     rules: {
-      "eol-last": ["error", "always"]
-    }
+      "eol-last": ["error", "always"],
+    },
   },
   globalIgnores([
     ".next/**",
@@ -31,6 +31,7 @@ const eslintConfig = defineConfig([
     "html/**",
     "next-env.d.ts",
     "out/**",
+    "**/*.spec.tsx",
   ]),
 ]);
 

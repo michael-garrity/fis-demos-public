@@ -10,8 +10,8 @@ export class DashboardPage {
   readonly quizGeneratorDescription: Locator;
 
   // Content Mapping Card Elements
-  readonly contentMappingCardButton: Locator;
-  readonly contentMappingDescription: Locator;
+  readonly courseOutlineCardButton: Locator;
+  readonly courseOutlineDescription: Locator;
 
   // Personalized Content Card Elements
   readonly personalizedContentCardButton: Locator;
@@ -35,11 +35,11 @@ export class DashboardPage {
     );
 
     // Content Mapping (Lesson Planning) Card Elements
-    this.contentMappingCardButton = page
+    this.courseOutlineCardButton = page
       .getByRole("button", { name: "View Demo" })
       .nth(1);
-    this.contentMappingDescription = page.getByText(
-      /Quickly generate a full, adaptable course outline and get instant/i
+    this.courseOutlineDescription = page.getByText(
+      /Quickly generate a full, adaptable course outline/i
     );
 
     // Personalized Content Card Elements
@@ -56,7 +56,7 @@ export class DashboardPage {
   }
 
   public async visitLessonPlannerDemo(): Promise<void> {
-    return await this.contentMappingCardButton.click();
+    return await this.courseOutlineCardButton.click();
   }
 
   public async visitPersonalizedContentDemo(): Promise<void> {

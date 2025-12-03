@@ -29,7 +29,11 @@ export default function CourseOutlineListRecord({
             data-testid="course-outline-list-time-per-lesson"
             className="flex items-center text-gray-600"
           >
-            {record.timePerLesson} per lesson
+            {record.durationValue}{" "}
+            {record.durationValue === 1
+              ? record.durationUnit.slice(0, -1)
+              : record.durationUnit}{" "}
+            per lesson
           </p>
           <p
             data-testid="course-outline-list-total-lessons"
@@ -40,7 +44,7 @@ export default function CourseOutlineListRecord({
         </div>
         <LearnerProfileChip
           data-testid="course-outline-list-learner-chip"
-          learnerProfileId={record.learnerProfile}
+          learnerProfileId={record.learnerProfileId}
           className="mt-2"
         />
       </div>

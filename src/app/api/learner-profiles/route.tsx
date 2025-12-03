@@ -2,7 +2,7 @@ import { LearnerProfile } from "@/types";
 import { NextResponse } from "next/server";
 
 const LiamProfile: LearnerProfile = {
-  id: 1,
+  id: "1",
   name: "Liam Chen",
   age: "25",
   readingLevel: "Intermediate",
@@ -12,7 +12,7 @@ const LiamProfile: LearnerProfile = {
 };
 
 const MayaProfile: LearnerProfile = {
-  id: 2,
+  id: "2",
   name: "Maya Singh",
   age: "40",
   readingLevel: "Advanced",
@@ -26,7 +26,7 @@ const MayaProfile: LearnerProfile = {
 };
 
 const ChloeProfile: LearnerProfile = {
-  id: 3,
+  id: "3",
   name: "Chloe Davis",
   age: "17",
   readingLevel: "Fluent",
@@ -36,7 +36,6 @@ const ChloeProfile: LearnerProfile = {
 };
 /**
  * Handles GET requests for the course outline records.
- * Endpoint: /app/api/demos/course-outline
  */
 export async function GET() {
   await new Promise((resolve) => setTimeout(resolve, 1000));

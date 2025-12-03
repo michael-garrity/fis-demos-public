@@ -9,10 +9,10 @@ import {
 } from "@heroui/react";
 import { CircleUserRound } from "lucide-react";
 import LearnerProfileCard from "./LearnerProfileCard";
-import { useLearnerProfiles } from "@/hooks/stores/useLearnerProfiles";
+import { useLearnerProfiles } from "@demos/_store/useLearnerProfiles";
 
 interface LearnerProfileChipProps {
-  learnerProfileId: string | number;
+  learnerProfileId: string;
   className?: string;
   "data-testid"?: string;
 }
