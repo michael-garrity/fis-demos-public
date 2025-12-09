@@ -21,6 +21,21 @@ vi.mock("@/components/learner-profile/LearnerProfileChip", () => {
   };
 });
 
+// Mock the delete mutation hook
+const mockDeleteMutation = vi.fn();
+const mockIsDeleting = vi.fn(() => false); // Use a mock function to control state easily
+vi.mock("../_store/useDeleteCourseOutline", () => {
+  return {
+    useDeleteCourseOutline: vi.fn(() => ({
+      mutate: mockDeleteMutation,
+      isPending: mockIsDeleting(),
+    })),
+  };
+});
+
+// Mock the ConfirmationDialog component (Declare globally)
+// const MockConfirmationDialog = vi.fn(() => null);
+
 describe("CourseOutlineListRecord", () => {
   const mockRecord: CourseOutlineRecord = {
     id: "course-123",

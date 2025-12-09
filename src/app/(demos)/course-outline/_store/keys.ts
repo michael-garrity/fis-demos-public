@@ -13,4 +13,7 @@ export const courseKeys = {
 
   // Key for the update mutation (used for mutationKey in useUpdateCourseOutline)
   update: () => [...courseKeys.all, "update"] as const,
+
+  // Key for the delete mutation (used for mutationKey in useDeleteCourseOutline)
+  delete: () => [...courseKeys.all, "delete"] as const,
 };

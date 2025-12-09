@@ -8,24 +8,21 @@ export async function PUT(req: Request) {
   return NextResponse.json(updatedCourseOutline, { status: 200 });
 }
 
-export async function GET(
+export async function GET() {
+  await new Promise((resolve) => setTimeout(resolve, 1000));
+
+  return NextResponse.json(MOCK_DETAIL, { status: 200 });
+}
+
+export async function DELETE(
   req: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
   const id = (await params).id;
 
-  // Simulate lookup/network latency
   await new Promise((resolve) => setTimeout(resolve, 1000));
 
-  // In a real app, you would query the database using 'id'.
-  // For mock data, we check the ID and return the complete detail object.
-  if (id === "1") {
-    // Return the comprehensive CourseOutlineDetail object
-    return NextResponse.json(MOCK_DETAIL, { status: 200 });
-  } else {
-    console.warn(`[API] Course Detail not found for ID: ${id}`);
-    return new NextResponse("Course not found", { status: 404 });
-  }
+  return NextResponse.json(id, { status: 200 });
 }
 
 const MOCK_LESSONS: Lesson[] = [
