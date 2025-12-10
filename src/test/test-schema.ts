@@ -1,5 +1,6 @@
 import { Pool } from "pg";
 import { beforeAll, afterAll, afterEach } from "vitest";
+import * as factory from "@/test/factory";
 
 /*
  * This uses a custom schema as a testing sandbox:
@@ -51,5 +52,5 @@ export async function prepareTestSchema() {
 
   afterEach(truncateAll);
 
-  return { pgClient };
+  return { factory, pgClient };
 }

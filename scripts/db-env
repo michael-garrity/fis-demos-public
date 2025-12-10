@@ -1,0 +1,7 @@
+#!/usr/bin/env sh
+
+npx supabase status -o env \
+  --override-name api.url=SUPABASE_URL \
+  --override-name db.url=DATABASE_URL \
+  --override-name auth.secret_key=SUPABASE_SECRET_KEY \
+| grep -E '^(SUPABASE_|DATABASE_)'
