@@ -1,6 +1,6 @@
 {
   "**/*.sql": ["./scripts/sqlfluff lint", "supabase db lint"],
-  "supabase/migrations/*.sql": ["scripts/check-schema-staged"],
+  "supabase/migrations/*.sql": ["scripts/check-db-changes"],
   "**/*.{js,ts,jsx,tsx}": ["eslint src"],
   "**/*.{yaml,yml}": ["./scripts/yamllint"]
 }

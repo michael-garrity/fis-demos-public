@@ -2,6 +2,7 @@
   "name": "fis-demos",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -25,11 +26,13 @@
     "db:reset:test": "node scripts/db-reset-test.js",
     "db:start": "supabase start",
     "db:status": "supabase status",
-    "db:sync": "npm run db:reset:test && npm run db:dump"
+    "db:sync": "npm run db:reset:test && npm run db:dump && npm run db:types",
+    "db:types": "supabase gen types typescript --local > src/types/database.ts"
   },
   "dependencies": {
     "@heroui/react": "^2.8.5",
     "@sentry/nextjs": "^10.29.0",
+    "@supabase/supabase-js": "^2.86.2",
     "@tanstack/react-query": "^5.90.12",
     "@tanstack/react-query-devtools": "^5.91.1",
     "framer-motion": "^12.23.25",

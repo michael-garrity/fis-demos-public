@@ -1,0 +1,76 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+STAGED_FILES=$(git diff --cached --name-only)
+
+# Flags for staged changes
+echo "$STAGED_FILES" | grep -q '^supabase/migrations/' && HAS_MIGRATIONS=true || HAS_MIGRATIONS=false
+echo "$STAGED_FILES" | grep -q '^supabase/schema/' && HAS_SCHEMA=true || HAS_SCHEMA=false
+echo "$STAGED_FILES" | grep -q '^src/types/database' && HAS_TYPES=true || HAS_TYPES=false
+
+warn() {
+  cat <<EOF
+
+⚠️  $1
+You may need to run one of the following:
+$2
+
+EOF
+}
+
+# --- Check: migrations without schema ---
+if [[ "$HAS_MIGRATIONS" = true && "$HAS_SCHEMA" = false ]]; then
+  warn \
+    "You have staged migration changes but no schema changes." \
+"    npm run db:dump     # generate the schema
+    npm run db:migrate  # run your migration & generate the schema
+    npm run db:reset    # reset your local DB & generate the schema"
+  exit 1
+fi
+
+# --- Check: validate staged schema matches DB state ---
+if [[ "$HAS_MIGRATIONS" = true && "$HAS_SCHEMA" = true ]]; then
+  SCHEMA_DIR="./supabase/schema"
+  TMP_DIR=$(mktemp -d)
+
+  trap 'rm -rf "$TMP_DIR"' EXIT
+
+  ./scripts/db-dump "$TMP_DIR"
+
+  if ! diff -r "$SCHEMA_DIR" "$TMP_DIR" >/dev/null; then
+    warn \
+      "The staged schema does not match the current database state." \
+"    npm run db:dump     # generate the schema
+    npm run db:reset    # reset your local DB & generate the schema"
+    exit 1
+  fi
+fi
+
+# --- Check: schema changed but types not staged ---
+if [[ "$HAS_SCHEMA" = true && "$HAS_TYPES" = false ]]; then
+  warn \
+    "You have staged schema changes but no type changes." \
+"    npm run db:types   # generate the types
+    npm run db:reset   # reset your local DB & generate the types"
+  exit 1
+fi
+
+# --- Check: validate staged types match DB state ---
+if [[ "$HAS_SCHEMA" = true && "$HAS_TYPES" = true ]]; then
+  TYPES_PATH="./src/types/database.ts"
+  TMP_TYPES_FILE=$(mktemp /tmp/supabase-types.XXXXXX.ts)
+
+  trap 'rm -f "$TMP_TYPES_FILE"' EXIT
+
+  npx supabase gen types typescript --local > "$TMP_TYPES_FILE"
+
+  if ! diff "$TYPES_PATH" "$TMP_TYPES_FILE" >/dev/null; then
+    warn \
+      "The staged types do not match the current database state." \
+"    npm run db:types   # generate the types
+    npm run db:reset   # reset your local DB & regenerate types"
+    exit 1
+  fi
+fi
+
+exit 0
