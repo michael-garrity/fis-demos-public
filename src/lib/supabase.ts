@@ -21,7 +21,9 @@ export function getClient() {
   client = createClient<Database>(
     process.env.SUPABASE_URL!,
     process.env.SUPABASE_SECRET_KEY!,
-    options
+    // NOTE: this type strategy doesn't seem ideal, but opting into it for
+    // now to unblock our Vercel builds
+    options as any // eslint-disable-line @typescript-eslint/no-explicit-any
   );
 
   return client;

@@ -48,7 +48,7 @@ export async function prepareTestSchema() {
 
   beforeAll(truncateAll);
 
-  afterAll(pgClient.release);
+  afterAll(() => pgClient.release());
 
   afterEach(truncateAll);
 
