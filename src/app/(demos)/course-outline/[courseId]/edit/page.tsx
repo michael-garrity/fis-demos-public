@@ -7,8 +7,6 @@ import {
   LayoutList,
   BookOpen,
   CheckCircle,
-  Lightbulb,
-  LucideIcon,
 } from "lucide-react";
 import {
   Chip,
@@ -20,87 +18,57 @@ import {
   Textarea,
   addToast,
 } from "@heroui/react";
-import { useCourseOutlineData } from "../_hooks/useCourseOutlineData";
-import { Lesson, LessonContentBlock, LessonSections } from "@/types";
-import { useRouter } from "next/navigation";
-import EditableSectionBlock from "../_components/EditableBlockSection";
 import CourseOverviewSkeleton from "../_components/CourseOverviewSkeleton";
 import LessonItemSkeleton from "../_components/LessonItemSkeleton";
-
-// --- CONSTANTS ---
-const LESSON_CONTENT_BLOCKS = [
-  "introduction",
-  "context",
-  "example",
-  "activity",
-  "assessment",
-  "reflection",
-] as const;
-
-const LessonIcons: Record<keyof LessonSections, LucideIcon> = {
-  introduction: BookOpen,
-  context: Users,
-  example: Lightbulb,
-  activity: LayoutList,
-  assessment: CheckCircle,
-  reflection: Clock,
-};
-
-// Type definition for Lesson key used in map
-type BlockKey = (typeof LESSON_CONTENT_BLOCKS)[number];
+import { LearnerProfileChip } from "@/lib/learner-profiles";
+import { useEditCourseOutline } from "../_hooks/useEditCourseOutline";
+import { useParams, useRouter } from "next/navigation";
 
 export default function CourseOutlineTeacherView() {
   const router = useRouter();
+  const { courseId: id } = useParams<{ courseId: string }>();
 
   const {
-    course,
-    courseId,
-    isModified,
-    totalDuration,
-    isSaving,
-    isCourseFetching,
-    fetchError,
-    isSuccess: isSaveSuccess,
-    handleTopLevelChange,
-    handleLessonChange,
-    handleBlockChange,
-    saveChanges,
     cancelChanges,
-  } = useCourseOutlineData();
-
-  // Handle successful save and navigation
-  const savedCourseId = courseId;
+    courseOutline,
+    error,
+    handleLessonOutlineChange,
+    handleTopLevelChange,
+    isFetching,
+    isModified,
+    isPending,
+    isSuccess,
+    saveChanges,
+  } = useEditCourseOutline(id);
 
   useEffect(() => {
-    if (isSaveSuccess && savedCourseId) {
+    if (isSuccess && id) {
       addToast({
         title: <p className="text-xl text-bold">Success!</p>,
         description: "Course Outline Saved",
         color: "success",
         shouldShowTimeoutProgress: true,
       });
-      router.push(`/course-outline/${savedCourseId}`);
+      router.push(`/course-outline/${id}`);
     }
-  }, [isSaveSuccess, savedCourseId, router]);
-
-  const totalDurationText: string = totalDuration;
+  }, [isSuccess, id, router]);
 
   // --- Conditional Rendering ---
 
-  if (fetchError) {
+  if (error) {
     return (
       <div className="p-8 max-w-5xl mx-auto text-center text-red-600">
-        <p>Error loading course: {fetchError.message}</p>
+        <p>Error loading course: {error.message}</p>
       </div>
     );
   }
 
-  const isFetchingData: boolean = isCourseFetching && !isSaving;
+  const isFetchingData: boolean = isFetching && !isPending;
 
   // --- MAIN RENDER ---
   return (
     <div className="max-w-5xl mx-auto font-inter min-h-screen w-full">
-      {isFetchingData && !course?.title ? (
+      {isFetchingData && !courseOutline?.title ? (
         <CourseOverviewSkeleton />
       ) : (
         <Card className="shadow-xl border-t-4 border-indigo-600 mb-8 rounded-xl">
@@ -115,7 +83,7 @@ export default function CourseOutlineTeacherView() {
               classNames={{
                 input: "text-3xl font-extrabold text-gray-900 leading-tight",
               }}
-              value={course?.title}
+              value={courseOutline?.title}
               onChange={(e: ChangeEvent<HTMLInputElement>) =>
                 handleTopLevelChange("title", e.target.value)
               }
@@ -129,7 +97,7 @@ export default function CourseOutlineTeacherView() {
               fullWidth
               rows={3}
               className="w-full text-lg text-gray-600"
-              value={course?.description}
+              value={courseOutline?.description}
               onChange={(e: ChangeEvent<HTMLElement>) =>
                 handleTopLevelChange(
                   "description",
@@ -146,7 +114,7 @@ export default function CourseOutlineTeacherView() {
               >
                 Total Lessons:{" "}
                 <span className="font-semibold ml-1">
-                  {course?.lessons.length}
+                  {courseOutline?.lessonOutlineCount}
                 </span>
               </Chip>
               <Chip
@@ -155,18 +123,20 @@ export default function CourseOutlineTeacherView() {
                 startContent={<Clock className="w-4 h-4" />}
               >
                 Total Course Time:{" "}
-                <span className="font-semibold ml-1">{totalDurationText}</span>
+                <span className="font-semibold ml-1">{courseOutline?.totalMinutesInWords}</span>
               </Chip>
-              <Chip
+              <LearnerProfileChip
+                learnerProfile={courseOutline?.learnerProfile ?? null}
                 size="md"
                 variant="faded"
+                color="default"
                 startContent={<Users className="w-4 h-4" />}
               >
                 Target Profile:{" "}
                 <span className="font-semibold ml-1">
-                  ID {course?.learnerProfileId}
+                  {courseOutline?.learnerProfile?.label}
                 </span>
-              </Chip>
+              </LearnerProfileChip>
             </div>
           </CardBody>
         </Card>
@@ -181,7 +151,7 @@ export default function CourseOutlineTeacherView() {
         <LessonItemSkeleton />
       ) : (
         <div className="space-y-6">
-          {course?.lessons.map((lesson, index) => (
+          {courseOutline?.lessonOutlines.map((lessonOutline, index) => (
             <Card
               key={index.toString()}
               className="shadow-lg overflow-hidden border-t-4 border-indigo-200"
@@ -199,9 +169,9 @@ export default function CourseOutlineTeacherView() {
                         input: "text-xl font-bold text-gray-800 p-0 m-0",
                       }}
                       className="w-full"
-                      value={lesson.title}
+                      value={lessonOutline.title}
                       onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                        handleLessonChange(index, "title", e.target.value)
+                        handleLessonOutlineChange(index, "title", e.target.value)
                       }
                     />
                   </div>
@@ -210,43 +180,68 @@ export default function CourseOutlineTeacherView() {
                     variant="bordered"
                     className="text-sm ml-4 shrink-0"
                   >
-                    {lesson.duration}
+                    {lessonOutline.minutes} {lessonOutline.minutes === 1 ? "minute" : "minutes"}
                   </Chip>
-                </div>
-                <div className="text-sm text-gray-500">
-                  Rationale & Assessment Breakdown
                 </div>
               </CardHeader>
 
               <CardBody className="p-4 pt-0">
                 <div className="p-2 grid grid-cols-1 lg:grid-cols-2 gap-4 border-t pt-4">
-                  {LESSON_CONTENT_BLOCKS.map((blockKey: BlockKey) => {
-                    const block = lesson[blockKey as keyof Lesson];
+                  <Card className="shadow-sm h-full">
+                    <CardHeader className="flex flex-col items-start pb-2">
+                      <h4 className="flex items-center text-base font-semibold text-gray-800">
+                        <BookOpen className="w-5 h-5 text-indigo-500 mr-2" />
+                        Description
+                      </h4>
+                    </CardHeader>
 
-                    if (
-                      typeof block === "object" &&
-                      block !== null &&
-                      "rationale" in block
-                    ) {
-                      const typedBlock = block as LessonContentBlock;
-                      const title =
-                        blockKey.charAt(0).toUpperCase() + blockKey.slice(1);
-                      const Icon = LessonIcons[blockKey] || BookOpen;
-
-                      return (
-                        <EditableSectionBlock
-                          key={blockKey}
-                          block={typedBlock}
-                          title={title}
-                          Icon={Icon}
-                          lessonIndex={index}
-                          blockKey={blockKey}
-                          handleBlockChange={handleBlockChange}
+                    <CardBody className="space-y-3 pt-2 border-t border-gray-100">
+                      <div>
+                        <Textarea
+                          label="Description"
+                          labelPlacement="outside"
+                          rows={3}
+                          fullWidth
+                          value={lessonOutline.description}
+                          onChange={(e: ChangeEvent<HTMLElement>) =>
+                            handleLessonOutlineChange(
+                              index,
+                              "description",
+                              (e.target as HTMLTextAreaElement).value
+                            )
+                          }
                         />
-                      );
-                    }
-                    return null;
-                  })}
+                      </div>
+                    </CardBody>
+                  </Card>
+
+                  <Card className="shadow-sm h-full">
+                    <CardHeader className="flex flex-col items-start pb-2">
+                      <h4 className="flex items-center text-base font-semibold text-gray-800">
+                        <CheckCircle className="w-5 h-5 text-indigo-500 mr-2" />
+                        Outcome
+                      </h4>
+                    </CardHeader>
+
+                    <CardBody className="space-y-3 pt-2 border-t border-gray-100">
+                      <div>
+                        <Textarea
+                          label="Outcome"
+                          labelPlacement="outside"
+                          rows={3}
+                          fullWidth
+                          value={lessonOutline.outcome}
+                          onChange={(e: ChangeEvent<HTMLElement>) =>
+                            handleLessonOutlineChange(
+                              index,
+                              "outcome",
+                              (e.target as HTMLTextAreaElement).value
+                            )
+                          }
+                        />
+                      </div>
+                    </CardBody>
+                  </Card>
                 </div>
               </CardBody>
             </Card>
@@ -260,16 +255,16 @@ export default function CourseOutlineTeacherView() {
           color="danger"
           variant="light"
           onPress={cancelChanges}
-          isDisabled={!isModified || isSaving}
+          isDisabled={!isModified || isPending}
         >
           Cancel
         </Button>
         <Button
           color="primary"
           onPress={saveChanges}
-          isDisabled={!isModified || isSaving}
+          isDisabled={!isModified || isPending}
         >
-          {isSaving ? "Saving..." : "Save Changes"}
+          {isPending ? "Saving..." : "Save Changes"}
         </Button>
       </div>
     </div>

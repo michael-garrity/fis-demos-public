@@ -127,6 +127,11 @@ export async function create<F extends Factory> (
   console.log(data, error);
   
   if (error) throw error;
+  if (!data) throw new Error(`
+    Factory failed to *create* record: ${name} with overrides ${JSON.stringify(overrides)}.
+    Is the Supabase module being mocked elsewhere in your tests? If so, use
+    *build* rather than *create*.
+ `);
 
   return data as FactoryOutput<F>;
 }

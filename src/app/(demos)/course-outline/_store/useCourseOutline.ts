@@ -1,4 +1,4 @@
-import { getCourseOutline } from "../_fetchers";
+import { getCourseOutline } from "../_services";
 import { CourseOutline } from "../_models";
 import { useQueryClient, useQuery } from "@tanstack/react-query";
 import { courseKeys } from "./keys";

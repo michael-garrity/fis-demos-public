@@ -44,7 +44,8 @@
     "next-router-mock": "^1.0.4",
     "pg": "^8.16.3",
     "react": "19.2.1",
-    "react-dom": "19.2.1"
+    "react-dom": "19.2.1",
+    "zod": "^4.2.0"
   },
   "devDependencies": {
     "@eslint/json": "^0.14.0",

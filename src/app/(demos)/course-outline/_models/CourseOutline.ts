@@ -4,6 +4,9 @@ import { LearnerProfile, LearnerProfileRow } from "@/lib/learner-profiles"
 export type CourseOutlineRow =
   Database["public"]["Tables"]["course_outlines"]["Row"];
 
+export type CourseOutlineUpdate =
+  Database["public"]["Tables"]["course_outlines"]["Update"];
+
 interface CreationMeta {
   learner_profile?: LearnerProfileRow;
   [key: string]: unknown;
@@ -18,6 +21,31 @@ export interface LessonOutline {
 
 export class CourseOutline {
   constructor(private data: CourseOutlineRow) {}
+
+  asUpdate(): CourseOutlineUpdate {
+    return {
+      title: this.data.title,
+      description: this.data.description,
+      lesson_outlines: this.data.lesson_outlines
+    }
+  }
+
+  // NOTE: if this ever accepts any camelCase `name`, this will need to
+  // be adjusted to handle the transformation
+  with(name: "title" | "description", value: string): CourseOutline {
+    return new CourseOutline({ ...this.data, [name]: value });
+  }
+
+  // NOTE: if LessonOutline gains any camelCase properties, this will need to
+  // be adjusted to handle the transformation
+  withLessonOutline(
+    index: number, lessonOutline: Partial<LessonOutline>
+  ): CourseOutline {
+    const lessonOutlines = this.lessonOutlines.map((existing, i) =>
+      i === index ? { ...existing, ...lessonOutline } : { ...existing }
+    );
+    return new CourseOutline({ ...this.data, lesson_outlines: lessonOutlines });
+  }
 
   get id() {
     return this.data.id;

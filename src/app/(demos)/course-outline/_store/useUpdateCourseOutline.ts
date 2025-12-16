@@ -1,27 +1,7 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { CourseOutlineDetail } from "@/types";
+import { CourseOutline } from "../_models";
 import { courseKeys } from "./keys";
-
-/**
- * API function to update an existing Course Outline record.
- */
-const updateCourseOutline = async (
-  updatedCourseData: CourseOutlineDetail
-): Promise<CourseOutlineDetail> => {
-  const response = await fetch(`/api/course-outlines/${updatedCourseData.id}`, {
-    method: "PUT",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(updatedCourseData),
-  });
-
-  if (!response.ok) {
-    const errorText = await response.text();
-    throw new Error(
-      `Failed to update course (ID: ${updatedCourseData.id}): ${errorText}`
-    );
-  }
-  return response.json();
-};
+import { putCourseOutline } from "../_services"
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 /**
  * Hook for updating an existing Course Outline record,
@@ -32,8 +12,8 @@ export const useUpdateCourseOutline = () => {
 
   return useMutation({
     mutationKey: courseKeys.update(),
-    mutationFn: updateCourseOutline,
-    onSuccess: (updatedCourse: CourseOutlineDetail) => {
+    mutationFn: putCourseOutline,
+    onSuccess: (updatedCourse: CourseOutline) => {
       // Manually update the specific detail view cache
       // This ensures the page viewing the course details immediately reflects the change.
       queryClient.setQueryData(
@@ -44,7 +24,7 @@ export const useUpdateCourseOutline = () => {
       // Manually update the list cache for a faster UX (no refetch)
       queryClient.setQueryData(
         courseKeys.list(),
-        (old: CourseOutlineDetail[] | undefined) => {
+        (old: CourseOutline[] | undefined) => {
           if (!old) return undefined;
 
           // Find the index of the updated course and replace it

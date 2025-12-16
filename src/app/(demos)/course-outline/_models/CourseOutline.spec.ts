@@ -4,6 +4,55 @@ import { describe, it, expect } from "vitest";
 import { factory } from "@/test"
 
 describe("CourseOutline", () => {
+  describe("asUpdate", () => {
+    it("returns an object with title, description, and lesson_outlines", () => {
+      const data = factory.build("courseOutline");
+      const courseOutline = new CourseOutline(data);
+
+      const update = courseOutline.asUpdate();
+
+      expect(update).toEqual({
+        title: data.title,
+        description: data.description,
+        lesson_outlines: data.lesson_outlines,
+      });
+    });
+  });
+
+  describe("with", () => {
+    it("returns a new instance with the updated title", () => {
+      const data = factory.build("courseOutline", { title: "Original Title" });
+      const courseOutline = new CourseOutline(data);
+
+      const updated = courseOutline.with("title", "New Title");
+
+      expect(updated.title).toBe("New Title");
+      expect(courseOutline.title).toBe("Original Title");
+      expect(updated).not.toBe(courseOutline);
+    });
+
+    it("returns a new instance with the updated description", () => {
+      const data = factory.build("courseOutline", { description: "Original Desc" });
+      const courseOutline = new CourseOutline(data);
+
+      const updated = courseOutline.with("description", "New Desc");
+
+      expect(updated.description).toBe("New Desc");
+      expect(courseOutline.description).toBe("Original Desc");
+      expect(updated).not.toBe(courseOutline);
+    });
+
+    it("does not modify other fields when editing one field", () => {
+      const data = factory.build("courseOutline", { title: "Original" });
+      const courseOutline = new CourseOutline(data);
+
+      const updated = courseOutline.with("title", "Updated Title");
+
+      expect(updated.title).toBe("Updated Title");
+      expect(updated.description).toEqual(courseOutline.description);
+    });
+  });
+
   it("returns the correct id", () => {
     const data = factory.build("courseOutline");
     const courseOutline = new CourseOutline(data);

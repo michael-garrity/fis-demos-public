@@ -21,7 +21,7 @@ import {
 import CourseOverviewSkeleton from "./_components/CourseOverviewSkeleton";
 import LessonItemSkeleton from "./_components/LessonItemSkeleton";
 import { LearnerProfileChip } from "@/lib/learner-profiles";
-import { useCourseOutline } from "../_store/useCourseOutline";
+import { useCourseOutline } from "../_store";
 import { useParams } from "next/navigation";
 
 export default function CourseOutlineTeacherView() {
