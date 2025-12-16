@@ -1,11 +1,10 @@
-// hooks/useDummyCourseOutlines.ts
 import { PersonalizedContentRecord } from "@/types";
 
 const mockData: PersonalizedContentRecord[] = [
   {
     id: "1",
     title: "Introduction to Reading Skills",
-    intro: "This course introduces fundamental reading strategies.",
+    description: "This course introduces fundamental reading strategies.",
     durationValue: 45,
     durationUnit: "minutes",
     learnerProfileId: "1",
@@ -13,7 +12,7 @@ const mockData: PersonalizedContentRecord[] = [
   {
     id: "2",
     title: "Exploring Narrative Structures",
-    intro: "Learn how stories are structured and how to analyze them.",
+    description: "Learn how stories are structured and how to analyze them.",
     durationValue: 2,
     durationUnit: "hours",
     learnerProfileId: "2",

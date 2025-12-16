@@ -51,10 +51,10 @@ export default function PersonalizedContentListRecord({
             {record.title}
           </h2>
           <p
-            data-testid="personalized-content-list-record-intro"
+            data-testid="personalized-content-list-record-description"
             className="text-sm text-gray-600 mb-4 text-justify line-clamp-2"
           >
-            {record.intro}
+            {record.description}
           </p>
 
           <div className="flex justify-between items-center mb-4 text-xs">

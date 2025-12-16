@@ -28,7 +28,7 @@ describe("PersonalizedContentlistRecord", () => {
   const mockRecord: PersonalizedContentRecord = {
     id: "lesson-123",
     title: "Advanced Testing Strategies",
-    intro: "Learn property-based testing and fuzzing.",
+    description: "Learn property-based testing and fuzzing.",
     durationValue: 60,
     durationUnit: "minutes",
     learnerProfileId: "senior-engineer",
@@ -54,8 +54,8 @@ describe("PersonalizedContentlistRecord", () => {
       screen.getByTestId("personalized-content-list-record-title")
     ).toHaveTextContent(mockRecord.title);
     expect(
-      screen.getByTestId("personalized-content-list-record-intro")
-    ).toHaveTextContent(mockRecord.intro);
+      screen.getByTestId("personalized-content-list-record-description")
+    ).toHaveTextContent(mockRecord.description);
 
     // Duration/Lesson details
     expect(
