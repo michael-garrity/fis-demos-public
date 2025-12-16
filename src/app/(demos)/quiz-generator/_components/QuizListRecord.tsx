@@ -1,16 +1,16 @@
 "use client";
 
 import { useCallback } from "react";
-import LearnerProfileChip from "@/components/learner-profile/LearnerProfileChip";
 import { Button, addToast, useDisclosure } from "@heroui/react";
 import { Edit2, Eye, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import ConfirmationDialog from "@/components/ConfirmationDialog";
 import { useDeleteQuiz } from "../_store";
-import { QuizRecord } from "@/types/demos/quiz-generator";
+import { Quiz } from "../_models";
+import { LearnerProfileChip } from "@/lib/learner-profiles";
 
 interface QuizListRecordProps {
-  record: QuizRecord;
+  record: Quiz;
 }
 
 export default function QuizListRecord({
@@ -69,7 +69,7 @@ export default function QuizListRecord({
   return (
     <>
       {/* Content: Use a plain div for the grid layout */}
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-5 md:gap-8 items-center">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-5 md:gap-8 items-center w-full">
         <div className="col-span-3">
           <h2
             data-testid="quiz-list-record-title"
@@ -89,12 +89,12 @@ export default function QuizListRecord({
               data-testid="quiz-list-total-lessons"
               className="flex items-center gap-2 text-gray-600"
             >
-              {record.numberOfQuestions} total questions
+              `{record.questionCount} question{record.questionCount === 1 ? "" : "s"}
             </p>
           </div>
           <LearnerProfileChip
             data-testid="quiz-list-learner-chip"
-            learnerProfileId={record.learnerProfileId}
+            learnerProfile={record.learnerProfile}
             className="mt-2"
           />
         </div>

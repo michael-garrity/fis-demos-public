@@ -129,3 +129,54 @@ $creation_meta$,
 ]
 $lesson_outlines$
 );
+
+-- Seed quizzes
+insert into quizzes
+(title, description, creation_meta, questions)
+values
+(
+    'Introduction to Atoms Quiz',
+    $description$
+This course provides instructors with a structured framework to teach students about the fundamental building blocks of matter: atoms. Instructors will guide students from the broad concept of matter to the detailed structure of atoms, exploring subatomic particles, their properties, and how atomic arrangements influence real-world phenomena. The course emphasizes clear, conceptual explanations and practical examples to help students connect atomic theory to everyday experiences and scientific observations.
+$description$,
+    $creation_meta$
+{
+  "source_material": {
+    "title": "What is an atom?",
+    "content": "Atoms are the building blocks of matter. Everything around you — the air, water, your body — is made of atoms. Scientists discovered that atoms are incredibly small and consist of even smaller parts: **protons**, **neutrons**, and **electrons**.\n- **Protons** have a positive charge and sit in the center, called the **nucleus**.\n- **Neutrons** have no charge and are also in the nucleus.\n- **Electrons** have a negative charge and orbit around the nucleus.\nLearning about atoms helps us understand chemistry, biology, and physics.\nFor example, how water molecules form, how chemical reactions occur, and why different materials behave differently all depend on atoms."
+  },
+  "learner_profile": {
+    "label": "7th grader",
+    "age": 12,
+    "reading_level": 5,
+    "experience": "Has completed introductory STEM activities and basic robotics challenges.",
+    "interests": ["Robotics", "Graphic novels", "Animals"]
+  }
+}
+$creation_meta$,
+    $questions$
+[
+  {
+    "question": "Which statement best describes the structure of an atom?",
+    "answer": {
+      "text": "An atom has protons and neutrons in the nucleus, with electrons orbiting around it.",
+      "feedback": "Correct! The nucleus contains protons and neutrons, while electrons move around the nucleus."
+    },
+    "distractors": [
+      {
+        "text": "An atom is made only of protons and electrons, which are both in the nucleus.",
+        "feedback": "Not quite. Neutrons are also in the nucleus, and electrons orbit around it."
+      },
+      {
+        "text": "An atom is a large solid sphere made entirely of electrons.",
+        "feedback": "Incorrect. Atoms are mostly empty space and have a nucleus with protons and neutrons."
+      },
+      {
+        "text": "An atom has neutrons orbiting the nucleus while protons and electrons stay in the center.",
+        "feedback": "Nope. Only electrons orbit the nucleus; protons and neutrons are in the center."
+      }
+    ]
+  }
+]
+$questions$
+);

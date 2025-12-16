@@ -97,6 +97,36 @@ export type Database = {
         }
         Relationships: []
       }
+      quizzes: {
+        Row: {
+          created_at: string
+          creation_meta: Json
+          description: string
+          id: string
+          questions: Json
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          creation_meta?: Json
+          description: string
+          id?: string
+          questions?: Json
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          creation_meta?: Json
+          description?: string
+          id?: string
+          questions?: Json
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       source_materials: {
         Row: {
           created_at: string

@@ -3,6 +3,7 @@ import { LessonOutline } from "@demos/course-outline/_models"
 import { faker } from '@faker-js/faker';
 import { getClient } from "@/lib/supabase";
 import { tableize, titleize, underscore } from 'inflection';
+import { Answer, Question } from "@/types";
 
 type Table = keyof Database["public"]["Tables"];
 type TableRow<T extends Table> = Database["public"]["Tables"][T]["Row"];
@@ -22,6 +23,21 @@ const factories = {
       },
       description: faker.lorem.sentence(),
       lesson_outlines: buildList("lessonOutline", 2) as unknown as Json,
+      title: titleize(faker.lorem.words(3)),
+    };
+  },
+
+  quiz(): TableRow<"quizzes"> {
+    const now = new Date().toISOString();
+    return {
+      id: crypto.randomUUID(),
+      created_at: now,
+      updated_at: now,
+      creation_meta: {
+        learner_profile: build("learnerProfile"),
+      },
+      description: faker.lorem.sentence(),
+      questions: buildList("question", 2) as unknown as Json,
       title: titleize(faker.lorem.words(3)),
     };
   },
@@ -47,6 +63,21 @@ const factories = {
       description: faker.lorem.sentence(),
       minutes: faker.number.int({ min: 5, max: 90, multipleOf: 15 }),
     };
+  },
+
+  question(): Question {
+    return {
+      question: faker.lorem.sentence(),
+      answer: build("answer"),
+      distractors: buildList("answer", 3),
+    }
+  },
+
+  answer(): Answer {
+    return {
+      text: faker.lorem.sentence(),
+      feedback: faker.lorem.sentence(),
+    }
   }
 };
 
@@ -93,6 +124,8 @@ export async function create<F extends Factory> (
     .select()
     .single();
 
+  console.log(data, error);
+  
   if (error) throw error;
 
   return data as FactoryOutput<F>;
