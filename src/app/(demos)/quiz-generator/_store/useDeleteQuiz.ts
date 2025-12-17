@@ -2,27 +2,11 @@
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { quizKeys } from "./keys";
-import { QuizRecord } from "@/types/demos/quiz-generator";
+import { QuizRow } from "@/types/demos/quiz-generator";
+import { deleteQuiz } from "../_fetchers";
 
 /**
- * API function to delete an existing Quiz record by ID.
- * @param id The ID of the quiz to delete.
- */
-const deleteQuiz = async (id: string): Promise<string> => {
-  const response = await fetch(`/api/quizzes/${id}`, {
-    method: "DELETE",
-  });
-
-  if (!response.ok) {
-    const errorText = await response.text();
-    throw new Error(`Failed to delete quiz (ID: ${id}): ${errorText}`);
-  }
-
-  return id;
-};
-
-/**
- * Hook for deleting an existing Quiz record.
+ * Hook for deleting an existing Quiz.
  * @returns The mutation object. The success handler receives the ID (string) of the deleted quiz.
  */
 export const useDeleteQuiz = () => {
@@ -39,11 +23,11 @@ export const useDeleteQuiz = () => {
       // 2. Manually update the list cache to remove the deleted item (Optimistic/Manual Update)
       queryClient.setQueryData(
         quizKeys.list(),
-        (old: QuizRecord[] | undefined) => {
+        (old: QuizRow[] | undefined) => {
           if (!old) return undefined;
 
           // Filter out the deleted course from the list
-          return old.filter((course) => course.id !== deletedId);
+          return old.filter((quiz) => quiz.id !== deletedId);
         }
       );
     },
