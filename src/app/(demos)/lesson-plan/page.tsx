@@ -2,19 +2,19 @@
 
 import ListView from "../_components/List";
 import LessonPlanListRecord from "./_components/LessonPlanListRecord";
-import { LessonPlanOutlineRecord } from "@/types/demos/lesson-plan";
-import { useLessonPlanList } from "./_store/useLessonOutlineList";
+import { LessonPlanRecord } from "@/types/demos/lesson-plan";
+import { useListLessonPlan } from "./_store/useLessonPlanList";
 
 export default function LessonPlanDemoPage() {
   // Get lesson array using tanstack query hook
-  const { data: lessons, isLoading, isError, error } = useLessonPlanList();
+  const { data: lessons, isLoading, isError, error } = useListLessonPlan();
 
   if (isError) {
     return <p>Error loading lessons: {error.message}</p>;
   }
 
   return (
-    <ListView<LessonPlanOutlineRecord>
+    <ListView<LessonPlanRecord>
       records={lessons ?? []}
       title="Lesson Plans"
       createNewRoute="/lesson-plan/create"

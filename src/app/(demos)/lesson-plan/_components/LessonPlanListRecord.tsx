@@ -7,16 +7,16 @@ import { Edit2, Eye, Trash2 } from "lucide-react";
 import ConfirmationDialog from "@/components/ConfirmationDialog";
 
 import LearnerProfileChip from "@/components/learner-profile/LearnerProfileChip";
-import { LessonPlanOutlineRecord } from "@/types/demos/lesson-plan";
-import { useDeleteLessonPlan } from "../_store/useLessonOutlineDelete";
+import { LessonPlanRecord } from "@/types/demos/lesson-plan";
+import { useDeleteLessonPlan } from "../_store/useLessonPlanDelete";
 
-interface LessonOutlineListProps {
-  record: LessonPlanOutlineRecord;
+interface LessonPlanListProps {
+  record: LessonPlanRecord;
 }
 
 export default function LessonPlanListRecord({
   record,
-}: LessonOutlineListProps) {
+}: LessonPlanListProps) {
   const router = useRouter();
   const { isOpen, onOpen, onClose } = useDisclosure();
 

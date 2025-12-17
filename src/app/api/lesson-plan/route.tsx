@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server";
-import { LessonPlanOutlineRecord } from "@/types/demos/lesson-plan";
+import { LessonPlanRecord } from "@/types/demos/lesson-plan";
 
 // --- MOCK COURSE OUTLINE DATA ---
 
-const mockLessonPlans: LessonPlanOutlineRecord[] = [
+const mockLessonPlans: LessonPlanRecord[] = [
   {
     id: "1",
     title: "JavaScript Fundamentals for the Web",

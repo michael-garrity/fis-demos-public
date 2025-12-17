@@ -1,4 +1,3 @@
-// import { LessonPlanOutlineRecord } from "@/types/demos/lesson-plan";
 import { NextResponse } from "next/server";
 
 export async function DELETE(
@@ -6,7 +5,6 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   const id = (await params).id;
-
   await new Promise((resolve) => setTimeout(resolve, 1000));
 
   return NextResponse.json(id, { status: 200 });

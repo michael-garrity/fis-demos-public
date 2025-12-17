@@ -1,7 +1,7 @@
 import { BaseListRecord } from "@/types/list";
 
 // This is for the top header -> Details about course
-export interface LessonPlanOutlineRecord extends BaseListRecord {
+export interface LessonPlanRecord extends BaseListRecord {
   title: string;
   description: string;
   durationValue: number;

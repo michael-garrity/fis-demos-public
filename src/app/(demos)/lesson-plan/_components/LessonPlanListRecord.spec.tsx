@@ -1,7 +1,7 @@
 import { useRouter } from "next/navigation";
 import { describe, test, expect, vi, beforeEach, Mock } from "vitest"; // Import Mock for type assertion
 import { render, screen, fireEvent } from "@testing-library/react";
-import { LessonPlanOutlineRecord } from "@/types/demos/lesson-plan";
+import { LessonPlanRecord } from "@/types/demos/lesson-plan";
 import LessonPlanListRecord from "./LessonPlanListRecord";
 
 // Mock the next/navigation useRouter
@@ -19,7 +19,7 @@ vi.mock("@/components/learner-profile/LearnerProfileChip", () => {
   return {
     default: ({
       learnerProfileId,
-      className,
+      // className,
       ...props
     }: MockLearnerChipProps) => (
       <div data-testid="mock-learner-chip" {...props}>
@@ -32,7 +32,7 @@ vi.mock("@/components/learner-profile/LearnerProfileChip", () => {
 // Mock the delete mutation hook
 const mockDeleteMutation = vi.fn();
 const mockIsDeleting = vi.fn(() => false); // Use a mock function to control state easily
-vi.mock("../_store/useLessonOutlineDelete.ts", () => {
+vi.mock("../_store/useLessonPlanDelete.ts", () => {
   return {
     useDeleteLessonPlan: vi.fn(() => ({
       mutate: mockDeleteMutation,
@@ -45,14 +45,14 @@ vi.mock("../_store/useLessonOutlineDelete.ts", () => {
 // const MockConfirmationDialog = vi.fn(() => null);
 
 describe("LessonPlanListRecord", () => {
-  const mockRecord: LessonPlanOutlineRecord = {
+  const mockRecord: LessonPlanRecord = {
     id: "course-123",
     title: "Advanced Testing Strategies",
     description: "Learn property-based testing and fuzzing.",
     durationValue: 60,
     durationUnit: "minutes",
     learnerProfileId: "senior-engineer",
-  } as LessonPlanOutlineRecord; // Cast to ensure all required fields are present
+  } as LessonPlanRecord; // Cast to ensure all required fields are present
 
   const mockPush = vi.fn();
 
@@ -93,7 +93,7 @@ describe("LessonPlanListRecord", () => {
       ...mockRecord,
       durationValue: 1,
       durationUnit: "hours",
-    } as LessonPlanOutlineRecord;
+    } as LessonPlanRecord;
 
     render(<LessonPlanListRecord record={singleLessonRecord} />);
     expect(

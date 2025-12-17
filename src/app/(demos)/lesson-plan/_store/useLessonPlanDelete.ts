@@ -1,7 +1,7 @@
 // Lesson Plan API Logic
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { LessonPlanOutlineRecord } from "@/types/demos/lesson-plan";
+import { LessonPlanRecord } from "@/types/demos/lesson-plan";
 import { lessonKeys } from "./keys";
 
 /**
@@ -39,7 +39,7 @@ export const useDeleteLessonPlan = () => {
       // 2. Manually update the list cache to remove the deleted item (Optimistic/Manual Update)
       queryClient.setQueryData(
         lessonKeys.list(),
-        (old: LessonPlanOutlineRecord[] | undefined) => {
+        (old: LessonPlanRecord[] | undefined) => {
           if (!old) return undefined;
 
           // Filter out the deleted course from the list

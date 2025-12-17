@@ -10,7 +10,6 @@ export const lessonKeys = {
   detail: (id: string | number) => [...lessonKeys.all, "detail", id] as const,
 
   // Key for the create mutation
-  // TODO Implement useLessonPlanCreate
   create: () => [...lessonKeys.all, "create"] as const,
 
   // Key for the update mutation

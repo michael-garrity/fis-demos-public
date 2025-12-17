@@ -1,11 +1,11 @@
-import { LessonPlanOutlineRecord } from "@/types/demos/lesson-plan";
+import { LessonPlanRecord } from "@/types/demos/lesson-plan";
 
 /**
- * Fetches the list of lesson outlines (LessonPlanOutlineRecord array).
+ * Fetches the list of lesson outlines (LessonPlanRecord array).
  * Corresponds to: GET /lesson-plan
  */
-export const fetchLessonPlanOutlinesList = async (): Promise<
-  LessonPlanOutlineRecord[]
+export const fetchLessonPlanList = async (): Promise<
+  LessonPlanRecord[]
 > => {
   const response = await fetch("/api/lesson-plan");
   if (!response.ok) {
