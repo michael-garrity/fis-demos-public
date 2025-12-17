@@ -1,4 +1,6 @@
+export * from "./useGenerateCourseOutline";
 export * from "./useCourseOutline";
 export * from "./useCourseOutlines";
-export * from "./useCreateCourseOutline";
 export * from "./useUpdateCourseOutline";
+export * from "./useDeleteCourseOutline";
+export * from "./useSaveCourseOutline";

@@ -20,6 +20,13 @@ const eslintConfig = defineConfig([
     extends: ["markdown/recommended"],
   },
   {
+    files: ["**/*.spec.ts"],
+    rules: {
+      "no-explicit-any": ["off"],
+      "@typescript-eslint/no-explicit-any": ["off"],
+    },
+  },
+  {
     rules: {
       "eol-last": ["error", "always"],
     },
@@ -30,7 +37,7 @@ const eslintConfig = defineConfig([
     "coverage/**",
     "html/**",
     "next-env.d.ts",
-    "out/**"
+    "out/**",
   ]),
 ]);
 

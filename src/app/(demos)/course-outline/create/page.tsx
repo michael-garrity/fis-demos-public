@@ -1,6 +1,6 @@
 "use client";
 
-import { useCreateCourseOutline } from "@demos/course-outline/_store";
+import { useGenerateCourseOutline } from "@demos/course-outline/_store";
 import { useLearnerProfiles } from "@demos/_store/useLearnerProfiles";
 import { CourseOutlineFormState } from "@/types";
 import {
@@ -15,22 +15,27 @@ import {
 import { BookOpen, Clock, User, Send } from "lucide-react";
 import React, { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
+import { useSaveCourseOutline } from "../_store/useSaveCourseOutline";
 
 export default function CourseOutlineForm() {
   const [formData, setFormData] = useState<CourseOutlineFormState>({
-    id: "1",
-    title: "",
-    description: "",
-    numberOfLessons: 1,
-    durationValue: 60,
+    id: "course-elephants-001",
+    title: "Elephants: Behavior, Biology, and Conservation",
+    description:
+      "An engaging course exploring the biology, social behavior, and conservation challenges of elephants, with a focus on both African and Asian species.",
+    numberOfLessons: 5,
+    durationValue: 15,
     durationUnit: "minutes",
-    learnerProfileId: "",
-    customization: "",
+    learnerProfileId: "1",
+    customization:
+      "Assume learners have no prior biology background. Use clear explanations, real-world examples, and include conservation case studies in each lesson.",
   });
 
   const { data: profiles, isLoading: profilesLoading } = useLearnerProfiles();
-  const { mutate: createCourse, isPending: isSubmitting } =
-    useCreateCourseOutline();
+  const { mutateAsync: createCourseOutline, isPending: isSubmitting } =
+    useGenerateCourseOutline();
+
+  const { mutateAsync: saveCourseOutline } = useSaveCourseOutline();
 
   const router = useRouter();
 
@@ -97,23 +102,27 @@ export default function CourseOutlineForm() {
     );
   }, [formData]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const learnerProfile = profiles?.find(
+      (p) => p.id === formData.learnerProfileId
+    );
     if (isFormValid && !isSubmitting) {
       // Structure data for API submission
       const submissionData = {
         ...formData,
-        // numberOfLessons is already a number due to handleChange fix
         timePerLesson: `${formData.durationValue} ${formData.durationUnit}`,
-        // Find the full name for context in the mock
-        learnerProfileName: profiles?.find(
-          (p) => p.id === formData.learnerProfileId
-        )?.name,
+        learnerProfileName: learnerProfile?.name,
       };
 
-      createCourse(submissionData);
+      const createdCourseOutline = await createCourseOutline(submissionData);
 
-      router.push(`/course-outline/${submissionData.id}/edit`);
+      const savedCourseOutline = await saveCourseOutline({
+        ...createdCourseOutline,
+        creation_meta: { learner_profile: learnerProfile },
+      });
+
+      router.push(`/course-outline/${savedCourseOutline.id}/edit`);
     }
   };
 

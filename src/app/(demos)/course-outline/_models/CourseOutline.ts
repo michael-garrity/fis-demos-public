@@ -1,8 +1,7 @@
-import type { Database } from "@/types/database";
-import { LearnerProfile, LearnerProfileRow } from "@/lib/learner-profiles"
+import type { Database, Tables } from "@/types/database";
+import { LearnerProfile, LearnerProfileRow } from "@/lib/learner-profiles";
 
-export type CourseOutlineRow =
-  Database["public"]["Tables"]["course_outlines"]["Row"];
+export type CourseOutlineRow = Tables<"course_outlines">;
 
 export type CourseOutlineUpdate =
   Database["public"]["Tables"]["course_outlines"]["Update"];
@@ -10,14 +9,14 @@ export type CourseOutlineUpdate =
 interface CreationMeta {
   learner_profile?: LearnerProfileRow;
   [key: string]: unknown;
-};
+}
 
 export interface LessonOutline {
   title: string;
   minutes: number;
   outcome: string;
   description: string;
-};
+}
 
 export class CourseOutline {
   constructor(private data: CourseOutlineRow) {}
@@ -26,8 +25,8 @@ export class CourseOutline {
     return {
       title: this.data.title,
       description: this.data.description,
-      lesson_outlines: this.data.lesson_outlines
-    }
+      lesson_outlines: this.data.lesson_outlines,
+    };
   }
 
   // NOTE: if this ever accepts any camelCase `name`, this will need to
@@ -39,7 +38,8 @@ export class CourseOutline {
   // NOTE: if LessonOutline gains any camelCase properties, this will need to
   // be adjusted to handle the transformation
   withLessonOutline(
-    index: number, lessonOutline: Partial<LessonOutline>
+    index: number,
+    lessonOutline: Partial<LessonOutline>
   ): CourseOutline {
     const lessonOutlines = this.lessonOutlines.map((existing, i) =>
       i === index ? { ...existing, ...lessonOutline } : { ...existing }
@@ -56,7 +56,7 @@ export class CourseOutline {
   }
 
   get learnerProfile(): LearnerProfile | null {
-    const profileData = this.creationMeta.learner_profile
+    const profileData = this.creationMeta.learner_profile;
     if (!profileData) return null;
 
     return new LearnerProfile(profileData);
@@ -79,9 +79,7 @@ export class CourseOutline {
   }
 
   get totalMinutes() {
-    return this.lessonOutlines.reduce(
-      (sum, lesson) => sum + lesson.minutes, 0
-    );
+    return this.lessonOutlines.reduce((sum, lesson) => sum + lesson.minutes, 0);
   }
 
   get totalMinutesInWords(): string {

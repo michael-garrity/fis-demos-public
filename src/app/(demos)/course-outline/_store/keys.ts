@@ -16,4 +16,7 @@ export const courseKeys = {
 
   // Key for the delete mutation (used for mutationKey in useDeleteCourseOutline)
   delete: () => [...courseKeys.all, "delete"] as const,
+
+  // Key for saving a course outline to the database
+  save: () => [...courseKeys.all, "save"] as const,
 };

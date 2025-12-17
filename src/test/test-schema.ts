@@ -27,7 +27,7 @@ export async function prepareTestSchema() {
 
   const truncateAll = async () => {
     const { rows } = await pgClient.query(
-      `SELECT tablename FROM pg_tables WHERE schemaname = '${schemaName}'`,
+      `SELECT tablename FROM pg_tables WHERE schemaname = '${schemaName}'`
     );
 
     for (const { tablename } of rows) {
@@ -38,7 +38,12 @@ export async function prepareTestSchema() {
             SELECT FROM pg_tables
             WHERE schemaname = '${schemaName}' AND tablename = '${tablename}'
           ) THEN
-            EXECUTE 'TRUNCATE TABLE "${tablename}" RESTART IDENTITY CASCADE';
+            BEGIN
+              EXECUTE 'TRUNCATE TABLE "${tablename}" RESTART IDENTITY CASCADE';
+            EXCEPTION WHEN undefined_table THEN
+              -- Table was dropped between inspection and truncation; ignore.
+              NULL;
+            END;
           END IF;
         END
         $$;

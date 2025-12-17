@@ -1,13 +1,7 @@
 "use client";
 
 import { ChangeEvent, useEffect } from "react";
-import {
-  Clock,
-  Users,
-  LayoutList,
-  BookOpen,
-  CheckCircle,
-} from "lucide-react";
+import { Clock, Users, LayoutList, BookOpen, CheckCircle } from "lucide-react";
 import {
   Chip,
   Card,
@@ -123,7 +117,9 @@ export default function CourseOutlineTeacherView() {
                 startContent={<Clock className="w-4 h-4" />}
               >
                 Total Course Time:{" "}
-                <span className="font-semibold ml-1">{courseOutline?.totalMinutesInWords}</span>
+                <span className="font-semibold ml-1">
+                  {courseOutline?.totalMinutesInWords}
+                </span>
               </Chip>
               <LearnerProfileChip
                 learnerProfile={courseOutline?.learnerProfile ?? null}
@@ -151,7 +147,7 @@ export default function CourseOutlineTeacherView() {
         <LessonItemSkeleton />
       ) : (
         <div className="space-y-6">
-          {courseOutline?.lessonOutlines.map((lessonOutline, index) => (
+          {courseOutline?.lessonOutlines?.map((lessonOutline, index) => (
             <Card
               key={index.toString()}
               className="shadow-lg overflow-hidden border-t-4 border-indigo-200"
@@ -171,7 +167,11 @@ export default function CourseOutlineTeacherView() {
                       className="w-full"
                       value={lessonOutline.title}
                       onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                        handleLessonOutlineChange(index, "title", e.target.value)
+                        handleLessonOutlineChange(
+                          index,
+                          "title",
+                          e.target.value
+                        )
                       }
                     />
                   </div>
@@ -180,7 +180,8 @@ export default function CourseOutlineTeacherView() {
                     variant="bordered"
                     className="text-sm ml-4 shrink-0"
                   >
-                    {lessonOutline.minutes} {lessonOutline.minutes === 1 ? "minute" : "minutes"}
+                    {lessonOutline.minutes}{" "}
+                    {lessonOutline.minutes === 1 ? "minute" : "minutes"}
                   </Chip>
                 </div>
               </CardHeader>
