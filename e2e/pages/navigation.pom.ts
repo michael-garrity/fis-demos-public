@@ -5,8 +5,7 @@ export class NavigationPage {
   readonly dashboardButton: Locator;
   readonly managePersonasButton: Locator;
 
-  // User Profile Button
-  readonly userProfileButton: Locator;
+  readonly accountButton: Locator;
 
   constructor(readonly page: Page) {
     // Top-Level Navigation Elements
@@ -15,7 +14,6 @@ export class NavigationPage {
       name: "Manage Personas",
     });
 
-    // User Profile Button
-    this.userProfileButton = page.getByTestId("user-profile");
+    this.accountButton = page.getByTestId("account");
   }
 }

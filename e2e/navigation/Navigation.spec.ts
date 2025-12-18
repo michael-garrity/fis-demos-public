@@ -15,18 +15,18 @@ test('1. Navbar "Manage Personas" button navigates to /personas and verifies the
   await expect(managePersonasPage.heading).toBeVisible();
 });
 
-test("2. Navbar Profile button navigates to /profile and verifies the heading", async ({
+test('2. Navbar "Account" button navigates to /account and verifies the heading', async ({
   page,
   navigationPage,
-  profilePage,
+  accountPage,
 }) => {
-  await navigationPage.userProfileButton.click();
+  await navigationPage.accountButton.click();
 
   // ASSERTION: Verify URL change
-  await expect(page).toHaveURL(ROUTES.profile);
+  await expect(page).toHaveURL(ROUTES.account);
 
   // ASSERTION: Verify the content on the new page
-  await expect(profilePage.heading).toBeVisible();
+  await expect(accountPage.heading).toBeVisible();
 });
 
 test('3. Navbar "Dashboard" link returns to the root page from a deep route', async ({

@@ -5,5 +5,5 @@ export const ROUTES = {
   personalizedContent: "/personalized-content",
   lessonPlan: "/lesson-plan",
   personas: "/personas",
-  profile: "/profile",
+  account: "/account",
 };

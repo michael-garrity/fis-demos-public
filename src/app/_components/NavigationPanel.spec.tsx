@@ -26,9 +26,9 @@ describe("NavigationPanel (Unit Test)", () => {
 
   it("renders the user profile with correct name", () => {
     render(<NavigationPanel />);
-    const userProfile = screen.getByTestId("user-profile");
-    expect(userProfile).toBeInTheDocument();
-    expect(userProfile).toHaveTextContent("Kylon Tyner");
+    const account = screen.getByTestId("account");
+    expect(account).toBeInTheDocument();
+    expect(account).toHaveTextContent("Kylon Tyner");
   });
 
   it("navigates to profile page when user profile is clicked", async () => {
@@ -38,11 +38,11 @@ describe("NavigationPanel (Unit Test)", () => {
     mockRouter.push = mockPush;
 
     render(<NavigationPanel />);
-    const userProfileButton = screen.getByTestId("user-profile");
+    const accountButton = screen.getByTestId("account");
 
-    await user.click(userProfileButton);
+    await user.click(accountButton);
 
-    expect(mockPush).toHaveBeenCalledWith("/profile");
+    expect(mockPush).toHaveBeenCalledWith("/account");
   });
 
   it("toggles mobile menu when NavbarMenuToggle is clicked", async () => {
@@ -74,7 +74,7 @@ describe("NavigationPanel (Unit Test)", () => {
       "mobile-navigation-link-settings"
     );
     expect(settingsLink).toBeInTheDocument();
-    expect(settingsLink).toHaveAttribute("href", "/profile");
+    expect(settingsLink).toHaveAttribute("href", "/account");
 
     const logoutLink = await screen.findByTestId(
       "mobile-navigation-link-logout"

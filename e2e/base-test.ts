@@ -8,7 +8,7 @@ import { ManagePersonasPage } from "./pages/managePersonas.pom";
 import { QuizGeneratorPage } from "./pages/demos/quizGenerator.pom";
 import { CourseOutlineListPage } from "./pages/demos/course-outline/courseOutlineList.pom";
 import { PersonalizedContentPage } from "./pages/demos/personalizedContent.pom";
-import { ProfilePage } from "./pages/profile.pom";
+import { AccountPage } from "./pages/account.pom";
 import { MobileNavigationPage } from "./pages/mobileNavigation.pom";
 import { CourseOutlineCreatePage } from "./pages/demos/course-outline/courseOutlineCreate.pom";
 import { LessonPlanPage } from "./pages/demos/lesson-plan/lessonPlan.pom";
@@ -21,7 +21,7 @@ type CustomFixtures = {
   // Navigation
   navigationPage: NavigationPage;
   managePersonasPage: ManagePersonasPage;
-  profilePage: ProfilePage;
+  accountPage: AccountPage;
   mobileNavigationPage: MobileNavigationPage;
 
   // Demos
@@ -52,9 +52,9 @@ export const test = base.extend<CustomFixtures>({
     const managePersonasPage = new ManagePersonasPage(page);
     await use(managePersonasPage);
   },
-  profilePage: async ({ page }, use) => {
-    const profilePage = new ProfilePage(page);
-    await use(profilePage);
+  accountPage: async ({ page }, use) => {
+    const accountPage = new AccountPage(page);
+    await use(accountPage);
   },
   mobileNavigationPage: async ({ page }, use) => {
     const mobileNavigationPage = new MobileNavigationPage(page);

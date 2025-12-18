@@ -43,7 +43,7 @@ export default function NavigationPanel() {
 
   const mobileMenuItems: Array<MobileMenuItem> = [
     ...menuItems,
-    { label: "Settings", href: "/profile" },
+    { label: "Settings", href: "/account" },
     { label: "Logout", href: "#", color: "danger" },
   ];
 
@@ -65,14 +65,14 @@ export default function NavigationPanel() {
       <NavbarContent justify="end">
         <NavbarItem>
           <User
-            data-testid="user-profile"
+            data-testid="account"
             isFocusable
             avatarProps={{
               src: "https://avatars.githubusercontent.com/u/30373425?v=4",
             }}
             name="Kylon Tyner"
             className="cursor-pointer p-2 hover:bg-gray-200 transition-background"
-            onClick={() => router.push("/profile")}
+            onClick={() => router.push("/account")}
           />
         </NavbarItem>
       </NavbarContent>
