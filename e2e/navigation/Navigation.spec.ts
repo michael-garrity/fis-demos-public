@@ -1,18 +1,18 @@
 import { test, expect } from "../base-test";
 import { ROUTES } from "../routes";
 
-test('1. Navbar "Manage Personas" button navigates to /personas and verifies the heading', async ({
+test('1. Navbar "Learner Profiles" button navigates to /learner-profiles and verifies the heading', async ({
   page,
   navigationPage,
-  managePersonasPage,
+  learnerProfilesPage,
 }) => {
-  await navigationPage.managePersonasButton.click();
+  await navigationPage.learnerProfilesButton.click();
 
   // ASSERTION: Verify URL change
-  await expect(page).toHaveURL(ROUTES.personas);
+  await expect(page).toHaveURL(ROUTES.learnerProfiles);
 
   // ASSERTION: Verify the content on the new page
-  await expect(managePersonasPage.heading).toBeVisible();
+  await expect(learnerProfilesPage.heading).toBeVisible();
 });
 
 test('2. Navbar "Account" button navigates to /account and verifies the heading', async ({
@@ -34,11 +34,11 @@ test('3. Navbar "Dashboard" link returns to the root page from a deep route', as
   navigationPage,
   dashboardPage,
 }) => {
-  // 1. ACT: Go to a deep route first (e.g., Manage Personas)
-  await page.goto(ROUTES.personas);
+  // 1. ACT: Go to a deep route first (e.g., Learner Profiles)
+  await page.goto(ROUTES.learnerProfiles);
 
   // Sanity check: Ensure we are not on the dashboard
-  await expect(page).toHaveURL(ROUTES.personas);
+  await expect(page).toHaveURL(ROUTES.learnerProfiles);
 
   // 2. ACT: Click the dashboard link
   await navigationPage.dashboardButton.click();

@@ -17,11 +17,11 @@ describe("NavigationPanel (Unit Test)", () => {
     expect(dashboardLink).toBeInTheDocument();
     expect(dashboardLink).toHaveAttribute("href", "/");
 
-    const managePersonasLink = screen.getByTestId(
-      "navigation-link-manage-personas"
+    const learnerProfilesLink = screen.getByTestId(
+      "navigation-link-learner-profiles"
     );
-    expect(managePersonasLink).toBeInTheDocument();
-    expect(managePersonasLink).toHaveAttribute("href", "/personas");
+    expect(learnerProfilesLink).toBeInTheDocument();
+    expect(learnerProfilesLink).toHaveAttribute("href", "/learner-profiles");
   });
 
   it("renders the user profile with correct name", () => {

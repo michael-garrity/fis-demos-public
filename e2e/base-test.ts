@@ -4,7 +4,7 @@ import { test as base } from "@playwright/test";
 import { DashboardPage } from "./pages/dashboard.pom";
 import { ROUTES } from "./routes";
 import { NavigationPage } from "./pages/navigation.pom";
-import { ManagePersonasPage } from "./pages/managePersonas.pom";
+import { LearnerProfilesPage } from "./pages/learnerProfiles.pom";
 import { QuizGeneratorPage } from "./pages/demos/quizGenerator.pom";
 import { CourseOutlineListPage } from "./pages/demos/course-outline/courseOutlineList.pom";
 import { PersonalizedContentPage } from "./pages/demos/personalizedContent.pom";
@@ -20,8 +20,8 @@ type CustomFixtures = {
 
   // Navigation
   navigationPage: NavigationPage;
-  managePersonasPage: ManagePersonasPage;
   accountPage: AccountPage;
+  learnerProfilesPage: LearnerProfilesPage;
   mobileNavigationPage: MobileNavigationPage;
 
   // Demos
@@ -48,9 +48,9 @@ export const test = base.extend<CustomFixtures>({
     const navigationPage = new NavigationPage(page);
     await use(navigationPage);
   },
-  managePersonasPage: async ({ page }, use) => {
-    const managePersonasPage = new ManagePersonasPage(page);
-    await use(managePersonasPage);
+  learnerProfilesPage: async ({ page }, use) => {
+    const learnerProfilesPage = new LearnerProfilesPage(page);
+    await use(learnerProfilesPage);
   },
   accountPage: async ({ page }, use) => {
     const accountPage = new AccountPage(page);

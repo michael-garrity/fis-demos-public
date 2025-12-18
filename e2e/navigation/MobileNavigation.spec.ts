@@ -25,19 +25,19 @@ test("1. Mobile Navbar Menu Toggle opens and closes the mobile menu", async ({
 test("2. Mobile Navbar links navigate correctly when menu is open", async ({
   page,
   mobileNavigationPage,
-  managePersonasPage,
+  learnerProfilesPage,
 }) => {
   // 1. ACT: Open the mobile menu
   await mobileNavigationPage.openMenuButton.click();
 
-  // 2. ACT: Click the "Manage Personas" link in the mobile menu
-  await mobileNavigationPage.managePersonasLink.click();
+  // 2. ACT: Click the "Learner Profiles" link in the mobile menu
+  await mobileNavigationPage.learnerProfilesLink.click();
 
   // 3. ASSERTION: Verify URL change
-  await expect(page).toHaveURL(ROUTES.personas);
+  await expect(page).toHaveURL(ROUTES.learnerProfiles);
 
   // 4. ASSERTION: Verify the content on the new page
-  await expect(managePersonasPage.heading).toBeVisible();
+  await expect(learnerProfilesPage.heading).toBeVisible();
 });
 
 test("3. Mobile menu closes after navigation", async ({
@@ -47,12 +47,12 @@ test("3. Mobile menu closes after navigation", async ({
   // 1. ACT: Open the mobile menu
   await mobileNavigationPage.openMenuButton.click();
 
-  // 2. ACT: Click the "Manage Personas" link in the mobile menu
-  await mobileNavigationPage.managePersonasLink.click();
+  // 2. ACT: Click the "Learner Profiles" link in the mobile menu
+  await mobileNavigationPage.learnerProfilesLink.click();
 
   // 3. ASSERTION: Verify URL change
-  await expect(page).toHaveURL(ROUTES.personas);
+  await expect(page).toHaveURL(ROUTES.learnerProfiles);
 
   // 4. ASSERTION: Verify the mobile menu is closed by checking that the link is not visible
-  await expect(mobileNavigationPage.managePersonasLink).not.toBeVisible();
+  await expect(mobileNavigationPage.learnerProfilesLink).not.toBeVisible();
 });

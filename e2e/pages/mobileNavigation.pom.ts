@@ -7,7 +7,7 @@ export class MobileNavigationPage {
 
   // Menu Buttons/Links
   readonly dashboardLink: Locator;
-  readonly managePersonasLink: Locator;
+  readonly learnerProfilesLink: Locator;
 
   constructor(readonly page: Page) {
     // Open/Close Button
@@ -20,8 +20,8 @@ export class MobileNavigationPage {
 
     // Menu Buttons/Links
     this.dashboardLink = page.getByTestId("mobile-navigation-link-dashboard");
-    this.managePersonasLink = page.getByTestId(
-      "mobile-navigation-link-manage-personas"
+    this.learnerProfilesLink = page.getByTestId(
+      "mobile-navigation-link-learner-profiles"
     );
   }
 }

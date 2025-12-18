@@ -38,7 +38,7 @@ export default function NavigationPanel() {
 
   const menuItems: Array<MobileMenuItem> = [
     { label: "Dashboard", href: "/" },
-    { label: "Manage Personas", href: "/personas" },
+    { label: "Learner Profiles", href: "/learner-profiles" },
   ];
 
   const mobileMenuItems: Array<MobileMenuItem> = [
