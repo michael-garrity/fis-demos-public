@@ -222,3 +222,65 @@ $creation_meta$,
 ]
 $questions$
 );
+
+-- Seed lesson_plans
+insert into lesson_plans
+(
+    creation_meta,
+    introduction_markdown,
+    context_markdown,
+    example_markdown,
+    practice_markdown,
+    assessment_markdown,
+    reflection_markdown
+)
+values
+(
+    $creation_meta$
+{
+  "source_material": {
+    "title": "What is an atom?",
+    "content": "Atoms are the building blocks of matter. Everything around you — the air, water, your body — is made of atoms. Scientists discovered that atoms are incredibly small and consist of even smaller parts: **protons**, **neutrons**, and **electrons**.\n- **Protons** have a positive charge and sit in the center, called the **nucleus**.\n- **Neutrons** have no charge and are also in the nucleus.\n- **Electrons** have a negative charge and orbit around the nucleus.\nLearning about atoms helps us understand chemistry, biology, and physics.\nFor example, how water molecules form, how chemical reactions occur, and why different materials behave differently all depend on atoms."
+  },
+  "learner_profile": {
+    "label": "7th grader",
+    "age": 12,
+    "reading_level": 5,
+    "experience": "Has completed introductory STEM activities and basic robotics challenges.",
+    "interests": ["Robotics", "Graphic novels", "Animals"]
+  }
+}
+$creation_meta$,
+
+    $intro$
+  ## Introduction
+  Atoms are the tiny building blocks that make up everything around us.
+  $intro$,
+
+    $context$
+  ## Context
+  Atoms contain protons and neutrons in the nucleus, with electrons moving around it.
+  $context$,
+
+    $example$
+  ## Example
+  Water is made of atoms that combine to form molecules with specific properties.
+  $example$,
+
+    $practice$
+  ## Practice
+  - Name the three subatomic particles  
+  - Identify which ones are in the nucleus
+  $practice$,
+
+    $assessment$
+  ## Assessment
+  1. What is an atom?
+  2. Which particle has a negative charge?
+  $assessment$,
+
+    $reflection$
+  ## Reflection
+  Why is understanding atoms important for science?
+  $reflection$
+);
