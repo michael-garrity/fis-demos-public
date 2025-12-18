@@ -97,6 +97,36 @@ export type Database = {
         }
         Relationships: []
       }
+      personalized_content: {
+        Row: {
+          content: string
+          created_at: string | null
+          creation_meta: Json
+          description: string
+          id: string
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          content: string
+          created_at?: string | null
+          creation_meta?: Json
+          description: string
+          id?: string
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          content?: string
+          created_at?: string | null
+          creation_meta?: Json
+          description?: string
+          id?: string
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       quizzes: {
         Row: {
           created_at: string

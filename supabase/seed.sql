@@ -130,6 +130,48 @@ $creation_meta$,
 $lesson_outlines$
 );
 
+-- Seed personalized_content
+insert into personalized_content
+(title, description, creation_meta, content)
+values
+(
+    'Introduction to Atoms',
+    $description$
+This course provides instructors with a structured framework to teach students about the fundamental building blocks of matter: atoms. Instructors will guide students from the broad concept of matter to the detailed structure of atoms, exploring subatomic particles, their properties, and how atomic arrangements influence real-world phenomena. The course emphasizes clear, conceptual explanations and practical examples to help students connect atomic theory to everyday experiences and scientific observations.
+$description$,
+    $creation_meta$
+{
+  "source_material": {
+    "title": "What is an atom?",
+    "content": "Atoms are the building blocks of matter. Everything around you — the air, water, your body — is made of atoms. Scientists discovered that atoms are incredibly small and consist of even smaller parts: **protons**, **neutrons**, and **electrons**.\n- **Protons** have a positive charge and sit in the center, called the **nucleus**.\n- **Neutrons** have no charge and are also in the nucleus.\n- **Electrons** have a negative charge and orbit around the nucleus.\nLearning about atoms helps us understand chemistry, biology, and physics.\nFor example, how water molecules form, how chemical reactions occur, and why different materials behave differently all depend on atoms."
+  },
+  "learner_profile": {
+    "label": "7th grader",
+    "age": 12,
+    "reading_level": 5,
+    "experience": "Has completed introductory STEM activities and basic robotics challenges.",
+    "interests": ["Robotics", "Graphic novels", "Animals"]
+  }
+}
+$creation_meta$,
+    $content$
+    $md$
+Atoms are the building blocks of matter. Everything around you — the air,
+water, your body — is made of atoms. Scientists discovered that atoms are
+incredibly small and consist of even smaller parts: **protons**, **neutrons**,
+and **electrons**.
+
+- **Protons** have a positive charge and sit in the center, called the **nucleus**.
+- **Neutrons** have no charge and are also in the nucleus.
+- **Electrons** have a negative charge and orbit around the nucleus.
+
+Learning about atoms helps us understand chemistry, biology, and physics.
+For example, how water molecules form, how chemical reactions occur, and why
+different materials behave differently all depend on atoms.
+$md$
+    $content$
+);
+
 -- Seed quizzes
 insert into quizzes
 (title, description, creation_meta, questions)
