@@ -34,5 +34,5 @@
     "vitest.config.ts",
     "vitest.setup.ts"
   ],
-  "exclude": ["node_modules"]
+  "exclude": [".next", "node_modules"]
 }
