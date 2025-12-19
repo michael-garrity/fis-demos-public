@@ -13,9 +13,15 @@ export function QueryProvider({
     () =>
       new QueryClient({
         defaultOptions: {
+          /*
+           * NOTE: this effectively disables caching globally. We do this in
+           * the demo application, which has very limited traffic, to reduce
+           * complexity.
+           */
           queries: {
-            staleTime: 1000 * 60 * 5,
-            gcTime: 1000 * 60 * 60 * 24,
+            gcTime: 0,
+            refetchOnMount: true,
+            staleTime: 0,
           },
         },
       })
