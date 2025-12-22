@@ -9,7 +9,7 @@ import {
 } from "@heroui/react";
 import { CircleUserRound } from "lucide-react";
 import LearnerProfileCard from "./LearnerProfileCard";
-import { useLearnerProfiles } from "@demos/_store/useLearnerProfiles";
+import { useDeprecatedLearnerProfiles } from "@demos/_store/useDeprecatedLearnerProfiles";
 
 interface LearnerProfileChipProps {
   learnerProfileId: string;
@@ -22,7 +22,7 @@ export default function LearnerProfileChip({
   className,
   "data-testid": dataTestID = "learner-profile-chip",
 }: LearnerProfileChipProps) {
-  const { data: learnerProfiles, isLoading } = useLearnerProfiles();
+  const { data: learnerProfiles, isLoading } = useDeprecatedLearnerProfiles();
 
   const learnerProfile =
     learnerProfiles?.find((lp) => lp.id === learnerProfileId) || null;

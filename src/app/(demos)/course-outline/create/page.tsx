@@ -111,8 +111,8 @@ export default function CourseOutlineForm() {
       // Structure data for API submission
       const submissionData = {
         ...formData,
+        learnerProfile,
         timePerLesson: `${formData.durationValue} ${formData.durationUnit}`,
-        learnerProfileName: learnerProfile?.name,
       };
 
       const createdCourseOutline = await createCourseOutline(submissionData);
@@ -232,7 +232,7 @@ export default function CourseOutlineForm() {
             <>
               {profiles?.map((profile) => (
                 <SelectItem key={profile.id.toString()}>
-                  {profile.name}
+                  {profile.label}
                 </SelectItem>
               ))}
             </>

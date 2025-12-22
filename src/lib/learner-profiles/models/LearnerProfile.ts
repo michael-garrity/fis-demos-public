@@ -1,7 +1,6 @@
-import type { Database } from "@/types/database";
+import type { Tables } from "@/types/database";
 
-export type LearnerProfileRow =
-  Database["public"]["Tables"]["learner_profiles"]["Row"];
+export type LearnerProfileRow = Tables<"learner_profiles">;
 
 export class LearnerProfile {
   constructor(private data: LearnerProfileRow) {}

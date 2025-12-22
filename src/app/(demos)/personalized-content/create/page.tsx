@@ -87,9 +87,9 @@ export default function PersonalizedContentForm() {
 
 
         // Find the full name for context in the mock
-        learnerProfileName: profiles?.find(
+        learnerProfile: profiles?.find(
           (p) => p.id === formData.learnerProfileId
-        )?.name,
+        )
       };
 
       createPersonalizedContent(submissionData);
@@ -184,7 +184,7 @@ export default function PersonalizedContentForm() {
             <>
               {profiles?.map((profile) => (
                 <SelectItem key={profile.id.toString()}>
-                  {profile.name}
+                  {profile.label}
                 </SelectItem>
               ))}
             </>

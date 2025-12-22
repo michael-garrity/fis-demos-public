@@ -2,7 +2,7 @@ import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import LearnerProfileChip from "./LearnerProfileChip";
 import { LearnerProfile } from "@/types";
-import { useLearnerProfiles } from "@demos/_store/useLearnerProfiles";
+import { useDeprecatedLearnerProfiles } from "@demos/_store/useDeprecatedLearnerProfiles";
 
 interface MockLearnerProfileCardProps {
   learnerProfile: LearnerProfile;
@@ -36,8 +36,8 @@ const MOCK_PROFILES_ARRAY: LearnerProfile[] = [
   },
 ];
 
-vi.mock("@demos/_store/useLearnerProfiles", () => ({
-  useLearnerProfiles: vi.fn(),
+vi.mock("@demos/_store/useDeprecatedLearnerProfiles", () => ({
+  useDeprecatedLearnerProfiles: vi.fn(),
 }));
 
 vi.mock("./LearnerProfileCard", () => ({
@@ -69,11 +69,11 @@ vi.mock("@heroui/react", async (importOriginal) => {
   };
 });
 
-type UseLearnerProfilesReturn = ReturnType<typeof useLearnerProfiles>;
+type UseLearnerProfilesReturn = ReturnType<typeof useDeprecatedLearnerProfiles>;
 
 describe("LearnerProfileChip", () => {
   // Cast the mock hook for easier use in test setup
-  const mockUseLearnerProfiles = vi.mocked(useLearnerProfiles);
+  const mockUseLearnerProfiles = vi.mocked(useDeprecatedLearnerProfiles);
 
   beforeEach(() => {
     mockUseLearnerProfiles.mockReturnValue({

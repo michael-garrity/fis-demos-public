@@ -85,10 +85,9 @@ export default function LessonPlanForm() {
         ...formData,
         // numberOfLessons is already a number due to handleChange fix
         timePerLesson: `${formData.durationValue} ${formData.durationUnit}`,
-        // Find the full name for context in the mock
-        learnerProfileName: profiles?.find(
+        learnerProfile: profiles?.find(
           (p) => p.id === formData.learnerProfileId
-        )?.name,
+        ),
       };
 
       createLesson(submissionData);
@@ -189,7 +188,7 @@ export default function LessonPlanForm() {
             <>
               {profiles?.map((profile) => (
                 <SelectItem key={profile.id.toString()}>
-                  {profile.name}
+                  {profile.label}
                 </SelectItem>
               ))}
             </>
