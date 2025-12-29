@@ -88,7 +88,7 @@ export default function LessonPlanListRecord({ record }: LessonPlanListProps) {
   return (
     <>
       {/* Content: Use a plain div for the grid layout */}
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-5 md:gap-8 items-center">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-5 md:gap-8 items-center w-full">
         <div className="col-span-3">
           <h2
             data-testid="lesson-plan-list-record-title"

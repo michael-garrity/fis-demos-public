@@ -2,7 +2,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { LessonPlanRecord } from "@/types/demos/lesson-plan";
 import { lessonKeys } from "./keys";
 
-const createLessonPlan= async (
+const createLessonPlan = async (
   newLessonData: LessonPlanRecord
 ): Promise<LessonPlanRecord> => {
   const response = await fetch("/api/lesson-plan/create", {
