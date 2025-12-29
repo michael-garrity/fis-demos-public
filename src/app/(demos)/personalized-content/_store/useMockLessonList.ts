@@ -88,7 +88,7 @@ const mockData = [
       rationale:
         "Show a request–response cycle visually using diagrams and example URLs.",
       assessment_format:
-        "Learners label each part of a printed request/response diagram.",
+        "Learners name each part of a printed request/response diagram.",
     },
     activity: {
       rationale:

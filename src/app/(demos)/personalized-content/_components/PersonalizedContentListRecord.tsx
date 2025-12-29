@@ -83,7 +83,6 @@ export default function PersonalizedContentListRecord({
           >
             {record.description}
           </p>
-
           <LearnerProfileChip
             data-testid="personalized-content-list-learner-chip"
             learnerProfile={record.learnerProfile}

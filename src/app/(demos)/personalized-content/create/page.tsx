@@ -1,8 +1,9 @@
 "use client";
 
-import { useCreatePersonalizedContent } from "../_store"; 
+import { useGeneratePersonalizedContent } from "../_store";
+import { useSavePersonalizedContent } from "../_store";
 import { useLearnerProfiles } from "@demos/_store/useLearnerProfiles";
-import { useMockLessonList } from "../_store";
+import { useMockLessonList } from "../_store/useMockLessonList";
 import { PersonalizedContentFormState } from "@/types";
 import {
   Card,
@@ -22,18 +23,17 @@ export default function PersonalizedContentForm() {
     id: "1",
     title: "",
     description: "",
-    durationValue: 60,
-    durationUnit: "minutes",
-    lesson: [],
+    sourceLesson: "",
     learnerProfileId: "",
     customization: "",
   });
 
   const { data: profiles, isLoading: profilesLoading } = useLearnerProfiles();
   const { data: lessons, isLoading: lessonsLoading } = useMockLessonList();
-  
-  const { mutate: createPersonalizedContent, isPending: isSubmitting } =
-    useCreatePersonalizedContent();
+  const { mutateAsync: createPersonalizedContent, isPending: isSubmitting } =
+    useGeneratePersonalizedContent();
+
+  const { mutateAsync: savePersonalizedContent } = useSavePersonalizedContent();
 
   const router = useRouter();
 
@@ -57,45 +57,39 @@ export default function PersonalizedContentForm() {
       title,
       description,
       learnerProfileId,
-      lesson,
+      sourceLesson,
     } = formData;
     return (
       title.trim().length > 0 &&
       description.trim().length > 0 &&
-      lesson.length > 0 &&
+      sourceLesson !== "" &&
       learnerProfileId !== ""
     );
   }, [formData]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Find the full name for context in the mock
+    const learnerProfile = profiles?.find(
+      (p) => p.id === formData.learnerProfileId
+    );
     if (isFormValid && !isSubmitting) {
       // Structure data for API submission
       const submissionData = {
         ...formData,
-
-        // Find duration from selected lesson in the mock
-        durationValue: lessons?.find(
-          (lesson) => lesson.id.toString() === formData.lesson.toString()
-        )?.durationValue || 60,
-
-        // This assumes lesson durationUnit is either "minutes" or "hours" 
-        durationUnit:
-          (lessons
-            ?.find((lesson) => lesson.id.toString() === formData.lesson.toString())
-            ?.durationUnit as "minutes" | "hours") || "minutes",
-
-
-        // Find the full name for context in the mock
-        learnerProfile: profiles?.find(
-          (p) => p.id === formData.learnerProfileId
-        )
+        learnerProfile,
       };
 
-      createPersonalizedContent(submissionData);
+      const createdPersonalizedContent = await createPersonalizedContent(submissionData);
+
+      const savedPersonalizedContent = await savePersonalizedContent({
+        ...createdPersonalizedContent,
+        creation_meta: { learner_profile: learnerProfile },
+      });
 
       // Edit page to be implemented later
-      router.push(`/personalized-content/${submissionData.id}/edit`);
+      router.push(`/personalized-content/${savedPersonalizedContent.id}/edit`);
     }
   };
 
@@ -138,7 +132,7 @@ export default function PersonalizedContentForm() {
             <Select
             data-testid="personalized-content-create-lesson"
             label="Source Lesson"
-            name="lesson"
+            name="sourceLesson"
             placeholder={
               lessonsLoading
                 ? "Loading lessons..."
@@ -146,7 +140,7 @@ export default function PersonalizedContentForm() {
             }
             labelPlacement="outside"
             onSelectionChange={(key) =>
-              handleSelectChange("lesson", key.currentKey)
+              handleSelectChange("sourceLesson", key.currentKey)
             }
             isDisabled={lessonsLoading}
             fullWidth

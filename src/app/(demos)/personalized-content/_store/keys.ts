@@ -6,10 +6,14 @@ export const personalizedContentKeys = {
     
   create: () => [...personalizedContentKeys.all, "create"] as const,
 
+  delete: () => [...personalizedContentKeys.all, "delete"] as const,
+
+  // Key for saving personalized content to the database
+  save: () => [...personalizedContentKeys.all, "save"] as const,
+
   // These keys are TODO: to be implemented later
   detail: (id: string | number) => [...personalizedContentKeys.all, "detail", id] as const,
 
   update: () => [...personalizedContentKeys.all, "update"] as const,
-
-  delete: () => [...personalizedContentKeys.all, "delete"] as const,
 };
+

@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { personalizedContentKeys } from "./keys";
-import { getPersonalizedContentList } from "../_fetchers";
+import { getPersonalizedContentList } from "../_services";
 import { PersonalizedContent } from "../_models";
 /**
  * Hook to fetch the list of Personalized Content.
