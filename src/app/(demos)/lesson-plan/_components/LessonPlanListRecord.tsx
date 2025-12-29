@@ -6,7 +6,8 @@ import { Button, addToast, useDisclosure } from "@heroui/react";
 import { Edit2, Eye, Trash2 } from "lucide-react";
 import ConfirmationDialog from "@/components/ConfirmationDialog";
 
-import LearnerProfileChip from "@/components/learner-profile/LearnerProfileChip";
+import { LearnerProfileChip, LearnerProfile } from "@/lib/learner-profiles";
+import type { LearnerProfileRow } from "@/lib/learner-profiles";
 import { LessonPlanRecord } from "@/types/demos/lesson-plan";
 import { useDeleteLessonPlan } from "../_store/useLessonPlanDelete";
 
@@ -14,9 +15,27 @@ interface LessonPlanListProps {
   record: LessonPlanRecord;
 }
 
-export default function LessonPlanListRecord({
-  record,
-}: LessonPlanListProps) {
+/**
+ * Converts a plain learner_profile object from LessonPlanRecord to a LearnerProfile instance.
+ * Provides default values for required database fields that aren't present in the plain object.
+ */
+function toLearnerProfile(
+  profile: LessonPlanRecord["creation_meta"]["learner_profile"]
+): LearnerProfile {
+  const profileRow: LearnerProfileRow = {
+    id: profile.id,
+    label: profile.label,
+    age: profile.age,
+    reading_level: profile.reading_level,
+    experience: profile.experience ?? null,
+    interests: profile.interests ?? null,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+  };
+  return new LearnerProfile(profileRow);
+}
+
+export default function LessonPlanListRecord({ record }: LessonPlanListProps) {
   const router = useRouter();
   const { isOpen, onOpen, onClose } = useDisclosure();
 
@@ -75,13 +94,13 @@ export default function LessonPlanListRecord({
             data-testid="lesson-plan-list-record-title"
             className="text-lg font-semibold"
           >
-            {record.title}
+            {record.creation_meta.source_material.title}
           </h2>
           <p
             data-testid="lesson-plan-list-record-description"
             className="text-sm text-gray-600 mb-4 text-justify line-clamp-2"
           >
-            {record.description}
+            {record.introduction}
           </p>
 
           <div className="flex justify-between items-center mb-4 text-xs">
@@ -89,16 +108,15 @@ export default function LessonPlanListRecord({
               data-testid="lesson-plan-list-time-per-lesson"
               className="flex items-center text-gray-600"
             >
-              {record.durationValue}{" "}
-              {record.durationValue === 1
-                ? record.durationUnit.slice(0, -1)
-                : record.durationUnit}{" "}
-              per lesson
+              {/* Removed durationValue/durationUnit as they dont exist in new type */}
+              &nbsp;
             </p>
           </div>
           <LearnerProfileChip
             data-testid="lesson-plan-list-learner-chip"
-            learnerProfileId={record.learnerProfileId}
+            learnerProfile={toLearnerProfile(
+              record.creation_meta.learner_profile
+            )}
             className="mt-2"
           />
         </div>
@@ -147,7 +165,8 @@ export default function LessonPlanListRecord({
           <p className="text-gray-700">
             Are you sure you want to permanently delete the lesson:
             <span className="font-semibold block mt-1">
-              &quot;{record.title}&quot; (ID: {record.id})?
+              &quot;{record.creation_meta.source_material.title}&quot; (ID:{" "}
+              {record.id})?
             </span>
             This action cannot be undone.
           </p>

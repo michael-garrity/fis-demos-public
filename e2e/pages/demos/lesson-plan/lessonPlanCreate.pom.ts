@@ -5,11 +5,16 @@ export class LessonPlanCreatePage {
   readonly heading: Locator;
 
   // Form Fields
-  readonly titleField: Locator;
-  readonly descriptionField: Locator;
-  readonly durationValueField: Locator;
-  readonly durationUnitSelect: Locator;
+  readonly sourceMaterialTitleField: Locator;
+  readonly sourceMaterialContentField: Locator;
   readonly learnerProfileSelect: Locator;
+
+  readonly introductionField: Locator;
+  readonly contextField: Locator;
+  readonly exampleField: Locator;
+  readonly practiceField: Locator;
+  readonly assessmentField: Locator;
+  readonly reflectionField: Locator;
 
   // Buttons
   readonly submitButton: Locator;
@@ -20,15 +25,25 @@ export class LessonPlanCreatePage {
     });
 
     // --- Locators for Form Fields ---
-    this.titleField = page.getByTestId("lesson-plan-create-title");
-    this.descriptionField = page.getByTestId("lesson-plan-create-description");
-    this.durationValueField = page.getByLabel("Time").first(); // Target the input for the value
-    this.durationUnitSelect = page.getByRole("combobox", {
-      name: "Time Per Lesson Unit",
-    });
+    this.sourceMaterialTitleField = page.getByTestId(
+      "lesson-plan-create-source-material-title"
+    );
+    this.sourceMaterialContentField = page.getByTestId(
+      "lesson-plan-create-source-material-content"
+    );
+
     this.learnerProfileSelect = page.getByTestId(
       "lesson-plan-create-learner-profile"
     );
+
+    this.introductionField = page.getByTestId(
+      "lesson-plan-create-introduction"
+    );
+    this.contextField = page.getByTestId("lesson-plan-create-context");
+    this.exampleField = page.getByTestId("lesson-plan-create-example");
+    this.practiceField = page.getByTestId("lesson-plan-create-practice");
+    this.assessmentField = page.getByTestId("lesson-plan-create-assessment");
+    this.reflectionField = page.getByTestId("lesson-plan-create-reflection");
 
     // --- Locator for Submit Button ---
     this.submitButton = page.getByTestId("lesson-plan-create-submit");
@@ -46,36 +61,39 @@ export class LessonPlanCreatePage {
    * Fills the form with valid data necessary for submission.
    * NOTE: Assumes Learner Profiles are loaded, selects the first one.
    */
-  async fillRequiredFields(data?: {
-    title?: string;
-    description?: string;
-    durationValue?: number;
-    durationUnit?: "minutes" | "hours";
-  }) {
+  async fillRequiredFields() {
+    await expect(this.learnerProfileSelect).toBeEnabled();
+
     await expect(this.learnerProfileSelect).toHaveText(
       "Select existing profile"
     );
-    await expect(this.learnerProfileSelect).not.toBeDisabled();
+    // await expect(this.learnerProfileSelect).not.toBeDisabled();
 
-    // 1. Fill Text/Number fields
-    await this.titleField.fill(data?.title ?? "Advanced Playwright Testing");
-    await this.descriptionField.fill(
-      data?.description ?? "A lesson on end-to-end testing strategies."
-    );
-    await this.durationValueField.fill(String(data?.durationValue ?? 30));
-
-    // 2. Select Duration Unit (Default is 'minutes')
-    if (data?.durationUnit && data.durationUnit !== "minutes") {
-      await this.durationUnitSelect.click();
-      await this.page.getByRole("option", { name: data.durationUnit }).click();
-    }
-
-    // 3. Select Learner Profile (Selects the first available option)
+    // Select Learner Profile (Selects the first available option)
     await this.learnerProfileSelect.click();
-
-    // 4. Wait for a visible, standard dropdown item and select it.
     const firstOption = this.page.getByRole("option").first();
-    await expect(firstOption).toBeVisible();
     await firstOption.click();
+
+    // 1. Source material
+    await this.sourceMaterialTitleField.fill(
+      "Introduction to Atomic Structure"
+    );
+    await this.sourceMaterialContentField.fill(
+      "Atoms are the basic building blocks of matter..."
+    );
+
+    // 2. Lesson content
+    await this.introductionField.fill("This lesson introduces atoms.");
+    await this.contextField.fill(
+      "Atoms are essential to understanding chemistry and physics."
+    );
+    await this.exampleField.fill(
+      "For example, water is made of hydrogen and oxygen atoms."
+    );
+    await this.practiceField.fill(
+      "Have students identify atoms in common substances."
+    );
+    await this.assessmentField.fill("Quiz students on atomic structure.");
+    await this.reflectionField.fill("Students reflect on why atoms matter.");
   }
 }

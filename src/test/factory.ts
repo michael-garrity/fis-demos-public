@@ -1,12 +1,12 @@
 import type { Database, Json, Tables } from "@/types";
-import { LessonOutline } from "@demos/course-outline/_models"
-import { faker } from '@faker-js/faker';
+import { LessonOutline } from "@demos/course-outline/_models";
+import { faker } from "@faker-js/faker";
 import { getClient } from "@/lib/supabase";
-import { tableize, titleize, underscore } from 'inflection';
+import { tableize, titleize, underscore } from "inflection";
 import { Answer, Question } from "@/types";
 
 type Factory = keyof typeof factories;
-type FactoryOutput<F extends Factory> = ReturnType<typeof factories[F]>;
+type FactoryOutput<F extends Factory> = ReturnType<(typeof factories)[F]>;
 
 const factories = {
   courseOutline(): Tables<"course_outlines"> {
@@ -77,19 +77,41 @@ const factories = {
     };
   },
 
+  lessonPlan(): Tables<"lesson_plans"> {
+    const now = new Date().toISOString();
+    return {
+      id: crypto.randomUUID(),
+      created_at: now,
+      updated_at: now,
+      creation_meta: {
+        learner_profile: build("learnerProfile"),
+        source_material: {
+          title: faker.lorem.sentence(),
+          content: faker.lorem.lines(1),
+        },
+      },
+      introduction: faker.lorem.paragraph(),
+      context: faker.lorem.paragraphs(2),
+      example: faker.lorem.paragraphs(2),
+      practice: faker.lorem.paragraphs(3),
+      assessment: faker.lorem.paragraph(),
+      reflection: faker.lorem.paragraph(),
+    };
+  },
+
   question(): Question {
     return {
       question: faker.lorem.sentence(),
       answer: build("answer"),
       distractors: buildList("answer", 3),
-    }
+    };
   },
 
   answer(): Answer {
     return {
       text: faker.lorem.sentence(),
       feedback: faker.lorem.sentence(),
-    }
+    };
   },
 
   sourceMaterial(): Tables<"source_materials"> {
@@ -101,7 +123,7 @@ const factories = {
       title: titleize(faker.lorem.words(3)),
       markdown: `# ${faker.lorem.word()}\n${faker.lorem.paragraph()}`,
     };
-  }
+  },
 };
 
 function snakeCaseKeys(input: any): any { // eslint-disable-line @typescript-eslint/no-explicit-any
@@ -114,25 +136,27 @@ function snakeCaseKeys(input: any): any { // eslint-disable-line @typescript-esl
   return input;
 }
 
-export function build<F extends Factory> (
+export function build<F extends Factory>(
   name: F,
   overrides = {}
 ): FactoryOutput<F> {
   const factory = factories[name];
   if (!factory) throw new Error(`Unknown factory '${name}'`);
 
-  return { ...factory(), ...(snakeCaseKeys(overrides)) } as FactoryOutput<F>
+  return { ...factory(), ...snakeCaseKeys(overrides) } as FactoryOutput<F>;
 }
 
-export function buildList<F extends Factory> (
+export function buildList<F extends Factory>(
   name: F,
   length: number,
   overrides = {}
 ): FactoryOutput<F>[] {
-  return Array.from({ length }, () => build(name, overrides)) as FactoryOutput<F>[];
+  return Array.from({ length }, () =>
+    build(name, overrides)
+  ) as FactoryOutput<F>[];
 }
 
-export async function create<F extends Factory> (
+export async function create<F extends Factory>(
   name: F,
   overrides = {}
 ): Promise<FactoryOutput<F>> {
@@ -158,7 +182,7 @@ export async function create<F extends Factory> (
   return data as FactoryOutput<F>;
 }
 
-export async function createList<F extends Factory> (
+export async function createList<F extends Factory>(
   name: F,
   length: number,
   overrides = {}

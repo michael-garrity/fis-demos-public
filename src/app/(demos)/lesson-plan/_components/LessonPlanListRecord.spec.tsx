@@ -3,6 +3,7 @@ import { describe, test, expect, vi, beforeEach, Mock } from "vitest"; // Import
 import { render, screen, fireEvent } from "@testing-library/react";
 import { LessonPlanRecord } from "@/types/demos/lesson-plan";
 import LessonPlanListRecord from "./LessonPlanListRecord";
+import { factory } from "@/test";
 
 // Mock the next/navigation useRouter
 vi.mock("next/navigation", () => ({
@@ -45,64 +46,36 @@ vi.mock("../_store/useLessonPlanDelete.ts", () => {
 // const MockConfirmationDialog = vi.fn(() => null);
 
 describe("LessonPlanListRecord", () => {
-  const mockRecord: LessonPlanRecord = {
-    id: "course-123",
-    title: "Advanced Testing Strategies",
-    description: "Learn property-based testing and fuzzing.",
-    durationValue: 60,
-    durationUnit: "minutes",
-    learnerProfileId: "senior-engineer",
-  } as LessonPlanRecord; // Cast to ensure all required fields are present
-
+  const mockRecord = factory.build("lessonPlan", {
+    id: crypto.randomUUID(),
+  }) as LessonPlanRecord;
   const mockPush = vi.fn();
 
   beforeEach(() => {
-    // Reset mock before each test
     mockPush.mockClear();
-    // FIX: Use the imported 'Mock' type for assertion
     (useRouter as Mock).mockReturnValue({
       push: mockPush,
     });
   });
 
-  // Test 1: Component renders correctly with all data points
   test("should render lesson details and learner chip correctly", () => {
     render(<LessonPlanListRecord record={mockRecord} />);
 
-    // Title and Description
+    // Title / description (from introduction in new type)
     expect(
       screen.getByTestId("lesson-plan-list-record-title")
-    ).toHaveTextContent(mockRecord.title);
+    ).toHaveTextContent(mockRecord.creation_meta.source_material.title);
     expect(
       screen.getByTestId("lesson-plan-list-record-description")
-    ).toHaveTextContent(mockRecord.description);
+    ).toHaveTextContent(mockRecord.introduction);
 
-    // Duration/Lesson details
-    expect(
-      screen.getByTestId("lesson-plan-list-time-per-lesson")
-    ).toHaveTextContent("60 minutes per lesson");
     // Learner chip
     expect(
       screen.getByTestId("lesson-plan-list-learner-chip")
-    ).toHaveTextContent("Learner Profile: senior-engineer");
+    ).toHaveTextContent(mockRecord.creation_meta.learner_profile.label);
   });
 
-  // Test 2: Handles singular duration unit correctly (e.g., 1 hour, not 1 hours)
-  test("should handle singular duration unit", () => {
-    const singleLessonRecord = {
-      ...mockRecord,
-      durationValue: 1,
-      durationUnit: "hours",
-    } as LessonPlanRecord;
-
-    render(<LessonPlanListRecord record={singleLessonRecord} />);
-    expect(
-      screen.getByTestId("lesson-plan-list-time-per-lesson")
-    ).toHaveTextContent("1 hour per lesson");
-  });
-
-  // Test 3: View button navigates to the view route
-  test("should navigate to view route when View button is clicked", () => {
+  test("View button navigates to the view route", () => {
     render(<LessonPlanListRecord record={mockRecord} />);
 
     const viewButton = screen.getByTestId("lesson-plan-list-button-view");
@@ -112,8 +85,7 @@ describe("LessonPlanListRecord", () => {
     expect(mockPush).toHaveBeenCalledWith(`/lesson-plan/${mockRecord.id}`);
   });
 
-  // Test 4: Edit button navigates to the edit route
-  test("should navigate to edit route when Edit button is clicked", () => {
+  test("Edit button navigates to the edit route", () => {
     render(<LessonPlanListRecord record={mockRecord} />);
 
     const editButton = screen.getByTestId("lesson-plan-list-button-edit");
