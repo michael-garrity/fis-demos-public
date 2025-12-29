@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { lessonKeys } from "./keys";
 import { LessonPlanRecord } from "@/types/demos/lesson-plan";
-import { fetchLessonPlanList } from "@/app/api/lesson-plan/lessonPlanListApi";
+import { getLessonPlanList } from "../_services/getLessonPlanList";
 
 /**
  * Hook to fetch the list of LessonPlanRecord summaries.
@@ -9,7 +9,7 @@ import { fetchLessonPlanList } from "@/app/api/lesson-plan/lessonPlanListApi";
 export const useListLessonPlan = () => {
   const query = useQuery<LessonPlanRecord[], Error>({
     queryKey: lessonKeys.list(),
-    queryFn: fetchLessonPlanList,
+    queryFn: getLessonPlanList,
   });
 
   return query;

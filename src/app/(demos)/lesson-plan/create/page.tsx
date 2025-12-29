@@ -123,9 +123,12 @@ export default function LessonPlanForm() {
         reflection: formData.reflectionMarkdown,
       };
 
-      createLesson(submissionData as LessonPlanRecord);
-
-      router.push(`/lesson-plan/${submissionData.id}/edit`);
+      // createLesson(submissionData as LessonPlanRecord);
+      createLesson(submissionData as LessonPlanRecord, {
+        onSuccess: (createdLesson) => {
+          router.push(`/lesson-plan/${createdLesson.id}/edit`);
+        },
+      });
     }
   };
 

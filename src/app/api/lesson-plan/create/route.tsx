@@ -19,12 +19,13 @@ export async function POST(req: Request) {
       })
       .select()
       .single();
+
     if (error) {
       return NextResponse.json({ error: error }, { status: 400 });
     }
 
     return NextResponse.json(data, { status: 201 });
-  } catch (err) {
+  } catch {
     return NextResponse.json({ error: "Invalid request" }, { status: 400 });
   }
 }

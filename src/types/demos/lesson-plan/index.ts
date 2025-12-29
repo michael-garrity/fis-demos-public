@@ -25,3 +25,8 @@ export interface LessonPlanRecord extends BaseListRecord {
   created_at: string;
   updated_at: string;
 }
+
+export type LessonPlanUpdate = Omit<
+  LessonPlanRecord,
+  "created_at" | "updated_at"
+>;
