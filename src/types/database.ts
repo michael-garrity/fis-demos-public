@@ -136,7 +136,7 @@ export type Database = {
         }
         Relationships: []
       }
-      personalized_content: {
+      personalized_contents: {
         Row: {
           content: string
           created_at: string | null

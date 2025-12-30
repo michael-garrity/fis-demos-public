@@ -2,10 +2,10 @@ import type { Database } from "@/types/database";
 import { LearnerProfile, LearnerProfileRow } from "@/lib/learner-profiles"
 
 export type PersonalizedContentRow =
-  Database["public"]["Tables"]["personalized_content"]["Row"];
+  Database["public"]["Tables"]["personalized_contents"]["Row"];
 
 export type PersonalizedContentUpdate =
-  Database["public"]["Tables"]["personalized_content"]["Update"];
+  Database["public"]["Tables"]["personalized_contents"]["Update"];
 
 interface CreationMeta {
   learner_profile?: LearnerProfileRow;

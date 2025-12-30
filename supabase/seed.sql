@@ -131,7 +131,7 @@ $lesson_outlines$
 );
 
 -- Seed personalized_content
-insert into personalized_content
+insert into personalized_contents
 (title, description, creation_meta, content)
 values
 (

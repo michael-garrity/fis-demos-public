@@ -13,7 +13,7 @@ export async function DELETE(
   const supabase = getClient();
 
   const { error, count } = await supabase
-    .from("personalized_content")
+    .from("personalized_contents")
     .delete({ count: "exact" })
     .eq("id", id);
 

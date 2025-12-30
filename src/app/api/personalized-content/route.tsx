@@ -10,7 +10,7 @@ const supabase = getClient();
  * Index personalized content 
  */
 export async function GET() {
-  const { data, error } = await supabase.from("personalized_content").select("*");
+  const { data, error } = await supabase.from("personalized_contents").select("*");
 
   if (error) {
     Sentry.captureException(error);
@@ -21,7 +21,7 @@ export async function GET() {
 }
 
 type PersonalizedContentInsert =
-  Database["public"]["Tables"]["personalized_content"]["Insert"];
+  Database["public"]["Tables"]["personalized_contents"]["Insert"];
 
 const PersonalizedContentInsertSchema = z.object({
   title: z.string().min(1),
@@ -49,7 +49,7 @@ export async function POST(req: NextRequest) {
   };
 
   const { data, error } = await supabase
-    .from("personalized_content")
+    .from("personalized_contents")
     .insert(payload)
     .select()
     .single();

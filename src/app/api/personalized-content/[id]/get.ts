@@ -13,7 +13,7 @@ export async function GET(
   const supabase = getClient();
 
   const { data, error } = await supabase
-    .from("personalized_content")
+    .from("personalized_contents")
     .select("*")
     .eq("id", id)
     .maybeSingle();

@@ -1,5 +1,5 @@
 CREATE TABLE
-  public.personalized_content (
+  public.personalized_contents (
     id uuid NOT NULL DEFAULT gen_random_uuid (),
     creation_meta jsonb NOT NULL DEFAULT '{}'::jsonb,
     title text NOT NULL DEFAULT NULL,
@@ -11,4 +11,4 @@ CREATE TABLE
 
 ;
 
-CREATE UNIQUE INDEX personalized_content_pkey ON public.personalized_content USING btree (id);
+CREATE UNIQUE INDEX personalized_content_pkey ON public.personalized_contents USING btree (id);

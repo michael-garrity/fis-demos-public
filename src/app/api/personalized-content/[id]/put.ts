@@ -27,8 +27,8 @@ export async function PUT(
 
   const supabase = getClient();
   const { data: record, error: dbError } = await supabase
-    .from("personalized_content")
-    .update(input satisfies TablesUpdate<"personalized_content">)
+    .from("personalized_contents")
+    .update(input satisfies TablesUpdate<"personalized_contents">)
     .eq("id", id)
     .select("*")
     .maybeSingle();

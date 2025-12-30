@@ -75,7 +75,7 @@ describe("API Route Handlers: /api/personalized-content", () => {
       const response = await GET();
       const body = await response.json();
 
-      expect(from).toHaveBeenCalledWith("personalized_content");
+      expect(from).toHaveBeenCalledWith("personalized_contents");
       expect(select).toHaveBeenCalledWith("*");
       expect(response.status).toBe(200);
       expect(body).toEqual(mockData);
@@ -103,8 +103,7 @@ describe("API Route Handlers: /api/personalized-content", () => {
     });
   });
 
-  // skip the POST tests for now
-  describe.skip("POST handler", () => {
+  describe("POST handler", () => {
     const mockRequest = (body: any): NextRequest =>
       ({
         json: vi.fn().mockResolvedValue(body),
@@ -133,7 +132,7 @@ describe("API Route Handlers: /api/personalized-content", () => {
       const response = await POST(req);
       const body = await response.json();
 
-      expect(from).toHaveBeenCalledWith("personalized-content");
+      expect(from).toHaveBeenCalledWith("personalized_contents");
       expect(insert).toHaveBeenCalledWith(contentToInsert);
       expect(single).toHaveBeenCalled();
       expect(response.status).toBe(200);

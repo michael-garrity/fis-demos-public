@@ -7,7 +7,7 @@ describe("PUT", async () => {
   const { factory, pgClient } = await prepareTestSchema();
 
   // skip these tests until I run I migration to change personalized_content table to personalized_contents
-  describe.skip("with a valid update", () => {
+  describe("with a valid update", () => {
     it("responds with a 200 status", async () => {
       const personalizedContent = await factory.create("personalizedContent");
 
@@ -37,7 +37,7 @@ describe("PUT", async () => {
       await PUT(request, { params: Promise.resolve({ id }) });
 
       const result = await pgClient.query(
-        `select title from personalized_content where id = $1`,
+        `select title from personalized_contents where id = $1`,
         [id]
       );
 
@@ -58,14 +58,14 @@ describe("PUT", async () => {
         params: Promise.resolve({ id: personalizedContent.id }),
       });
 
-      const body: Tables<"personalized_content"> = await response.json();
+      const body: Tables<"personalized_contents"> = await response.json();
 
       expect(body.title).toEqual("Updated Title");
       expect(body.id).toEqual(personalizedContent.id);
     });
   });
 
-  describe.skip("with invalid input", () => {
+  describe("with invalid input", () => {
     it("responds with a 422 status and validation error", async () => {
       const personalizedContent = await factory.create("personalizedContent");
 
@@ -86,7 +86,7 @@ describe("PUT", async () => {
     });
   });
 
-  describe.skip("when the record does not exist", () => {
+  describe("when the record does not exist", () => {
     it("responds with a 404 status", async () => {
       const request = new Request("http://localhost", {
         method: "PUT",

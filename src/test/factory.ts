@@ -62,7 +62,7 @@ const factories = {
     };
   },
 
-  personalizedContent(): Tables<"personalized_content"> {
+  personalizedContent(): Tables<"personalized_contents"> {
     const now = new Date().toISOString();
     return {
       id: crypto.randomUUID(),
