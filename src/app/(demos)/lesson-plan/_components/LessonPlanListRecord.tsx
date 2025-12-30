@@ -6,8 +6,12 @@ import { Button, addToast, useDisclosure } from "@heroui/react";
 import { Edit2, Eye, Trash2 } from "lucide-react";
 import ConfirmationDialog from "@/components/ConfirmationDialog";
 
-import { LearnerProfileChip, LearnerProfile } from "@/lib/learner-profiles";
-import type { LearnerProfileRow } from "@/lib/learner-profiles";
+import {
+  LearnerProfileChip,
+  LearnerProfile,
+  LearnerProfileRow,
+} from "@/lib/learner-profiles";
+
 import { LessonPlanRecord } from "@/types/demos/lesson-plan";
 import { useDeleteLessonPlan } from "../_store/useLessonPlanDelete";
 

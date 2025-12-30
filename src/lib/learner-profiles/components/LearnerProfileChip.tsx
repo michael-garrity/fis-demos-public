@@ -10,7 +10,7 @@ import {
 } from "@heroui/react";
 import LearnerProfileCard from "./LearnerProfileCard";
 import { CircleUserRound } from "lucide-react";
-import { LearnerProfile } from "@/lib/learner-profiles"
+import { LearnerProfile } from "@/lib/learner-profiles";
 
 interface LearnerProfileChipProps extends ChipProps {
   learnerProfile: LearnerProfile | null;
@@ -55,7 +55,7 @@ export default function LearnerProfileChip({
 
   if (!learnerProfile) {
     return (
-      <Chip size="md" data-testid={dataTestId ?? TEST_ID} {...restChipProps} >
+      <Chip size="md" data-testid={dataTestId ?? TEST_ID} {...restChipProps}>
         Unknown Learner
       </Chip>
     );
@@ -74,7 +74,7 @@ export default function LearnerProfileChip({
           classNames={{ content: "p-0" }}
           {...restChipProps}
         >
-          { children ? children : learnerProfile.label}
+          {children ? children : learnerProfile.label}
         </Chip>
       </PopoverTrigger>
       <PopoverContent className="p-0 border-none">

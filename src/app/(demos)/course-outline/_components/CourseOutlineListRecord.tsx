@@ -1,13 +1,17 @@
 "use client";
 
-import { useCallback } from "react";
-import { LearnerProfileChip } from "@/lib/learner-profiles";
-import { CourseOutline } from "../_models";
+import { useRouter } from "next/navigation";
 import { Button, addToast, useDisclosure } from "@heroui/react";
 import { Edit2, Eye, Trash2 } from "lucide-react";
-import { useRouter } from "next/navigation";
+
+import { LearnerProfileChip } from "@/lib/learner-profiles";
+import { CourseOutline } from "../_models";
 import { useDeleteCourseOutline } from "../_store/useDeleteCourseOutline";
 import ConfirmationDialog from "@/components/ConfirmationDialog";
+
+// Simple helper for pluralizing text
+const formatUnit = (count: number, unit: string) =>
+  `${count} ${unit}${count === 1 ? "" : "s"}`;
 
 interface CourseOutlineListRecordProps {
   record: CourseOutline;
@@ -19,57 +23,46 @@ export default function CourseOutlineListRecord({
   const router = useRouter();
   const { isOpen, onOpen, onClose } = useDisclosure();
 
-  // 1. Integrate the deletion hook
   const { mutate: deleteCourseOutline, isPending: isDeleting } =
     useDeleteCourseOutline();
 
-  const gotoView = useCallback(
-    (id: string) => {
-      router.push(`/course-outline/${id}`);
-    },
-    [router]
-  );
+  // --- Handlers ---
 
-  const gotoEdit = useCallback(
-    (id: string) => {
-      router.push(`/course-outline/${id}/edit`);
-    },
-    [router]
-  );
+  const handleView = () => router.push(`/course-outline/${record.id}`);
 
-  // 2. Handler for confirming and initiating deletion
-  const handleDelete = useCallback(() => {
-    // Check if mutation is running
+  const handleEdit = () => router.push(`/course-outline/${record.id}/edit`);
+
+  const handleConfirmDelete = () => {
     if (isDeleting) return;
 
-    // Call the mutation hook with the record ID
     deleteCourseOutline(record, {
       onSuccess: (deleted) => {
-        // Show success notification
         addToast({
-          title: <p className="text-xl font-bold">Deleted!</p>,
+          title: <span className="text-xl font-bold">Deleted!</span>,
           description: `'${deleted.title}' has been removed.`,
           color: "success",
           shouldShowTimeoutProgress: true,
         });
-        onClose(); // Close the confirmation modal
+        onClose();
       },
       onError: (error) => {
         addToast({
-          title: <p className="text-xl font-bold">Error</p>,
+          title: <span className="text-xl font-bold">Error</span>,
           description: `Failed to delete course: ${error.message}`,
           color: "danger",
           shouldShowTimeoutProgress: true,
         });
-        onClose(); // Close the modal even on error
+        onClose();
       },
     });
-  }, [isDeleting, record, deleteCourseOutline, onClose]);
+  };
+
+  // --- Render ---
 
   return (
     <>
-      {/* Content: Use a plain div for the grid layout */}
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-5 md:gap-8 items-center">
+      <div className="grid grid-cols-1 gap-4 items-center md:grid-cols-5 md:gap-8 w-full">
+        {/* Course Information */}
         <div className="col-span-3">
           <h2
             data-testid="course-outline-list-record-title"
@@ -77,27 +70,23 @@ export default function CourseOutlineListRecord({
           >
             {record.title}
           </h2>
+
           <p
             data-testid="course-outline-list-record-description"
-            className="text-sm text-gray-600 mb-4 text-justify line-clamp-2"
+            className="mb-4 text-sm text-gray-600 text-justify line-clamp-2"
           >
             {record.description}
           </p>
 
-          <div className="flex justify-between items-center mb-4 text-xs">
-            <p
-              data-testid="course-outline-list-time-per-lesson"
-              className="flex items-center text-gray-600"
-            >
-              {`${record.totalMinutes} minute${record.totalMinutes === 1 ? "" : "s"}`} total
+          <div className="flex justify-between items-center mb-4 text-xs text-gray-600">
+            <p data-testid="course-outline-list-time-per-lesson">
+              {formatUnit(record.totalMinutes, "minute")} total
             </p>
-            <p
-              data-testid="course-outline-list-total-lessons"
-              className="flex items-center gap-2 text-gray-600"
-            >
-              {`${record.lessonOutlineCount} lesson${record.lessonOutlineCount === 1 ? "" : "s"}`}
+            <p data-testid="course-outline-list-total-lessons">
+              {formatUnit(record.lessonOutlineCount, "lesson")}
             </p>
           </div>
+
           <LearnerProfileChip
             data-testid="course-outline-list-learner-chip"
             learnerProfile={record.learnerProfile}
@@ -105,34 +94,33 @@ export default function CourseOutlineListRecord({
           />
         </div>
 
-        <div className="flex items-center gap-2 col-span-2 justify-self-end">
-          {/* View Button */}
+        {/* Action Buttons */}
+        <div className="flex col-span-2 gap-2 items-center justify-self-end">
           <Button
             data-testid="course-outline-list-button-view"
             color="primary"
             startContent={<Eye />}
-            onPress={() => gotoView(record.id)}
+            onPress={handleView}
           >
             View
           </Button>
 
-          {/* Edit Button */}
           <Button
             data-testid="course-outline-list-button-edit"
             variant="flat"
             startContent={<Edit2 />}
-            onPress={() => gotoEdit(record.id)}
+            onPress={handleEdit}
           >
             Edit
           </Button>
 
-          {/* 3. Delete Button (Triggers Modal) */}
           <Button
             data-testid="course-outline-list-button-delete"
             color="danger"
             isIconOnly
             onPress={onOpen}
             isDisabled={isDeleting}
+            aria-label="Delete course"
           >
             <Trash2 size={18} />
           </Button>
@@ -142,20 +130,20 @@ export default function CourseOutlineListRecord({
       <ConfirmationDialog
         isOpen={isOpen}
         onClose={onClose}
-        onConfirm={handleDelete}
+        onConfirm={handleConfirmDelete}
         isExecuting={isDeleting}
-        title={"Confirm Deletion"}
+        title="Confirm Deletion"
+        confirmButtonColor="danger"
+        confirmButtonText="Delete"
         message={
           <p className="text-gray-700">
             Are you sure you want to permanently delete the course:
-            <span className="font-semibold block mt-1">
+            <span className="block mt-1 font-semibold">
               &quot;{record.title}&quot; (ID: {record.id})?
             </span>
             This action cannot be undone.
           </p>
         }
-        confirmButtonColor="danger"
-        confirmButtonText="Delete"
       />
     </>
   );

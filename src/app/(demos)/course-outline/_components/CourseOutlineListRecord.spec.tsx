@@ -14,15 +14,22 @@ vi.mock("next/navigation", () => ({
 
 // Mock the LearnerProfileChip component as it's an external dependency
 vi.mock("@/lib/learner-profiles", async (importOriginal) => {
-  const actual = (await importOriginal()) as Partial<typeof import("@/lib/learner-profiles")>
+  const actual = (await importOriginal()) as Partial<
+    typeof import("@/lib/learner-profiles")
+  >;
   return {
     ...actual,
-    LearnerProfileChip: ({ learnerProfile, ...props }: { learnerProfile: LearnerProfile }) => (
+    LearnerProfileChip: ({
+      learnerProfile,
+      ...props
+    }: {
+      learnerProfile: LearnerProfile;
+    }) => (
       <div data-testid="mock-learner-chip" {...props}>
         Learner Profile: {learnerProfile.label}
       </div>
     ),
-  }
+  };
 });
 
 // Mock the delete mutation hook
@@ -81,9 +88,7 @@ describe("CourseOutlineListRecord", () => {
 
   test("should avoid impromper pluralization", () => {
     const newData = factory.build("courseOutline", {
-      lessonOutlines: [
-        factory.build("lessonOutline", { minutes: 1 })
-      ]
+      lessonOutlines: [factory.build("lessonOutline", { minutes: 1 })],
     });
     const newRecord = new CourseOutline(newData);
 
@@ -113,8 +118,6 @@ describe("CourseOutlineListRecord", () => {
     fireEvent.click(editButton);
 
     expect(mockPush).toHaveBeenCalledTimes(1);
-    expect(mockPush).toHaveBeenCalledWith(
-      `/course-outline/${record.id}/edit`
-    );
+    expect(mockPush).toHaveBeenCalledWith(`/course-outline/${record.id}/edit`);
   });
 });

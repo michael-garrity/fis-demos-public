@@ -1,7 +1,7 @@
 import { CourseOutline } from "./";
-import { LearnerProfile } from "@/lib/learner-profiles"
+import { LearnerProfile } from "@/lib/learner-profiles";
 import { describe, it, expect } from "vitest";
-import { factory } from "@/test"
+import { factory } from "@/test";
 
 describe("CourseOutline", () => {
   describe("asUpdate", () => {
@@ -32,7 +32,9 @@ describe("CourseOutline", () => {
     });
 
     it("returns a new instance with the updated description", () => {
-      const data = factory.build("courseOutline", { description: "Original Desc" });
+      const data = factory.build("courseOutline", {
+        description: "Original Desc",
+      });
       const courseOutline = new CourseOutline(data);
 
       const updated = courseOutline.with("description", "New Desc");
@@ -61,7 +63,9 @@ describe("CourseOutline", () => {
 
   it("returns the learner profile", () => {
     const learnerProfile = factory.build("learnerProfile");
-    const data = factory.build("courseOutline", { creationMeta: { learnerProfile } });
+    const data = factory.build("courseOutline", {
+      creationMeta: { learnerProfile },
+    });
     const courseOutline = new CourseOutline(data);
     expect(courseOutline.learnerProfile).toBeInstanceOf(LearnerProfile);
     expect(courseOutline.learnerProfile?.label).toBe(learnerProfile.label);
@@ -76,7 +80,7 @@ describe("CourseOutline", () => {
 
   it("returns the correct lesson outline count", () => {
     const lessonOutlines = factory.buildList("lessonOutline", 2);
-    const data = factory.build("courseOutline", { lessonOutlines })
+    const data = factory.build("courseOutline", { lessonOutlines });
     const courseOutline = new CourseOutline(data);
     expect(courseOutline.lessonOutlineCount).toBe(2);
   });
@@ -91,8 +95,8 @@ describe("CourseOutline", () => {
     const lessonOutlines = [
       factory.build("lessonOutline", { minutes: 40 }),
       factory.build("lessonOutline", { minutes: 2 }),
-    ]
-    const data = factory.build("courseOutline", { lessonOutlines })
+    ];
+    const data = factory.build("courseOutline", { lessonOutlines });
     const courseOutline = new CourseOutline(data);
     expect(courseOutline.totalMinutes).toBe(42);
   });

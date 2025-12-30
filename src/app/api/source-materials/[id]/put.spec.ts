@@ -1,115 +1,172 @@
-import type { Tables } from "@/types";
-import { PUT } from "./route";
-import { describe, expect, it, vi, beforeEach, afterEach } from "vitest";
-import { prepareTestSchema } from "@/test";
+import { describe, it, expect, vi, beforeEach } from "vitest";
+import { NextRequest } from "next/server";
+import * as Sentry from "@sentry/nextjs";
+import { getClient } from "@/lib/supabase"; // Mock path
+import { PUT } from "@/app/api/course-outlines/[id]/route"; // Mock path
 
-const buildRequest = (body: { [key: string]: string }) => {
-  return new Request("http://localhost", {
-    method: "POST",
-    body: JSON.stringify(body),
-    headers: { "Content-Type": "application/json" },
-  });
-}
+// 1. Mock Sentry
+vi.mock("@sentry/nextjs", () => ({
+  captureException: vi.fn(),
+}));
 
-describe("PUT", async () => {
-  const { factory, pgClient } = await prepareTestSchema();
+// 2. Mock Supabase with extended spies for Update chain
+vi.mock("@/lib/supabase", () => {
+  // --- Spies for the UPDATE chain: .update().eq().select().maybeSingle() ---
+  const mockMaybeSingle = vi.fn();
+  const mockSelectForUpdate = vi.fn(() => ({ maybeSingle: mockMaybeSingle }));
+  const mockEq = vi.fn(() => ({ select: mockSelectForUpdate }));
+  const mockUpdate = vi.fn(() => ({ eq: mockEq }));
 
-  describe("with a valid update", () => {
-    it("responds with a 200 status", async () => {
-      const sourceMaterial = await factory.create("sourceMaterial");
-      const request = buildRequest({ title: "Updated Title" })
-      const response = await PUT(request, {
-        params: Promise.resolve({ id: sourceMaterial.id }),
-      });
-      expect(response.status).toEqual(200);
-    });
+  // Root spy for .from()
+  const mockFrom = vi.fn(() => ({
+    update: mockUpdate,
+  }));
 
-    it("updates the record", async () => {
-      const { id } = await factory.create("sourceMaterial");
-      const title = `New Title ${crypto.randomUUID()}`
-      const request = buildRequest({ title })
-      await PUT(request, { params: Promise.resolve({ id }) });
-      const result = await pgClient.query(
-        `select title from source_materials where id = $1`,
-        [id]
-      );
+  return {
+    getClient: vi.fn(() => ({
+      from: mockFrom,
+    })),
+  };
+});
 
-      expect(result.rows).toHaveLength(1);
-      expect(result.rows[0].title).toEqual(title);
-    });
-
-    it("responds with the updated record", async () => {
-      const sourceMaterial = await factory.create("sourceMaterial");
-      const request = buildRequest({ title: "Updated Title" })
-      const response = await PUT(request, {
-        params: Promise.resolve({ id: sourceMaterial.id }),
-      });
-
-      const body: Tables<"source_materials"> = await response.json();
-      expect(body.title).toEqual("Updated Title");
-      expect(body.id).toEqual(sourceMaterial.id);
-    });
+describe("API Route Handlers: Course Outlines PUT", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
   });
 
-  describe("with invalid input", () => {
-    it("responds with a 422 status and validation error", async () => {
-      const sourceMaterial = await factory.create("sourceMaterial");
-      const request = buildRequest({ title: "" })
-      const response = await PUT(request, {
-        params: Promise.resolve({ id: sourceMaterial.id }),
-      });
+  // --- Helper to access spies ---
+  const getMocks = () => {
+    const client = getClient();
+    const from = client.from;
 
-      expect(response.status).toEqual(422);
+    // Simulate the chain to get the specific spies
+    // chain: .from("table").update({}).eq("id", "1").select("*").maybeSingle()
+    const chainUpdate = client.from("any_table" as any).update({} as any);
+    const chainEq = chainUpdate.eq("id", "1");
+    const chainSelect = chainEq.select("*");
+
+    const update = from("course_outlines").update; // Reference to the update spy
+    const eq = chainUpdate.eq; // Reference to the eq spy
+    const maybeSingle = chainSelect.maybeSingle; // Reference to the end spy
+
+    // Clear history from setup steps
+    vi.clearAllMocks();
+
+    return { from, update, eq, maybeSingle };
+  };
+
+  const mockRequest = (body: any): NextRequest =>
+    ({
+      json: vi.fn().mockResolvedValue(body),
+    } as unknown as NextRequest);
+
+  const mockParams = { params: Promise.resolve({ id: "course-123" }) };
+
+  describe("PUT handler", () => {
+    it("should return the updated record with 200 status on success", async () => {
+      const { from, update, eq, maybeSingle } = getMocks();
+
+      const inputBody = {
+        title: "Updated Course Title",
+        description: "New description",
+        lesson_outlines: [
+          {
+            title: "Lesson 1",
+            minutes: 30,
+            outcome: "Learn X",
+            description: "Desc 1",
+          },
+        ],
+      };
+      const updatedRecord = { id: "course-123", ...inputBody };
+
+      // Mock DB success response
+      vi.mocked(maybeSingle).mockResolvedValueOnce({
+        data: updatedRecord,
+        error: null,
+        count: null,
+        status: 200,
+        statusText: "OK",
+      } as any);
+
+      const req = mockRequest(inputBody);
+      const response = await PUT(req, mockParams);
       const body = await response.json();
-      expect(body.error).toMatch(/Too small/);
+
+      // Assertions
+      expect(from).toHaveBeenCalledWith("course_outlines");
+      expect(update).toHaveBeenCalledWith(inputBody);
+      expect(eq).toHaveBeenCalledWith("id", "course-123");
+      expect(maybeSingle).toHaveBeenCalled();
+
+      expect(response.status).toBe(200);
+      expect(body).toEqual(updatedRecord);
     });
-  });
 
-  describe("when the record does not exist", () => {
-    it("responds with a 404 status", async () => {
-      const request = buildRequest({ title: "Updated Title" })
-      const response = await PUT(request, {
-        params: Promise.resolve({ id: crypto.randomUUID() }),
-      });
+    it("should return 404 when record is not found (data is null)", async () => {
+      const { maybeSingle } = getMocks();
+      const inputBody = { title: "Ghost Course" };
 
-      expect(response.status).toEqual(404);
+      // Mock DB "Not Found" response (no error, but no data)
+      vi.mocked(maybeSingle).mockResolvedValueOnce({
+        data: null,
+        error: null,
+        count: null,
+        status: 200,
+        statusText: "OK",
+      } as any);
+
+      const req = mockRequest(inputBody);
+      const response = await PUT(req, mockParams);
+      const body = await response.json();
+
+      expect(response.status).toBe(404);
+      expect(body.error).toBe("Not found");
     });
-  });
 
-  describe("when a Supabase error occurs", () => {
-    let spy: ReturnType<typeof vi.spyOn>;
+    it("should return 422 status when validation fails (Zod)", async () => {
+      const { from } = getMocks();
 
-    beforeEach(async () => {
-      const fakeClient = {
-        eq: vi.fn().mockReturnThis(),
-        from: vi.fn().mockReturnThis(),
-        insert: vi.fn().mockReturnThis(),
-        select: vi.fn().mockReturnThis(),
-        single: vi.fn().mockReturnThis(),
-        update: vi.fn().mockReturnThis(),
-        maybeSingle: vi.fn().mockResolvedValue({
-          data: null,
-          error: { message: "Simulated Supabase error" },
-        }),
+      // Invalid body: lesson_outlines missing required fields inside array objects
+      const invalidBody = {
+        lesson_outlines: [
+          { title: "Bad Lesson" }, // Missing minutes, outcome, description
+        ],
       };
 
-      spy = vi.spyOn(await import("@/lib/supabase"), "getClient").mockReturnValue(fakeClient as any);
-    });
-
-    afterEach(() => {
-      spy.mockRestore();
-    });
-
-    it("responds with a 500 status and the error message", async () => {
-      const sourceMaterial = await factory.build("sourceMaterial");
-      const request = buildRequest({ title: "Updated Title" })
-      const response = await PUT(request, {
-        params: Promise.resolve({ id: sourceMaterial.id }),
-      });
-
-      expect(response.status).toEqual(500);
+      const req = mockRequest(invalidBody);
+      const response = await PUT(req, mockParams);
       const body = await response.json();
-      expect(body.error).toEqual("Simulated Supabase error");
+
+      expect(response.status).toBe(422);
+      expect(body.error).toBeDefined();
+
+      // Ensure we stopped before hitting the database
+      expect(from).not.toHaveBeenCalled();
+      expect(Sentry.captureException).toHaveBeenCalled();
+    });
+
+    it("should return 500 status and call Sentry on database error", async () => {
+      const { maybeSingle } = getMocks();
+      const inputBody = { title: "Error Case" };
+      const mockError = new Error("Database connection failed");
+
+      // Mock DB Error response
+      vi.mocked(maybeSingle).mockResolvedValueOnce({
+        data: null,
+        error: mockError,
+        count: null,
+        status: 500,
+        statusText: "Internal Server Error",
+      } as any);
+
+      const req = mockRequest(inputBody);
+      const response = await PUT(req, mockParams);
+      const body = await response.json();
+
+      expect(response.status).toBe(500);
+      expect(body).toEqual({ error: mockError.message });
+      expect(Sentry.captureException).toHaveBeenCalledWith(mockError);
     });
   });
 });

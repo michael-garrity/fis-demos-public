@@ -1,4 +1,4 @@
-import { LearnerProfile, LearnerProfileRow } from "@/lib/learner-profiles"
+import { LearnerProfile, LearnerProfileRow } from "@/lib/learner-profiles";
 import { Question, QuizRow } from "@/types";
 
 interface CreationMeta {
@@ -18,7 +18,7 @@ export class Quiz {
   }
 
   get learnerProfile(): LearnerProfile | null {
-    const profileData = this.creationMeta.learner_profile
+    const profileData = this.creationMeta.learner_profile;
     if (!profileData) return null;
 
     return new LearnerProfile(profileData);

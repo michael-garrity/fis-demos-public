@@ -2,7 +2,7 @@ import * as Sentry from "@sentry/nextjs";
 import { NextRequest, NextResponse } from "next/server";
 import { getClient } from "@/lib/supabase";
 import z from "zod";
-import { Database, Json } from "@/types";
+import { TablesInsert } from "@/types";
 
 const supabase = getClient();
 
@@ -20,22 +20,40 @@ export async function GET() {
   return NextResponse.json(data, { status: 200 });
 }
 
-type CourseOutlineInsert =
-  Database["public"]["Tables"]["course_outlines"]["Insert"];
+export const LearnerProfileSchema = z.object({
+  age: z.number().int().min(1, "Age must be a positive number"),
+  label: z.string().min(1, "Label is required"),
+  interests: z.array(z.string()),
+  experience: z.string().optional().or(z.literal("")),
+  reading_level: z.number().min(0),
+});
 
-const LessonOutlineSchema = z.object({
+export const SourceMaterialSchema = z.object({
+  title: z.string().min(1, "Source title is required"),
+  content: z.string().min(1, "Source content is required"),
+});
+
+export const CreationMetaSchema = z.object({
+  learner_profile: LearnerProfileSchema,
+  source_material: SourceMaterialSchema.optional(),
+});
+
+export const LessonOutlineItemSchema = z.object({
   title: z.string().min(1),
   minutes: z.number().int().positive(),
-  outcome: z.string().min(1),
-  description: z.string().min(1),
+  outcome: z.string(),
+  description: z.string(),
 });
 
-const CourseOutlineInsertSchema = z.object({
+export const CourseOutlineInsertSchema = z.object({
+  id: z.uuid().optional(),
+  creation_meta: CreationMetaSchema,
   title: z.string().min(1),
-  description: z.string().min(1),
-  creation_meta: z.record(z.string(), z.unknown()).default({}),
-  lesson_outlines: z.array(LessonOutlineSchema).default([]),
+  description: z.string(),
+  lesson_outlines: z.array(LessonOutlineItemSchema),
 });
+
+type CourseOutlineInsert = TablesInsert<"course_outlines">;
 
 /**
  * Add course to database
@@ -47,12 +65,20 @@ export async function POST(req: NextRequest) {
     return NextResponse.json(null, { status: 400, statusText: "Empty body" });
   }
 
-  const parsed = CourseOutlineInsertSchema.parse(body);
+  // 1. Validate the incoming body
+  const parsed = CourseOutlineInsertSchema.safeParse(body);
 
+  if (!parsed.success) {
+    return NextResponse.json({ error: parsed.error }, { status: 400 });
+  }
+
+  // 2. Insert into the database
   const payload: CourseOutlineInsert = {
-    ...parsed,
-    creation_meta: parsed.creation_meta as Json,
-    lesson_outlines: parsed.lesson_outlines as Json,
+    title: parsed.data.title,
+    description: parsed.data.description,
+    creation_meta: parsed.data.creation_meta,
+    lesson_outlines: parsed.data.lesson_outlines,
+    ...(parsed.data.id ? { id: parsed.data.id } : {}),
   };
 
   const { data, error } = await supabase

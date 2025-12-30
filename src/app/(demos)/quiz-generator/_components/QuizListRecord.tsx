@@ -13,15 +13,12 @@ interface QuizListRecordProps {
   record: Quiz;
 }
 
-export default function QuizListRecord({
-  record,
-}: QuizListRecordProps) {
+export default function QuizListRecord({ record }: QuizListRecordProps) {
   const router = useRouter();
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   // 1. Integrate the deletion hook
-  const { mutate: deleteQuiz, isPending: isDeleting } =
-    useDeleteQuiz();
+  const { mutate: deleteQuiz, isPending: isDeleting } = useDeleteQuiz();
 
   const gotoView = useCallback(
     (id: string) => {
@@ -89,7 +86,8 @@ export default function QuizListRecord({
               data-testid="quiz-list-total-lessons"
               className="flex items-center gap-2 text-gray-600"
             >
-              `{record.questionCount} question{record.questionCount === 1 ? "" : "s"}
+              `{record.questionCount} question
+              {record.questionCount === 1 ? "" : "s"}
             </p>
           </div>
           <LearnerProfileChip

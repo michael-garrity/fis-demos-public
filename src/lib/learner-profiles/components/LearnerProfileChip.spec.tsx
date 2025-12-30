@@ -1,5 +1,4 @@
-import { LearnerProfile } from "@/lib/learner-profiles";
-import { LearnerProfileChip } from "@/lib/learner-profiles";
+import { LearnerProfile, LearnerProfileChip } from "@/lib/learner-profiles";
 import { describe, it, expect, vi } from "vitest";
 import { factory } from "@/test";
 import { render, screen } from "@testing-library/react";
@@ -63,7 +62,9 @@ describe("LearnerProfileChip", () => {
     it("renders 'Unknown Learner' chip when learner profile is null", () => {
       render(<LearnerProfileChip learnerProfile={null} />);
 
-      expect(screen.getByTestId("learner-profile-chip")).toHaveTextContent("Unknown Learner");
+      expect(screen.getByTestId("learner-profile-chip")).toHaveTextContent(
+        "Unknown Learner"
+      );
       expect(screen.queryByTestId("popover-trigger")).not.toBeInTheDocument();
     });
 
@@ -91,7 +92,12 @@ describe("LearnerProfileChip", () => {
     it("uses the provided custom data-testid", () => {
       const testid = "custom-learner-test-id";
 
-      render(<LearnerProfileChip learnerProfile={learnerProfile} data-testid={testid} />);
+      render(
+        <LearnerProfileChip
+          learnerProfile={learnerProfile}
+          data-testid={testid}
+        />
+      );
 
       expect(screen.getByTestId(testid)).toBeInTheDocument();
     });
@@ -99,20 +105,26 @@ describe("LearnerProfileChip", () => {
 
   describe("Snapshot Tests", () => {
     it("should match snapshot in Loading state", () => {
-      const { container } = render(<LearnerProfileChip learnerProfile={null} isLoading />);
+      const { container } = render(
+        <LearnerProfileChip learnerProfile={null} isLoading />
+      );
       expect(container).toMatchSnapshot();
     });
 
     it("should match snapshot in Unknown Learner state", () => {
-      const { container } = render(<LearnerProfileChip learnerProfile={null} data-testid="mock-chip"/>);
+      const { container } = render(
+        <LearnerProfileChip learnerProfile={null} data-testid="mock-chip" />
+      );
       expect(container).toMatchSnapshot();
     });
 
     it("should match snapshot in Success state (Profile Found)", () => {
-      const data = factory.build("learnerProfile", { label: "Advanced Pythonista" })
+      const data = factory.build("learnerProfile", {
+        label: "Advanced Pythonista",
+      });
       const profile = new LearnerProfile(data);
       const { container } = render(
-        <LearnerProfileChip learnerProfile={profile} data-testid="mock-chip"/>
+        <LearnerProfileChip learnerProfile={profile} data-testid="mock-chip" />
       );
       expect(container).toMatchSnapshot();
     });

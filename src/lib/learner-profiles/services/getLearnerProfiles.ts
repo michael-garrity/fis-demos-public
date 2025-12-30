@@ -6,5 +6,4 @@ export async function getLearnerProfiles() {
 
   const rows: LearnerProfileRow[] = await res.json();
   return rows.map((row) => new LearnerProfile(row));
-};
-
+}

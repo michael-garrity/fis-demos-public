@@ -1,11 +1,10 @@
 import { vi, describe, it, expect, beforeEach, afterEach, Mock } from "vitest";
 import { getLearnerProfiles } from "@/lib/learner-profiles";
 import { LearnerProfileRow, LearnerProfile } from "@/lib/learner-profiles";
-import { factory } from "@/test"
+import { factory } from "@/test";
 
 describe("getLearnerProfiles", () => {
-  const mockRows: LearnerProfileRow[] = factory.buildList("learnerProfile", 2)
-
+  const mockRows: LearnerProfileRow[] = factory.buildList("learnerProfile", 2);
 
   beforeEach(() => {
     vi.stubGlobal("fetch", vi.fn());

@@ -42,13 +42,15 @@ describe("API Route Handlers: /api/course-outlines", () => {
     const client = getClient();
     const from = client.from;
 
-    const chain = client.from("setup_extraction" as any);
+    // Access the hidden spies inside the mock chain
+    const chain = client.from("setup_extraction" as any); // Table name doesn't matter for grabbing mocks
     const select = chain.select;
     const insert = chain.insert;
 
+    // Simulate the chain to get the 'single' spy
     const single = insert({} as any).select().single;
 
-    // Clear the history of these setup calls
+    // Clear the history of these setup calls so tests start fresh
     vi.clearAllMocks();
 
     return { from, select, insert, single };
@@ -63,14 +65,13 @@ describe("API Route Handlers: /api/course-outlines", () => {
     it("should return course outlines data with 200 status on successful fetch", async () => {
       const { from, select } = getMocks();
 
-      // FIX: Add 'count', 'status', and 'statusText' to satisfy TypeScript
       vi.mocked(select).mockResolvedValueOnce({
         data: mockData,
         error: null,
         count: null,
         status: 200,
         statusText: "OK",
-      } as any); // 'as any' is safe here to avoid mocking every single Postgrest property
+      } as any);
 
       const response = await GET();
       const body = await response.json();
@@ -85,7 +86,6 @@ describe("API Route Handlers: /api/course-outlines", () => {
       const { select } = getMocks();
       const mockError = new Error("Connection pool timeout");
 
-      // FIX: Add missing properties here as well
       vi.mocked(select).mockResolvedValueOnce({
         data: null,
         error: mockError,
@@ -109,17 +109,26 @@ describe("API Route Handlers: /api/course-outlines", () => {
         json: vi.fn().mockResolvedValue(body),
       } as unknown as NextRequest);
 
+    const validCourseData = {
+      title: "New Course",
+      description: "test",
+      creation_meta: {
+        learner_profile: {
+          age: 12,
+          label: "7th Grader",
+          interests: ["Robotics"],
+          reading_level: 6,
+        },
+      },
+      lesson_outlines: [],
+    };
+
     it("should return the inserted course data with 200 status on success", async () => {
       const { from, insert, single } = getMocks();
-      const courseToInsert = {
-        title: "New Course",
-        description: "test",
-        creation_meta: {},
-        lesson_outlines: [],
-      };
-      const insertedCourse = { id: 3, ...courseToInsert };
 
-      // FIX: Add missing properties to satisfy TypeScript
+      const courseToInsert = { ...validCourseData };
+      const insertedCourse = { id: "3", ...courseToInsert };
+
       vi.mocked(single).mockResolvedValueOnce({
         data: insertedCourse,
         error: null,
@@ -139,36 +148,28 @@ describe("API Route Handlers: /api/course-outlines", () => {
       expect(body).toEqual(insertedCourse);
     });
 
-    // UPDATED TEST CASE
     it("should return 200 status (with error body) when request body is explicitly empty", async () => {
       const { from } = getMocks();
       const req = mockRequest(null);
 
       const response = await POST(req);
-
-      // Note: If response body is null, response.json() might throw in real usage
-      // unless you are mocking json() behavior elsewhere or your handler returns valid JSON 'null'.
-      // If your handler returns `NextResponse.json(null)`, body will be `null`.
+      // Catch null body errors if response is truly empty
       const body = await response.json().catch(() => null);
 
       expect(response.status).toBe(400);
       expect(response.statusText).toBe("Empty body");
-      expect(body).toEqual(null);
+      expect(body).toBeNull();
 
-      // Now this passes because we cleared the mocks in getMocks()
       expect(from).not.toHaveBeenCalled();
     });
 
     it("should return 500 status and call Sentry on database error", async () => {
       const { single } = getMocks();
-      const courseToInsert = {
-        title: "Fail Course",
-        description: "Test Description",
-        lesson_plans: [],
-      };
+
+      // FIX: Use valid data so validation passes and we actually attempt the DB call
+      const courseToInsert = { ...validCourseData, title: "Fail Course" };
       const mockError = new Error("Row violation");
 
-      // FIX: Add missing properties
       vi.mocked(single).mockResolvedValueOnce({
         data: null,
         error: mockError,
@@ -184,6 +185,18 @@ describe("API Route Handlers: /api/course-outlines", () => {
       expect(response.status).toBe(500);
       expect(body).toEqual({ error: mockError.message });
       expect(Sentry.captureException).toHaveBeenCalledWith(mockError);
+    });
+
+    // Optional: Add a test specifically for validation failure
+    it("should return 400 when data is invalid", async () => {
+      const { from } = getMocks();
+      const invalidData = { title: "Missing Meta" }; // Missing required fields
+
+      const req = mockRequest(invalidData);
+      const response = await POST(req);
+
+      expect(response.status).toBe(400);
+      expect(from).not.toHaveBeenCalled();
     });
   });
 });

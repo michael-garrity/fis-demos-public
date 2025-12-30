@@ -1,90 +1,135 @@
-import type { Tables } from "@/types";
-import { POST } from "./route";
-import { describe, expect, it } from "vitest";
-import { prepareTestSchema } from "@/test";
+import { describe, it, expect, vi, beforeEach } from "vitest";
+import { NextRequest } from "next/server";
+import { type Mock } from "vitest"; // Import Mock to fix type issues
+import * as Sentry from "@sentry/nextjs";
+import { getClient } from "@/lib/supabase"; // Mock path
+import { POST } from "./route"; // Relative import
 
-const buildRequest = (body: { [key: string]: string }) => {
-  return new Request("http://localhost", {
-    method: "POST",
-    body: JSON.stringify(body),
-    headers: { "Content-Type": "application/json" },
-  });
-}
+// 1. Mock Sentry
+vi.mock("@sentry/nextjs", () => ({
+  captureException: vi.fn(),
+}));
 
-describe("POST", async () => {
-  const { factory, pgClient } = await prepareTestSchema();
+// 2. Mock Supabase with extended spies for the POST chain
+vi.mock("@/lib/supabase", () => {
+  // Chain spies: .insert().select().single()
+  const mockSingle = vi.fn();
+  const mockSelect = vi.fn(() => ({ single: mockSingle }));
+  const mockInsert = vi.fn(() => ({ select: mockSelect }));
 
-  describe("with a valid payload", () => {
-    it("responds with a 201 status", async () => {
-      const { title, markdown } = await factory.build("sourceMaterial");
-      const request = buildRequest({ title, markdown });
-      const response = await POST(request);
-      expect(response.status).toEqual(201);
-    });
+  // Root spy for .from()
+  const mockFrom = vi.fn(() => ({
+    insert: mockInsert,
+  }));
 
-    it("creates the record", async () => {
-      const { title, markdown } = await factory.build("sourceMaterial");
-      const request = buildRequest({ title, markdown });
-      const getByTitle = async () => (
-        await pgClient.query(
-          `select * from source_materials where title = $1`, [title]
-        )
-      )
+  return {
+    getClient: vi.fn(() => ({
+      from: mockFrom,
+    })),
+  };
+});
 
-      expect((await getByTitle()).rows).toHaveLength(0);
-      await POST(request);
-      expect((await getByTitle()).rows).toHaveLength(1);
-    });
-
-    it("responds with the created record", async () => {
-      const { title, markdown } = await factory.build("sourceMaterial");
-      const request = buildRequest({ title, markdown });
-      const response = await POST(request);
-      const body: Tables<"source_materials"> = await response.json();
-      expect(body.id).toBeDefined();
-      expect(body.title).toEqual(title);
-      expect(body.markdown).toEqual(markdown);
-    });
+describe("API Route Handlers: Source Materials POST", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
   });
 
-  describe("with invalid input", () => {
-    it("responds with a 422 status and validation error", async () => {
-      const request = buildRequest({ title: "all title, no content" });
-      const response = await POST(request);
-      expect(response.status).toEqual(422);
-      const body = await response.json();
-      expect(body.error).toMatch(/Invalid input/);
-    });
-  });
+  // --- Helper to access spies ---
+  const getMocks = () => {
+    const client = getClient();
+    const from = client.from;
 
-  describe("when a Supabase error occurs", () => {
-    let spy: ReturnType<typeof vi.spyOn>;
+    // Simulate chain to grab references
+    const chainInsert = client.from("any" as any).insert({} as any);
+    const chainSelect = chainInsert.select();
 
-    beforeEach(async () => {
-      const fakeClient = {
-        from: vi.fn().mockReturnThis(),
-        insert: vi.fn().mockReturnThis(),
-        select: vi.fn().mockReturnThis(),
-        single: vi.fn().mockResolvedValue({
-          data: null,
-          error: { message: "Simulated Supabase error" },
-        }),
+    // Force cast to Mock to prevent "type instantiation excessively deep" error
+    const insert = from("source_materials").insert as unknown as Mock;
+    const single = chainSelect.single as unknown as Mock;
+
+    vi.clearAllMocks(); // Clear setup history
+
+    return { from, insert, single };
+  };
+
+  const mockRequest = (body: any): NextRequest =>
+    ({
+      json: vi.fn().mockResolvedValue(body),
+    } as unknown as NextRequest);
+
+  describe("POST handler", () => {
+    it("should return the created record with 201 status on success", async () => {
+      const { from, insert, single } = getMocks();
+
+      const payload = {
+        title: "The Odyssey",
+        markdown: "# Sing, O Muse...",
       };
 
-      spy = vi.spyOn(await import("@/lib/supabase"), "getClient").mockReturnValue(fakeClient as any);
-    });
+      const createdRecord = { id: "new-123", ...payload };
 
-    afterEach(() => {
-      spy.mockRestore();
-    });
+      // Mock DB success response
+      single.mockResolvedValueOnce({
+        data: createdRecord,
+        error: null,
+        count: null,
+        status: 201,
+        statusText: "Created",
+      });
 
-    it("responds with a 500 status and the error message", async () => {
-      const { title, markdown } = await factory.build("sourceMaterial");
-      const request = buildRequest({ title, markdown });
-      const response = await POST(request);
-      expect(response.status).toEqual(500);
+      const req = mockRequest(payload);
+      const response = await POST(req);
       const body = await response.json();
-      expect(body.error).toEqual("Simulated Supabase error");
+
+      // Assertions
+      expect(from).toHaveBeenCalledWith("source_materials");
+      expect(insert).toHaveBeenCalledWith(payload);
+      expect(single).toHaveBeenCalled();
+
+      expect(response.status).toBe(201);
+      expect(body).toEqual(createdRecord);
+    });
+
+    it("should return 422 status when validation fails (Zod)", async () => {
+      const { from } = getMocks();
+
+      // Invalid body: missing 'markdown' field
+      const invalidBody = { title: "Title Only" };
+
+      const req = mockRequest(invalidBody);
+      const response = await POST(req);
+      const body = await response.json();
+
+      expect(response.status).toBe(422);
+      expect(body.error).toBeDefined();
+
+      // Ensure we stopped before hitting the database
+      expect(from).not.toHaveBeenCalled();
+      expect(Sentry.captureException).toHaveBeenCalled();
+    });
+
+    it("should return 500 status and call Sentry on database error", async () => {
+      const { single } = getMocks();
+
+      const payload = { title: "Error Case", markdown: "Content" };
+      const mockError = new Error("Database insert failed");
+
+      // Mock DB Error response
+      single.mockResolvedValueOnce({
+        data: null,
+        error: mockError,
+        count: null,
+        status: 500,
+        statusText: "Internal Server Error",
+      });
+
+      const req = mockRequest(payload);
+      const response = await POST(req);
+      const body = await response.json();
+
+      expect(response.status).toBe(500);
+      expect(body).toEqual({ error: mockError.message });
+      expect(Sentry.captureException).toHaveBeenCalledWith(mockError);
     });
   });
 });

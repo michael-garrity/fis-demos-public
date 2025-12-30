@@ -69,7 +69,9 @@ export default function CourseOutlineTeacherView() {
                 startContent={<Clock className="w-4 h-4" />}
               >
                 Total Course Time:{" "}
-                <span className="font-semibold ml-1">{courseOutline?.totalMinutesInWords}</span>
+                <span className="font-semibold ml-1">
+                  {courseOutline?.totalMinutesInWords}
+                </span>
               </Chip>
               <LearnerProfileChip
                 learnerProfile={courseOutline?.learnerProfile ?? null}
@@ -113,9 +115,8 @@ export default function CourseOutlineTeacherView() {
                         {lessonOutline.title}
                       </span>
                       <Chip size="sm" variant="bordered" className="text-sm">
-                        {lessonOutline.minutes} {
-                          lessonOutline.minutes === 1 ? "minute" : "minutes"
-                        }
+                        {lessonOutline.minutes}{" "}
+                        {lessonOutline.minutes === 1 ? "minute" : "minutes"}
                       </Chip>
                     </div>
                   }

@@ -1,88 +1,120 @@
-import * as supabaseLib from "@/lib/supabase";
-import { DELETE } from "./route";
-import { describe, expect, it } from "vitest";
-import { prepareTestSchema } from "@/test";
+import { describe, it, expect, vi, beforeEach } from "vitest";
+import { NextRequest } from "next/server";
+import { type Mock } from "vitest"; // Import Mock to fix type issues
+import * as Sentry from "@sentry/nextjs";
+import { getClient } from "@/lib/supabase"; // Mock path
+import { DELETE } from "./route"; // Relative import
 
-describe("DELETE", async () => {
-  const { factory, pgClient } = await prepareTestSchema();
-  const mockRequest = {} as Request;
+// 1. Mock Sentry
+vi.mock("@sentry/nextjs", () => ({
+  captureException: vi.fn(),
+}));
 
-  describe("with an existing record", () => {
-    it("responds with a 204 status", async () => {
-      const sourceMaterial = await factory.create("sourceMaterial");
-      const response = await DELETE(mockRequest, {
-        params: Promise.resolve({ id: sourceMaterial.id })
-      });
-      expect(response.status).toEqual(204);
-    });
+// 2. Mock Supabase with extended spies for the DELETE chain
+vi.mock("@/lib/supabase", () => {
+  // Chain spies: .delete({ count: "exact" }) -> .eq("id", id)
+  const mockEq = vi.fn();
+  const mockDelete = vi.fn(() => ({ eq: mockEq }));
 
-    it("destroys the record", async () => {
-      const { id } = await factory.create("sourceMaterial");
+  // Root spy for .from()
+  const mockFrom = vi.fn(() => ({
+    delete: mockDelete,
+  }));
 
-      await DELETE(mockRequest, {
-        params: Promise.resolve({ id }),
-      });
+  return {
+    getClient: vi.fn(() => ({
+      from: mockFrom,
+    })),
+  };
+});
 
-      const result = await pgClient.query(
-        `select 1 from course_outlines where id = $1`,
-        [id]
-      );
-
-      expect(result.rows).toHaveLength(0);
-    });
+describe("API Route Handlers: Source Materials DELETE", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
   });
 
-  describe("without a matching record", async () => {
-    let response: Response;
+  // --- Helper to access spies ---
+  const getMocks = () => {
+    const client = getClient();
+    const from = client.from;
 
-    beforeEach(async () => {
-      response = await DELETE(mockRequest, {
-        params: Promise.resolve({ id: crypto.randomUUID() })
-      });
-    });
+    // Simulate the chain to get specific spy references
+    const chainDelete = client.from("any" as any).delete({} as any);
 
-    it("responds with a 404 status", async () => {
-      expect(response.status).toEqual(404);
-    });
+    // Force cast to Mock to prevent "type instantiation excessively deep" error
+    const deleteSpy = from("source_materials").delete as unknown as Mock;
+    const eq = chainDelete.eq as unknown as Mock;
 
-    it("responds with an error", async () => {
-      const body: { error: string } = await response.json();
-      expect(body).toEqual({ error: "Not found" });
-    });
-  });
+    vi.clearAllMocks(); // Clear history from setup steps
 
-  describe("when a Supabase error occurs", async () => {
-    let response: Response, spy: ReturnType<typeof vi.spyOn>;
+    return { from, deleteSpy, eq };
+  };
 
-    beforeEach(async () => {
-      spy = vi.spyOn(supabaseLib, "getClient").mockReturnValue({
-        from: () => ({
-          delete: () => ({
-            // @ts-expect-error Irrelevant type mismatch in mock
-            eq: () => ({
-              count: null,
-              error: { message: "Simulated Supabase error" },
-            })
-          })
-        }),
+  const mockRequest = {} as NextRequest;
+  const mockParams = { params: Promise.resolve({ id: "source-123" }) };
+
+  describe("DELETE handler", () => {
+    it("should return 204 status on successful deletion (count > 0)", async () => {
+      const { from, deleteSpy, eq } = getMocks();
+
+      // Mock DB success response with count = 1
+      eq.mockResolvedValueOnce({
+        data: null,
+        error: null,
+        count: 1, // Crucial for success path
+        status: 204,
+        statusText: "No Content",
       });
 
-      response = await DELETE(mockRequest, {
-        params: Promise.resolve({ id: crypto.randomUUID() })
+      const response = await DELETE(mockRequest, mockParams);
+
+      // Assertions
+      expect(from).toHaveBeenCalledWith("source_materials");
+      expect(deleteSpy).toHaveBeenCalledWith({ count: "exact" });
+      expect(eq).toHaveBeenCalledWith("id", "source-123");
+
+      expect(response.status).toBe(204);
+      expect(response.body).toBe(null);
+    });
+
+    it("should return 404 when record is not found (count is 0 or null)", async () => {
+      const { eq } = getMocks();
+
+      // Mock DB response where nothing was deleted
+      eq.mockResolvedValueOnce({
+        data: null,
+        error: null,
+        count: 0, // Indicates not found
+        status: 204,
+        statusText: "No Content",
       });
+
+      const response = await DELETE(mockRequest, mockParams);
+      const body = await response.json();
+
+      expect(response.status).toBe(404);
+      expect(body.error).toBe("Not found");
     });
 
-    afterEach(() => {
-      spy.mockRestore();
-    });
+    it("should return 500 status and call Sentry on database error", async () => {
+      const { eq } = getMocks();
+      const mockError = new Error("Foreign key violation");
 
-    it("responds with a 500 status and the error message", async () => {
-      expect(response.status).toEqual(500);
-    });
+      // Mock DB Error response
+      eq.mockResolvedValueOnce({
+        data: null,
+        error: mockError,
+        count: null,
+        status: 500,
+        statusText: "Internal Server Error",
+      });
 
-    it("responds with the error message", async () => {
-      const body: { error: string } = await response.json();
-      expect(body).toEqual({ error: "Simulated Supabase error" });
+      const response = await DELETE(mockRequest, mockParams);
+      const body = await response.json();
+
+      expect(response.status).toBe(500);
+      expect(body).toEqual({ error: mockError.message });
+      expect(Sentry.captureException).toHaveBeenCalledWith(mockError);
     });
   });
 });

@@ -1,68 +1,96 @@
-import * as supabaseLib from "@/lib/supabase";
-import { GET } from "./route";
-import { describe, expect, it } from "vitest";
-import { prepareTestSchema } from "@/test";
+import { describe, it, expect, vi, beforeEach } from "vitest";
+import * as Sentry from "@sentry/nextjs";
+import { getClient } from "@/lib/supabase"; // Mock path
+import { GET } from "./route"; // Relative import
 
-describe("GET", async () => {
-  const { factory } = await prepareTestSchema();
+// 1. Mock Sentry
+vi.mock("@sentry/nextjs", () => ({
+  captureException: vi.fn(),
+}));
 
-  describe("without any records", async () => {
-    it("responds with a 200 status", async () => {
-      const response = await GET();
-      expect(response.status).toEqual(200);
-    });
+// 2. Mock Supabase for the simple .select("*") chain
+vi.mock("@/lib/supabase", () => {
+  // Spy for .select()
+  const mockSelect = vi.fn();
 
-    it("responds with an empty array", async () => {
-      const response = await GET();
-      const body = await response.json();
+  // Root spy for .from()
+  const mockFrom = vi.fn(() => ({
+    select: mockSelect,
+  }));
 
-      expect(body).toEqual([]);
-    });
+  return {
+    getClient: vi.fn(() => ({
+      from: mockFrom,
+    })),
+  };
+});
+
+describe("API Route Handlers: Source Materials Index (GET)", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
   });
 
-  describe("with records", () => {
-    it("responds with a 200 status", async () => {
-      await factory.create("sourceMaterial");
-      const response = await GET();
-      expect(response.status).toEqual(200);
-    });
+  // --- Helper to access spies ---
+  const getMocks = () => {
+    const client = getClient();
+    const from = client.from;
 
-    it("responds with an array of records", async () => {
-      const sourceMaterial = await factory.create("sourceMaterial");
-      const response = await GET();
-      const body = await response.json();
-      expect(body).toEqual([sourceMaterial]);
-    });
-  });
+    // Simulate the chain to get the select spy reference
+    const select = from("source_materials").select;
 
-  describe("when a Supabase error occurs", async () => {
-    let spy: ReturnType<typeof vi.spyOn>;
+    vi.clearAllMocks(); // Clear history from setup steps
 
-    beforeEach(() => {
-      spy = vi.spyOn(supabaseLib, "getClient").mockReturnValue({
-        from: () => ({
-          // @ts-expect-error Irrelevant type mismatch in mock
-          select: async () => ({
-            data: null,
-            error: { message: "Simulated Supabase error" },
-          }),
-        }),
-      });
-    });
+    return { from, select };
+  };
 
-    afterEach(() => {
-      spy.mockRestore();
-    });
+  describe("GET handler", () => {
+    it("should return all records with 200 status on success", async () => {
+      const { from, select } = getMocks();
 
-    it("responds with a 500 status and the error message", async () => {
-      const response = await GET();
-      expect(response.status).toEqual(500);
-    });
+      const mockData = [
+        { id: "1", title: "Source A", markdown: "Content A" },
+        { id: "2", title: "Source B", markdown: "Content B" },
+      ];
 
-    it("responds with the error message", async () => {
+      // Mock DB success response
+      vi.mocked(select).mockResolvedValueOnce({
+        data: mockData,
+        error: null,
+        count: null,
+        status: 200,
+        statusText: "OK",
+      } as any);
+
       const response = await GET();
       const body = await response.json();
-      expect(body).toEqual({ error: "Simulated Supabase error" });
+
+      // Assertions
+      expect(from).toHaveBeenCalledWith("source_materials");
+      expect(select).toHaveBeenCalledWith("*");
+
+      expect(response.status).toBe(200);
+      expect(body).toEqual(mockData);
+    });
+
+    it("should return 500 status and call Sentry on database error", async () => {
+      const { select } = getMocks();
+      const mockError = new Error("Database timeout");
+
+      // Mock DB Error response
+      vi.mocked(select).mockResolvedValueOnce({
+        data: null,
+        error: mockError,
+        count: null,
+        status: 500,
+        statusText: "Internal Server Error",
+      } as any);
+
+      const response = await GET();
+      const body = await response.json();
+
+      expect(response.status).toBe(500);
+      expect(body).toEqual({ error: mockError.message });
+      expect(Sentry.captureException).toHaveBeenCalledWith(mockError);
     });
   });
 });

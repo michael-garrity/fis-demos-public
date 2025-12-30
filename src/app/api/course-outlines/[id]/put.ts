@@ -4,16 +4,22 @@ import { NextResponse } from "next/server";
 import { getClient } from "@/lib/supabase";
 import { z } from "zod";
 
-const schema = z.object({
-  title: z.string().min(1).optional(),
-  description: z.string().optional(),
-  lesson_outlines: z.array(z.object({
-    title: z.string().min(1),
-    minutes: z.number(),
-    outcome: z.string(),
-    description: z.string(),
-  })).optional(),
-}).strict();
+const schema = z
+  .object({
+    title: z.string().min(1).optional(),
+    description: z.string().optional(),
+    lesson_outlines: z
+      .array(
+        z.object({
+          title: z.string().min(1),
+          minutes: z.number(),
+          outcome: z.string(),
+          description: z.string(),
+        })
+      )
+      .optional(),
+  })
+  .strict();
 
 /**
  * Update course outline
@@ -27,7 +33,10 @@ export async function PUT(
 
   if (zError) {
     Sentry.captureException(zError);
-    return NextResponse.json({ error: z.prettifyError(zError) }, { status: 422 });
+    return NextResponse.json(
+      { error: z.prettifyError(zError) },
+      { status: 422 }
+    );
   }
 
   const supabase = getClient();

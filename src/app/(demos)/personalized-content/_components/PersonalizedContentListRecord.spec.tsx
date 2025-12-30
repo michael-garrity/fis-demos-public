@@ -14,15 +14,22 @@ vi.mock("next/navigation", () => ({
 
 // Mock the LearnerProfileChip component as it's an external dependency
 vi.mock("@/lib/learner-profiles", async (importOriginal) => {
-  const actual = (await importOriginal()) as Partial<typeof import("@/lib/learner-profiles")>
+  const actual = (await importOriginal()) as Partial<
+    typeof import("@/lib/learner-profiles")
+  >;
   return {
     ...actual,
-    LearnerProfileChip: ({ learnerProfile, ...props }: { learnerProfile: LearnerProfile }) => (
+    LearnerProfileChip: ({
+      learnerProfile,
+      ...props
+    }: {
+      learnerProfile: LearnerProfile;
+    }) => (
       <div data-testid="mock-learner-chip" {...props}>
         Learner Profile: {learnerProfile.label}
       </div>
     ),
-  }
+  };
 });
 
 // Mock the delete mutation hook
@@ -41,7 +48,9 @@ vi.mock("../_store/useDeletePersonalizedContent", () => {
 // const MockConfirmationDialog = vi.fn(() => null);
 
 describe("PersonalizedContentListRecord", () => {
-  const data = factory.build("personalizedContent", { id: crypto.randomUUID() });
+  const data = factory.build("personalizedContent", {
+    id: crypto.randomUUID(),
+  });
   const record = new PersonalizedContent(data);
   const mockPush = vi.fn();
 
@@ -71,11 +80,12 @@ describe("PersonalizedContentListRecord", () => {
     ).toHaveTextContent(`Learner Profile: ${record.learnerProfile?.label}`);
   });
 
-
   test("should navigate to view route when View button is clicked", () => {
     render(<PersonalizedContentListRecord record={record} />);
 
-    const viewButton = screen.getByTestId("personalized-content-list-button-view");
+    const viewButton = screen.getByTestId(
+      "personalized-content-list-button-view"
+    );
     fireEvent.click(viewButton);
 
     expect(mockPush).toHaveBeenCalledTimes(1);
@@ -84,7 +94,9 @@ describe("PersonalizedContentListRecord", () => {
 
   test("should navigate to edit route when Edit button is clicked", () => {
     render(<PersonalizedContentListRecord record={record} />);
-    const editButton = screen.getByTestId("personalized-content-list-button-edit");
+    const editButton = screen.getByTestId(
+      "personalized-content-list-button-edit"
+    );
     fireEvent.click(editButton);
 
     expect(mockPush).toHaveBeenCalledTimes(1);

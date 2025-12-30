@@ -1,5 +1,5 @@
 import type { Database } from "@/types/database";
-import { LearnerProfile, LearnerProfileRow } from "@/lib/learner-profiles"
+import { LearnerProfile, LearnerProfileRow } from "@/lib/learner-profiles";
 
 export type PersonalizedContentRow =
   Database["public"]["Tables"]["personalized_contents"]["Row"];
@@ -38,7 +38,7 @@ export class PersonalizedContent {
   }
 
   get learnerProfile(): LearnerProfile | null {
-    const profileData = this.creationMeta.learner_profile
+    const profileData = this.creationMeta.learner_profile;
     if (!profileData) return null;
 
     return new LearnerProfile(profileData);
@@ -54,5 +54,5 @@ export class PersonalizedContent {
 
   get content() {
     return this.data.content;
-}
+  }
 }
