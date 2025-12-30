@@ -1,5 +1,5 @@
-export * from "./useGetPersonalizedContentList";
-export * from "./useGetPersonalizedContent";
+export * from "./usePersonalizedContentList";
+export * from "./usePersonalizedContent";
 export * from "./useDeletePersonalizedContent";
 export * from "./useGeneratePersonalizedContent";
 export * from "./useSavePersonalizedContent";
