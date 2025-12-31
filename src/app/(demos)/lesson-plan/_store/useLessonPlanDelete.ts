@@ -2,24 +2,8 @@
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { LessonPlanRecord } from "@/types/demos/lesson-plan";
+import { deleteLessonPlan } from "../_services/deleteLessonPlan";
 import { lessonKeys } from "./keys";
-
-/**
- * API function to delete an existing Lesson Plan record by ID.
- * @param id The ID of the course outline to delete.
- */
-const deleteLessonPlan = async (id: string): Promise<string> => {
-  const response = await fetch(`/api/lesson-plan/${id}`, {
-    method: "DELETE",
-  });
-
-  if (!response.ok) {
-    const errorText = await response.text();
-    throw new Error(`Failed to delete course (ID: ${id}): ${errorText}`);
-  }
-
-  return id;
-};
 
 /**
  * Hook for deleting an existing Lesson Plan record.
