@@ -127,7 +127,13 @@ describe("PUT", async () => {
 
       const request = new Request("http://localhost", {
         method: "PUT",
-        body: JSON.stringify({ title: "Updated Title" }),
+        body: JSON.stringify({
+          creation_meta: {
+            source_material: {
+              title: "Updated Title",
+            },
+          },
+        }),
         headers: { "Content-Type": "application/json" },
       });
 

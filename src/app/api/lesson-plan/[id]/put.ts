@@ -2,6 +2,40 @@ import * as Sentry from "@sentry/nextjs";
 import type { TablesUpdate } from "@/types";
 import { NextResponse } from "next/server";
 import { getClient } from "@/lib/supabase";
+import { z } from "zod";
+
+export const schema = z
+  .object({
+    id: z.string().optional(),
+    creation_meta: z
+      .object({
+        learner_profile: z
+          .object({
+            age: z.number().optional(),
+            label: z.string().optional(),
+            interests: z.array(z.string()).optional(),
+            experience: z.string().optional(),
+            reading_level: z.number().optional(),
+          })
+          .optional(),
+        source_material: z
+          .object({
+            title: z.string().min(1).optional(),
+            content: z.string().min(1).optional(),
+          })
+          .optional(),
+      })
+      .optional(),
+    introduction: z.string().min(1).optional(),
+    context: z.string().min(1).optional(),
+    example: z.string().min(1).optional(),
+    practice: z.string().min(1).optional(),
+    assessment: z.string().min(1).optional(),
+    reflection: z.string().min(1).optional(),
+    created_at: z.string().optional(),
+    updated_at: z.string().optional(),
+  })
+  .strict();
 
 /**
  * Update Lesson Plan
@@ -11,7 +45,15 @@ export async function PUT(
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params;
-  const input = await req.json();
+  const { data: input, error: zError } = schema.safeParse(await req.json());
+
+  if (zError) {
+    Sentry.captureException(zError);
+    return NextResponse.json(
+      { error: z.prettifyError(zError) },
+      { status: 422 }
+    );
+  }
 
   const supabase = getClient();
   const { data: record, error: dbError } = await supabase
