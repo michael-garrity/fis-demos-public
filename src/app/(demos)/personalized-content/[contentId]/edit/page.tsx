@@ -15,6 +15,7 @@ import PersonalizedContentSkeleton from "../_components/PersonalizedContentSkele
 import { LearnerProfileChip } from "@/lib/learner-profiles";
 import { useEditPersonalizedContent } from "../_hooks/useEditPersonalizedContent";
 import { useParams, useRouter } from "next/navigation";
+import MarkdownPreview from "@/app/(demos)/_components/MarkdownPreview";
 
 export default function PeronsalizedContentEditView() {
   const router = useRouter();
@@ -96,33 +97,24 @@ export default function PeronsalizedContentEditView() {
                 )
               }
             />
-            <div className="p-2 grid grid-cols-1 lg:grid-cols-2 gap-4 border-t pt-4">
+            <div className="border-t pt-6 mt-6">
                 {/* Editable Content Markdown */}
-                <h2 className="text-2xl font-bold text-gray-800 mb-6">
+                <h2 className="text-2xl font-bold text-gray-800 mb-4">
                     Personalized Content Breakdown
                 </h2>
 
-                <Card className="shadow-sm h-full">
-                  <CardBody className="space-y-3 pt-2 border-t border-gray-100">
-                      
-                    <div>
-                      <Textarea
-                        label="Content"
-                        labelPlacement="outside"
-                        rows={3}
-                        fullWidth
-                        value={personalizedContent?.content}
-                        onChange={(e: ChangeEvent<HTMLElement>) =>
-                          handleChange(
-                            "content",
-                            (e.target as HTMLTextAreaElement).value
-                          )
-                        }
-                        />
-                      </div>
-                    </CardBody>
-                  </Card>
-                </div>
+              <Card className="shadow-sm h-full">
+                <CardBody className="space-y-3 pt-2 border-t border-gray-100">  
+                  <div>
+                    <MarkdownPreview
+                      label="Personalized Content"
+                      value={personalizedContent?.content}
+                      onChange={(value) => handleChange("content", value)}
+                    />
+                  </div>
+                </CardBody>
+              </Card>
+            </div>
 
             <div className="flex flex-wrap gap-4 mt-4">
               <LearnerProfileChip
