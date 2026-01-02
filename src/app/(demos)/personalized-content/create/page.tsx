@@ -44,7 +44,7 @@ export default function PersonalizedContentForm() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Simplified handler for select (used for learnerProfileId and lesson)
+  // Simplified handler for select (used for learnerProfileId)
   const handleSelectChange = (name: string, value: string | undefined) => {
     setFormData((prev) => ({
       ...prev,
@@ -66,6 +66,23 @@ export default function PersonalizedContentForm() {
       learnerProfileId !== ""
     );
   }, [formData]);
+
+  // Handles autofill from selected lesson
+  const handleLessonSelect = (lessonId: string | undefined) => {
+    if (!lessonId) return;
+
+    const lesson = lessons?.find(
+      (l) => l.id.toString() === lessonId
+    );
+
+    setFormData((prev) => ({
+      ...prev,
+      sourceLesson: lessonId,
+      title: prev.title || lesson?.title + " (Personalized)" || "",
+      description: prev.description || lesson?.description || "",
+    }));
+  };
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -108,7 +125,36 @@ export default function PersonalizedContentForm() {
       </h1>
       <Card className="p-6 space-y-6">
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* 1. TITLE INPUT */}
+          <div className="flex mb-12">
+            {/* 1. Source Lesson Selection */}
+            <Select
+              data-testid="personalized-content-create-lesson"
+              label="Source Lesson"
+              name="sourceLesson"
+              placeholder={
+                lessonsLoading
+                  ? "Loading lessons..."
+                  : "Select existing lesson"
+              }
+              labelPlacement="outside"
+              onSelectionChange={(key) =>
+                handleLessonSelect(key.currentKey)
+              }
+              isDisabled={lessonsLoading}
+              fullWidth
+              required
+            >
+              <>
+                {lessons?.map((lesson) => (
+                  <SelectItem key={lesson.id.toString()}>
+                    {lesson.title}
+                  </SelectItem>
+                ))}
+              </>
+            </Select>
+          </div>
+
+          {/* 2. TITLE INPUT */}
           <Input
             data-testid="personalized-content-create-title"
             label="Personalized Content Title"
@@ -120,48 +166,20 @@ export default function PersonalizedContentForm() {
             fullWidth
             required
           />
-
-          {/* 2. DESCRIPTION TEXTAREA */}
-          <Textarea
-            data-testid="personalized-content-create-description"
-            label="Personalized Content Description"
-            name="description"
-            placeholder="A brief summary of the content and goals."
-            value={formData.description}
-            onChange={handleChange}
-            labelPlacement="outside"
-            fullWidth
-            required
-            rows={4}
-          />
-
-          <div className="flex gap-4 mb-12">
-            {/* 3. Source Lesson Selection */}
-            <Select
-            data-testid="personalized-content-create-lesson"
-            label="Source Lesson"
-            name="sourceLesson"
-            placeholder={
-              lessonsLoading
-                ? "Loading lessons..."
-                : "Select existing lesson"
-            }
-            labelPlacement="outside"
-            onSelectionChange={(key) =>
-              handleSelectChange("sourceLesson", key.currentKey)
-            }
-            isDisabled={lessonsLoading}
-            fullWidth
-            required
-          >
-            <>
-              {lessons?.map((lesson) => (
-                <SelectItem key={lesson.id.toString()}>
-                  {lesson.title}
-                </SelectItem>
-              ))}
-            </>
-          </Select>
+          <div className="mb-12">
+            {/* 3. DESCRIPTION TEXTAREA */}
+            <Textarea
+              data-testid="personalized-content-create-description"
+              label="Personalized Content Description"
+              name="description"
+              placeholder="A brief summary of the content and goals."
+              value={formData.description}
+              onChange={handleChange}
+              labelPlacement="outside"
+              fullWidth
+              required
+              rows={4}
+            />
           </div>
 
           {/* 4. LEARNER PROFILE SELECTION */}
