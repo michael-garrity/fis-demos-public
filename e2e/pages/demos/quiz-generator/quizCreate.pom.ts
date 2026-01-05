@@ -75,8 +75,12 @@ export class QuizCreatePage {
     // 3. Select Learner Profile (Selects the first available option)
     await this.learnerProfileSelect.click();
 
-    const firstProfileOption = this.page.getByTestId("quiz-create-profile-0");
-    await expect(firstProfileOption).toBeVisible();
-    await firstProfileOption.click();
+    const profileList = this.page.getByRole("listbox").first();
+    await expect(profileList).toBeVisible();
+
+    const firstOption = profileList.getByRole("option").first();
+    await firstOption.waitFor({ state: "visible" });
+    await firstOption.click({ force: true });
+
   }
 }

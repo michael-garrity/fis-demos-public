@@ -3,7 +3,7 @@
 import { useGeneratePersonalizedContent } from "../_store";
 import { useSavePersonalizedContent } from "../_store";
 import { useLearnerProfiles } from "@demos/_store/useLearnerProfiles";
-import { useMockLessonList } from "../_store/useMockLessonList";
+import { useSourceMaterials } from "@/features/source-materials";
 import { PersonalizedContentFormState } from "@/types";
 import {
   Card,
@@ -29,7 +29,7 @@ export default function PersonalizedContentForm() {
   });
 
   const { data: profiles, isLoading: profilesLoading } = useLearnerProfiles();
-  const { data: lessons, isLoading: lessonsLoading } = useMockLessonList();
+  const { data: lessons, isLoading: lessonsLoading } = useSourceMaterials();
   const { mutateAsync: createPersonalizedContent, isPending: isSubmitting } =
     useGeneratePersonalizedContent();
 
@@ -79,7 +79,8 @@ export default function PersonalizedContentForm() {
       ...prev,
       sourceLesson: lessonId,
       title: prev.title || lesson?.title + " (Personalized)" || "",
-      description: prev.description || lesson?.description || "",
+      // current src material does not have description field, might add later
+      // description: prev.description || lesson?.description || "",
     }));
   };
 
