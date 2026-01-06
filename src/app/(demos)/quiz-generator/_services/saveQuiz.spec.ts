@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach, afterEach, Mock } from "vitest";
 import { Quiz } from "../_models";
 import { factory } from "@/test"
 import { QuizRow } from "@/types";
-import { createQuiz } from "./createQuiz";
+import { saveQuiz } from "./saveQuiz";
 
 describe("createQuiz", () => {
   const mockQuiz: QuizRow = factory.build("quiz", {id: crypto.randomUUID()})
@@ -27,9 +27,9 @@ describe("createQuiz", () => {
       }
     )
 
-    await createQuiz(mockForm);
+    await saveQuiz(mockForm);
 
-    expect(fetch).toHaveBeenCalledWith("/api/quizzes/create", {
+    expect(fetch).toHaveBeenCalledWith("/api/quizzes", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(mockForm)
@@ -43,7 +43,7 @@ describe("createQuiz", () => {
       }
     )
 
-    const result = await createQuiz(mockForm);
+    const result = await saveQuiz(mockForm);
 
     expect(result).toBeInstanceOf(Quiz);
     expect(result.id).toBe(mockQuiz.id);
@@ -56,7 +56,7 @@ describe("createQuiz", () => {
       text: async () => errorText
     });
 
-    await expect(createQuiz(mockForm)).rejects.toThrow(
+    await expect(saveQuiz(mockForm)).rejects.toThrow(
       `Failed to create quiz: ${errorText}`
     );
   });

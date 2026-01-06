@@ -13,7 +13,7 @@ import {
 } from "@heroui/react";
 import { ListOrdered, User, Send } from "lucide-react";
 import React, { useState, useMemo } from "react";
-import { useCreateQuiz } from "../_store/useCreateQuiz";
+import { useSaveQuiz, useGenerateQuizQuestions } from "../_store";
 import SourceLessonSelector from "./_components/SourceLessonSelector";
 import { useRouter } from "next/navigation";
 
@@ -22,34 +22,6 @@ const genericSourceMaterial = [{
   title: "What is an atom?",
   content: "Atoms are the building blocks of matter. Everything around you — the air, water, your body — is made of atoms. Scientists discovered that atoms are incredibly small and consist of even smaller parts: **protons**, **neutrons**, and **electrons**.\n- **Protons** have a positive charge and sit in the center, called the **nucleus**.\n- **Neutrons** have no charge and are also in the nucleus.\n- **Electrons** have a negative charge and orbit around the nucleus.\nLearning about atoms helps us understand chemistry, biology, and physics.\nFor example, how water molecules form, how chemical reactions occur, and why different materials behave differently all depend on atoms."
 }]
-
-const genericQuestions = [
-  {
-    "question": "Which statement best describes the structure of an atom?",
-    "answers": [
-      {
-        "text": "An atom has protons and neutrons in the nucleus, with electrons orbiting around it.",
-        "feedback": "Correct! The nucleus contains protons and neutrons, while electrons move around the nucleus.",
-        "correct": true,
-      },
-      {
-        "text": "An atom is made only of protons and electrons, which are both in the nucleus.",
-        "feedback": "Not quite. Neutrons are also in the nucleus, and electrons orbit around it.",
-        "correct": false,
-      },
-      {
-        "text": "An atom is a large solid sphere made entirely of electrons.",
-        "feedback": "Incorrect. Atoms are mostly empty space and have a nucleus with protons and neutrons.",
-        "correct": false,
-      },
-      {
-        "text": "An atom has neutrons orbiting the nucleus while protons and electrons stay in the center.",
-        "feedback": "Nope. Only electrons orbit the nucleus; protons and neutrons are in the center.",
-        "correct": false,
-      }
-    ]
-  }
-]
 
 export default function QuizForm() {
   const [formData, setFormData] = useState<QuizFormState>({
@@ -62,8 +34,10 @@ export default function QuizForm() {
   });
 
   const { data: profiles, isLoading: profilesLoading } = useLearnerProfiles();
-  const { mutateAsync: createQuiz, isPending: isSubmitting } =
-    useCreateQuiz();
+  const { mutateAsync: saveQuiz, isPending: isSubmitting } =
+    useSaveQuiz();
+  const {mutateAsync: generateQuizQuestions, isPending: isGenerating } =
+    useGenerateQuizQuestions();
 
   const router = useRouter();
 
@@ -127,6 +101,15 @@ export default function QuizForm() {
       if (learnerProfile === undefined) return;
       if (sourceMaterial === undefined) return;
 
+      const questions = await generateQuizQuestions({
+        title: formData.title,
+        description: formData.description,
+        learnerProfile,
+        sourceMaterial,
+        customization: formData.customization,
+        numberOfQuestions: Number(formData.numberOfQuestions)
+      })
+
       // Structure data for API submission
       const submissionData: QuizFormSubmission = {
         title: formData.title,
@@ -136,10 +119,10 @@ export default function QuizForm() {
           source_material: sourceMaterial,
           customization: formData.customization
         } as Record<string, unknown>,
-        questions: genericQuestions
+        questions: questions
       }
 
-      const savedQuiz = await createQuiz(submissionData);
+      const savedQuiz = await saveQuiz(submissionData);
 
       router.push(`/quiz-generator/${savedQuiz.id}/edit`);
     }
@@ -232,6 +215,7 @@ export default function QuizForm() {
               onChange={handleChange}
               labelPlacement="outside"
               min={1}
+              max={20}
               required
             />
           </div>
@@ -264,9 +248,13 @@ export default function QuizForm() {
             }
             onSubmit={handleSubmit}
           >
-            {isSubmitting
-              ? "Creating Quiz..."
-              : "Create Quiz"}
+            {
+            isGenerating
+              ? "Generating Questions..."
+            : isSubmitting
+              ? "Saving Quiz..."
+              : "Create Quiz"
+            }
           </Button>
         </form>
       </Card>

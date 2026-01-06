@@ -3,7 +3,7 @@ import { putQuiz } from ".";
 import { Quiz } from "../_models";
 import { factory } from "@/test"
 
-describe("putCourseOutline", () => {
+describe("putQuiz", () => {
   const row = factory.build("quiz");
   const quiz = new Quiz(row);
 
