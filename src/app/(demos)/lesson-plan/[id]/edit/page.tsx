@@ -152,19 +152,15 @@ export default function LessonPlanEditPage() {
                 <h3 className="text-lg font-semibold">{section.label}</h3>
               </CardHeader>
               <CardBody>
-                <Card className="shadow-sm h-full">
-                  <CardBody className="space-y-3 pt-2 border-t border-gray-100">
-                    <div>
-                      <MarkdownPreview
-                        label={`${section.label} Content`}
-                        value={lessonPlan?.[section.key] ?? ""}
-                        onChange={(value) =>
-                          handleLessonSectionChange(section.key, value)
-                        }
-                      />
-                    </div>
-                  </CardBody>
-                </Card>
+                <div>
+                  <MarkdownPreview
+                    label={`${section.label} Content`}
+                    value={lessonPlan?.[section.key] ?? ""}
+                    onChange={(value) =>
+                      handleLessonSectionChange(section.key, value)
+                    }
+                  />
+                </div>
               </CardBody>
             </Card>
           ))}
