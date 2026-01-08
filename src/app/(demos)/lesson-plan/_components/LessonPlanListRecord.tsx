@@ -106,7 +106,7 @@ export default function LessonPlanListRecord({ record }: LessonPlanListProps) {
           >
             {record.creation_meta.source_material.title}
           </h2>
-          <p
+          <div
             data-testid="lesson-plan-list-record-description"
             className="text-sm text-gray-600 mb-4 text-justify line-clamp-2"
           >
@@ -114,7 +114,7 @@ export default function LessonPlanListRecord({ record }: LessonPlanListProps) {
             <ReactMarkdown remarkPlugins={[remarkGfm]}>
               {record.introduction}
             </ReactMarkdown>
-          </p>
+          </div>
 
           <div className="flex justify-between items-center mb-4 text-xs">
             <p

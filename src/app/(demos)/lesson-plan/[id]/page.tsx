@@ -71,13 +71,13 @@ export default function LessonPlanTeacherView() {
           </CardHeader>
           {/* Find a better thing to put here? */}
           <CardBody className="pt-0">
-            <p className="text-lg text-gray-600 border-b pb-4 mb-4">
+            <div className="text-lg text-gray-600 border-b pb-4 mb-4">
               <div className="prose prose-base max-w-none prose-headings:font-bold prose-h2:mt-6 prose-h3:mt-4">
                 <ReactMarkdown remarkPlugins={[remarkGfm]}>
                   {lessonPlan?.creation_meta.source_material.content}
                 </ReactMarkdown>
               </div>
-            </p>
+            </div>
 
             <div className="flex flex-wrap gap-4">
               <LearnerProfileChip
