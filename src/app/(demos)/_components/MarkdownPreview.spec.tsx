@@ -24,7 +24,7 @@ describe("MarkdownPreview", () => {
     ).toBeInTheDocument();
   });
 
-  it("shows empty preview message when no content is provided", () => {
+  it("renders segmented tabs", () => {
     render(
       <MarkdownPreview
         value=""
@@ -32,12 +32,33 @@ describe("MarkdownPreview", () => {
       />
     );
 
+    expect(screen.getByRole("button", { name: "Edit" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Preview" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Split" })).toBeInTheDocument();
+  });
+
+  it("shows empty preview message when switching to preview mode", async () => {
+    const user = userEvent.setup();
+
+    render(
+      <MarkdownPreview
+        value=""
+        onChange={vi.fn()}
+      />
+    );
+
+    await user.click(
+      screen.getByRole("button", { name: "Preview" })
+    );
+
     expect(
       screen.getByText("Nothing to preview yet")
     ).toBeInTheDocument();
   });
 
-  it("renders markdown content in the preview", () => {
+  it("renders markdown content in preview mode", async () => {
+    const user = userEvent.setup();
+    
     const markdown = `
 # Heading
 
@@ -52,6 +73,10 @@ This is **bold** text.
         value={markdown}
         onChange={vi.fn()}
       />
+    );
+
+    await user.click(
+      screen.getByRole("button", { name: "Preview" })
     );
 
     // Heading rendered
@@ -91,10 +116,12 @@ This is **bold** text.
     .map(call => call[0])
     .join("");
 
-  expect(typedValue).toBe("Hello");
+    expect(typedValue).toBe("Hello");
   });
 
-  it("renders the live preview header", () => {
+  it("renders live preview header only in split mode", async () => {
+    const user = userEvent.setup();
+
     render(
       <MarkdownPreview
         value="Test"
@@ -102,12 +129,18 @@ This is **bold** text.
       />
     );
 
+    await user.click(
+      screen.getByRole("button", { name: "Split" })
+    );
+
     expect(
       screen.getByText("Live Preview")
     ).toBeInTheDocument();
   });
 
-  it("applies the heightClassName to both editor and preview cards", () => {
+  it("applies the heightClassName to both editor and preview in split mode", async () => {
+    const user = userEvent.setup();
+
     const { container } = render(
       <MarkdownPreview
         value="Test"
@@ -116,7 +149,13 @@ This is **bold** text.
       />
     );
 
-    const heightContainers = container.querySelectorAll(".h-\\[600px\\]");
+    await user.click(
+      screen.getByRole("button", { name: "Split" })
+    );
+
+    const heightContainers =
+      container.querySelectorAll(".h-\\[600px\\]");
+
     expect(heightContainers.length).toBe(2);
   });
 });
