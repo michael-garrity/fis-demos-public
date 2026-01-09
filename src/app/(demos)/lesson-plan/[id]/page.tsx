@@ -1,13 +1,7 @@
 "use client";
 
-import { Users, ChevronDown, ChevronUp } from "lucide-react";
-import {
-  Card,
-  CardHeader,
-  CardBody,
-  Accordion,
-  AccordionItem,
-} from "@heroui/react";
+import { Users } from "lucide-react";
+import { Card, CardHeader, CardBody } from "@heroui/react";
 import { LearnerProfile, LearnerProfileChip } from "@/lib/learner-profiles";
 import { useLessonPlan } from "../_store/useLessonPlan";
 import { useParams } from "next/navigation";
@@ -120,46 +114,31 @@ export default function LessonPlanTeacherView() {
       {isFetching ? (
         <LessonSkeleton />
       ) : (
-        <Accordion
-          selectionMode="multiple"
-          className="space-y-4"
-          variant="splitted"
-          defaultExpandedKeys={["0"]}
-        >
-          {lessonSections.map((section, index) => (
-            <AccordionItem
-              key={index.toString()}
-              aria-label={section.title}
-              title={
-                <div className="flex items-center justify-between w-full">
-                  <span className="text-xl font-bold text-gray-800">
+        <Card className="shadow-lg rounded-xl">
+          <CardBody className="divide-y-2 divide-indigo-100">
+            {lessonSections.map((section, index) => (
+              <section
+                key={index}
+                id={`section-${index}`}
+                className="py-10 scroll-mt-24"
+              >
+                {/* Section header */}
+                <div className="border-l-4 border-indigo-600 pl-4 mb-4">
+                  <h3 className="text-2xl font-bold text-gray-800">
                     {section.title}
-                  </span>
+                  </h3>
                 </div>
-              }
-              indicator={({ isOpen }) =>
-                isOpen ? (
-                  <ChevronUp className="w-5 h-5 text-indigo-600" />
-                ) : (
-                  <ChevronDown className="w-5 h-5 text-gray-500" />
-                )
-              }
-              classNames={{
-                trigger: "py-5 cursor-pointer",
-                heading: "text-xl",
-                content: "p-4 pt-0",
-                title: "text-lg font-semibold",
-                base: "border-t-4 border-indigo-200",
-              }}
-            >
-              <div className="prose prose-base max-w-none prose-headings:font-bold prose-h2:mt-6 prose-h3:mt-4">
-                <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                  {section.content}
-                </ReactMarkdown>
-              </div>
-            </AccordionItem>
-          ))}
-        </Accordion>
+
+                {/* Section content */}
+                <div className="prose prose-base max-w-none prose-headings:font-bold prose-h2:mt-6 prose-h3:mt-4">
+                  <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                    {section.content}
+                  </ReactMarkdown>
+                </div>
+              </section>
+            ))}
+          </CardBody>
+        </Card>
       )}
     </div>
   );
