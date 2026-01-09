@@ -185,7 +185,8 @@ export default function LessonPlanForm() {
               <>
                 <Input
                   data-testid="lesson-plan-create-source-material-title"
-                  label="Source Material Title"
+                  className="pt-2"
+                  label="Title"
                   name="sourceMaterialTitle"
                   placeholder="e.g., Python Programming Basics Chapter 3"
                   value={formData.sourceMaterialTitle}
@@ -197,7 +198,7 @@ export default function LessonPlanForm() {
                 />
                 <Textarea
                   data-testid="lesson-plan-create-source-material-content"
-                  label="Source Material Content"
+                  label="Source Material"
                   name="sourceMaterialContent"
                   placeholder="Paste or type the source material content that will be used to generate the lesson plan."
                   value={formData.sourceMaterialContent}
