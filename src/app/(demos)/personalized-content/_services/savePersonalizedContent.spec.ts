@@ -8,13 +8,11 @@ describe("getPersonalizedContentList", () => {
     {
       id: "1",
       title: "Personalized Content 1",
-      description: "First personalized Content",
       learnerProfileId: "learner-1",
     },
     {
       id: "2",
       title: "Personalized Content 2",
-      description: "Second personalized Content",
       learnerProfileId: "learner-2",
     },
   ];

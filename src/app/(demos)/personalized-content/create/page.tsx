@@ -22,7 +22,6 @@ export default function PersonalizedContentForm() {
   const [formData, setFormData] = useState<PersonalizedContentFormState>({
     id: "1",
     title: "",
-    description: "",
     sourceLesson: "",
     learnerProfileId: "",
     customization: "",
@@ -44,7 +43,7 @@ export default function PersonalizedContentForm() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Simplified handler for select (used for learnerProfileId)
+  // Simplified handler for select (used for learnerProfileId and sourceLesson)
   const handleSelectChange = (name: string, value: string | undefined) => {
     setFormData((prev) => ({
       ...prev,
@@ -55,34 +54,15 @@ export default function PersonalizedContentForm() {
   const isFormValid = useMemo(() => {
     const {
       title,
-      description,
       learnerProfileId,
       sourceLesson,
     } = formData;
     return (
       title.trim().length > 0 &&
-      description.trim().length > 0 &&
       sourceLesson !== "" &&
       learnerProfileId !== ""
     );
   }, [formData]);
-
-  // Handles autofill from selected lesson
-  const handleLessonSelect = (lessonId: string | undefined) => {
-    if (!lessonId) return;
-
-    const lesson = lessons?.find(
-      (l) => l.id.toString() === lessonId
-    );
-
-    setFormData((prev) => ({
-      ...prev,
-      sourceLesson: lessonId,
-      title: prev.title || lesson?.title + " (Personalized)" || "",
-      // current src material does not have description field, might add later
-      // description: prev.description || lesson?.description || "",
-    }));
-  };
 
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -107,11 +87,11 @@ export default function PersonalizedContentForm() {
 
       const createdPersonalizedContent = await createPersonalizedContent(submissionData);
 
-      // save the title and description from the form
+      // save the title, profile, and lessonId from the form
       const savedPersonalizedContent = await savePersonalizedContent({
         content: createdPersonalizedContent.content,
         title: formData.title,
-        description: formData.description,
+        description: createdPersonalizedContent.description,
         creation_meta: { learner_profile: learnerProfile, source_lesson_id: formData.sourceLesson },
       });
 
@@ -126,8 +106,21 @@ export default function PersonalizedContentForm() {
       </h1>
       <Card className="p-6 space-y-6">
         <form onSubmit={handleSubmit} className="space-y-6">
+          {/* 1. TITLE INPUT */}
+          <Input
+            data-testid="personalized-content-create-title"
+            label="Personalized Content Title"
+            name="title"
+            placeholder="e.g., Python for Data Analysis"
+            value={formData.title}
+            onChange={handleChange}
+            labelPlacement="outside"
+            fullWidth
+            required
+          />
+
           <div className="flex mb-12">
-            {/* 1. Source Lesson Selection */}
+            {/* 2. Source Lesson Selection */}
             <Select
               data-testid="personalized-content-create-lesson"
               label="Source Lesson"
@@ -139,7 +132,7 @@ export default function PersonalizedContentForm() {
               }
               labelPlacement="outside"
               onSelectionChange={(key) =>
-                handleLessonSelect(key.currentKey)
+                handleSelectChange("sourceLesson", key.currentKey)
               }
               isDisabled={lessonsLoading}
               fullWidth
@@ -155,35 +148,7 @@ export default function PersonalizedContentForm() {
             </Select>
           </div>
 
-          {/* 2. TITLE INPUT */}
-          <Input
-            data-testid="personalized-content-create-title"
-            label="Personalized Content Title"
-            name="title"
-            placeholder="e.g., Python for Data Analysis"
-            value={formData.title}
-            onChange={handleChange}
-            labelPlacement="outside"
-            fullWidth
-            required
-          />
-          <div className="mb-12">
-            {/* 3. DESCRIPTION TEXTAREA */}
-            <Textarea
-              data-testid="personalized-content-create-description"
-              label="Personalized Content Description"
-              name="description"
-              placeholder="A brief summary of the content and goals."
-              value={formData.description}
-              onChange={handleChange}
-              labelPlacement="outside"
-              fullWidth
-              required
-              rows={4}
-            />
-          </div>
-
-          {/* 4. LEARNER PROFILE SELECTION */}
+          {/* 3. LEARNER PROFILE SELECTION */}
           <Select
             data-testid="personalized-content-create-learner-profile"
             label="Target Learner Profile"
@@ -211,7 +176,7 @@ export default function PersonalizedContentForm() {
             </>
           </Select>
 
-          {/* 5. CUSTOMIZATION TEXTAREA */}
+          {/* 4. CUSTOMIZATION TEXTAREA */}
           <Textarea
             label="Customization"
             name="customization"

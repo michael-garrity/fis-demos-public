@@ -7,7 +7,6 @@ describe("generatePersonalizedContent", () => {
   const mockPersonalizedContentData: PersonalizedContentFormState = {
     id: "1",
     title: "Test Personalized Content",
-    description: "Test description",
     learnerProfileId: "learner-1",
     sourceLesson: "lesson-1",
     customization: "Test customization",

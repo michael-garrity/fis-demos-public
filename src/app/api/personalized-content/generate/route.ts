@@ -18,7 +18,7 @@ export async function POST(req: NextRequest) {
       You may also tailor examples to match the user’s interest, so if the source lesson is about velocity and acceleration and the user is interested in horses you might write some examples that use horses to explain velocity.
       You may also relate the topic to their interests, like explain how a loop works with how certain conditions in a speed boat race may mean that the race can start or that it must be stopped and then connect that to different loops in programming having their own conditions which can be used to stop execution.
 
-      You will be provided the source lesson, which is composed of the title, description of the lesson, and the main content body.
+      You will be provided the source lesson, which is composed of the title and the main content body.
       You are also going to be provided the persona for the person you are to change the lesson for.
       The persona stores the person’s age, their reading level, their experience, and a list of their interests.
       You will tailor your lesson for this persona.
@@ -28,7 +28,6 @@ export async function POST(req: NextRequest) {
       Make sure to incorporate these notes into your adaptation of the lesson.
 
       Title: ${body.title}
-      Description: ${body.description}
       Source Lesson Content: ${body.sourceLesson}
       Persona Information: ${body.learnerProfileId}
       Customization notes: ${body.customization}
