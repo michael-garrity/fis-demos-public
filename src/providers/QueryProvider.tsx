@@ -20,7 +20,7 @@ export function QueryProvider({
            */
           queries: {
             gcTime: 0,
-            refetchOnMount: true,
+            refetchOnWindowFocus: false,
             staleTime: 0,
           },
         },
