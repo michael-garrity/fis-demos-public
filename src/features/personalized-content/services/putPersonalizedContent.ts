@@ -1,4 +1,4 @@
-import { PersonalizedContentRow, PersonalizedContent } from "../_models";
+import { PersonalizedContentRow, PersonalizedContent } from "../models/PersonalizedContent";
 
 /**
  * API function to update an existing Personalized Content record.

@@ -1,6 +1,6 @@
 import "@testing-library/jest-dom";
 import PersonalizedContentListRecord from "./PersonalizedContentListRecord";
-import { PersonalizedContent } from "../_models";
+import { PersonalizedContent } from "@/features/personalized-content";
 import { LearnerProfile } from "@/lib/learner-profiles";
 import { describe, test, expect, vi, beforeEach, Mock } from "vitest";
 import { factory } from "@/test";
@@ -35,7 +35,7 @@ vi.mock("@/lib/learner-profiles", async (importOriginal) => {
 // Mock the delete mutation hook
 const mockDeleteMutation = vi.fn();
 const mockIsDeleting = vi.fn(() => false); // Use a mock function to control state easily
-vi.mock("../_store/useDeletePersonalizedContent", () => {
+vi.mock("@/features/personalized-content/hooks/useDeletePersonalizedContent", () => {
   return {
     useDeletePersonalizedContent: vi.fn(() => ({
       mutate: mockDeleteMutation,

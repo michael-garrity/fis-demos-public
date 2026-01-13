@@ -1,6 +1,5 @@
 import { SetStateAction, useState } from "react";
-import { usePersonalizedContent, useUpdatePersonalizedContent } from "../../_store";
-import { PersonalizedContent } from "../../_models";
+import { usePersonalizedContent, useUpdatePersonalizedContent, PersonalizedContent} from "@/features/personalized-content";
 
 const isEqual = (
   a?: PersonalizedContent,

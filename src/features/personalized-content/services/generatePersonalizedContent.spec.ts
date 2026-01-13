@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { PersonalizedContentFormState } from "@/types";
-import { PersonalizedContentRow } from "../_models";
+import { PersonalizedContentRow } from "../models/PersonalizedContent";
 import { generatePersonalizedContent } from "./generatePersonalizedContent";
 
 describe("generatePersonalizedContent", () => {

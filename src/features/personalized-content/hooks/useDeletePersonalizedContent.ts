@@ -1,6 +1,6 @@
-import { PersonalizedContent } from "../_models";
+import { PersonalizedContent } from "../models/PersonalizedContent";
 import { personalizedContentKeys } from "./keys";
-import { deletePersonalizedContent } from "../_services";
+import { deletePersonalizedContent } from "../services/deletePersonalizedContent";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 /**

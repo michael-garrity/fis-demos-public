@@ -1,4 +1,4 @@
-import { PersonalizedContent } from "./";
+import { PersonalizedContent } from "./PersonalizedContent";
 import { LearnerProfile } from "@/lib/learner-profiles";
 import { describe, it, expect } from "vitest";
 import { factory } from "@/test";

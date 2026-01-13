@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { PersonalizedContentRecord } from "@/types";
 import { personalizedContentKeys } from "./keys";
-import { savePersonalizedContent } from "../_services";
+import { savePersonalizedContent } from "../services/savePersonalizedContent";
 
 /**
  * Hook for saving a Personalized Content record.

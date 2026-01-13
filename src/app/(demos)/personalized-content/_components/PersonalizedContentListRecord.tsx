@@ -5,8 +5,7 @@ import { LearnerProfileChip } from "@/lib/learner-profiles";
 import { Button, addToast, useDisclosure } from "@heroui/react";
 import { Edit2, Eye, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { PersonalizedContent } from "../_models";
-import { useDeletePersonalizedContent } from "../_store";
+import { PersonalizedContent, useDeletePersonalizedContent } from "@/features/personalized-content";
 import ConfirmationDialog from "@/components/ConfirmationDialog";
 
 interface PersonalizedContentListRecordProps {

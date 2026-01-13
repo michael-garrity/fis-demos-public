@@ -1,5 +1,5 @@
-import { getPersonalizedContent } from "../_services";
-import { PersonalizedContent } from "../_models";
+import { getPersonalizedContent } from "../services/getPersonalizedContent";
+import { PersonalizedContent } from "../models/PersonalizedContent";
 import { useQueryClient, useQuery } from "@tanstack/react-query";
 import { personalizedContentKeys } from "./keys";
 

@@ -17,7 +17,7 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import PersonalizedContentSkeleton from "./_components/PersonalizedContentSkeleton";
 import { LearnerProfileChip } from "@/lib/learner-profiles";
-import { usePersonalizedContent } from "../_store";
+import { usePersonalizedContent } from "@/features/personalized-content";
 import { useSourceMaterials } from "@/features/source-materials";
 import { useParams } from "next/navigation";
 

@@ -1,6 +1,6 @@
 import { vi, describe, it, expect, beforeEach, afterEach, Mock } from "vitest";
 import { getPersonalizedContentList } from "./getPersonalizedContentList";
-import { PersonalizedContentRow, PersonalizedContent } from "../_models";
+import { PersonalizedContentRow, PersonalizedContent } from "../models/PersonalizedContent";
 import { factory } from "@/test"
 
 describe("getPersonalizedContentList", () => {

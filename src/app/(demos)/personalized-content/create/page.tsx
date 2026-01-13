@@ -1,7 +1,6 @@
 "use client";
 
-import { useGeneratePersonalizedContent } from "../_store";
-import { useSavePersonalizedContent } from "../_store";
+import { useGeneratePersonalizedContent, useSavePersonalizedContent } from "@/features/personalized-content";
 import { useLearnerProfiles } from "@demos/_store/useLearnerProfiles";
 import { useSourceMaterials } from "@/features/source-materials";
 import { PersonalizedContentFormState } from "@/types";

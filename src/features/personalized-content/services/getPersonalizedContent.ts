@@ -1,4 +1,4 @@
-import { PersonalizedContentRow, PersonalizedContent } from "../_models";
+import { PersonalizedContentRow, PersonalizedContent } from "../models/PersonalizedContent";
 
 export async function getPersonalizedContent(id: string) {
   const res = await fetch(`/api/personalized-content/${id}`);

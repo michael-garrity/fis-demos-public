@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { getPersonalizedContentList } from "./getPersonalizedContentList";
-import { PersonalizedContent } from "../_models";
+import { PersonalizedContent } from "../models/PersonalizedContent";
 import { PersonalizedContentRecord } from "@/types";
 
 describe("getPersonalizedContentList", () => {

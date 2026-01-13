@@ -1,4 +1,4 @@
-import { PersonalizedContent } from "../_models";
+import { PersonalizedContent } from "../models/PersonalizedContent";
 
 /**
  * API function to delete an existing Personalized Content record.

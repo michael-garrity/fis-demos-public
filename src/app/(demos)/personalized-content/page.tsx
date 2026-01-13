@@ -1,9 +1,8 @@
 "use client";
 
-import { PersonalizedContent } from "./_models";
+import { PersonalizedContent, usePersonalizedContentList } from "@/features/personalized-content";
 import ListView from "../_components/List";
 import PersonalizedContentListRecord from "./_components/PersonalizedContentListRecord";
-import { usePersonalizedContentList } from "./_store";
 
 export default function PersonalizedContentDemoPage() {
   const { data: content, isLoading, error } = usePersonalizedContentList();
