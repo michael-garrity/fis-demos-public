@@ -66,6 +66,13 @@ export const useEditQuiz = (id: string) => {
       })
   }
 
+  const handleCorrectAnswerChange = (questionIndex: number) => (correctAnswerIndex: number) => {
+    setQuiz((previous) => {
+      if (!previous) return undefined;
+      return previous.withCorrectAnswer(questionIndex, correctAnswerIndex)
+    })
+  }
+
   const saveChanges = () => {
     if (!state.quiz) return;
 
@@ -100,6 +107,7 @@ export const useEditQuiz = (id: string) => {
     handleTopLevelChange,
     handleQuestionChange,
     handleAnswerChange,
+    handleCorrectAnswerChange,
     saveChanges,
     cancelChanges,
   };

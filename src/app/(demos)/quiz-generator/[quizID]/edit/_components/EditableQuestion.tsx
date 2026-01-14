@@ -3,7 +3,8 @@ import {
   Card,
   CardHeader,
   CardBody,
-  Input
+  Input,
+  RadioGroup
 } from "@heroui/react";
 import { Answer, Question } from "@/types";
 import EditableAnswer from "./EditableAnswer";
@@ -12,12 +13,14 @@ type EditableQuestionProps = {
     question: Question,
     handleQuestionChange: <K extends keyof Question>(field: K, value: Question[K]) => void
     handleAnswerChange: (answerIndex: number) => <K extends keyof Answer>(field: K, value: Answer[K]) => void
+    handleCorrectAnswerChange: (answerIndex: number) => void
 }
 
 export default function EditableQuestion({
     question,
     handleQuestionChange,
-    handleAnswerChange
+    handleAnswerChange,
+    handleCorrectAnswerChange
 }: EditableQuestionProps) {
   return (
   <Card className="shadow-lg overflow-hidden border border-indigo-100 bg-white">
@@ -42,9 +45,19 @@ export default function EditableQuestion({
     {/* Answers */}
     <CardBody className="p-6 space-y-6 bg-gray-50">
       <p className="w-full text-left text-small text-default-800">Select the correct answer</p>
-      {question.answers.map((answer, index) =>
-        <EditableAnswer key={index} answer={answer} handleAnswerChange={handleAnswerChange(index)} />
-      )}
+      <RadioGroup 
+        value={String(question.answers.findIndex(a => a.correct))}
+        onValueChange={idx => handleCorrectAnswerChange(Number(idx))}
+      >
+        {question.answers.map((answer, index) =>
+          <EditableAnswer 
+            key={index}
+            index={index}
+            answer={answer} 
+            handleAnswerChange={handleAnswerChange(index)}
+          />
+        )}
+      </RadioGroup>
     </CardBody>
   </Card>
 );

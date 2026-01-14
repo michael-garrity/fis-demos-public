@@ -49,6 +49,24 @@ export class Quiz {
     return this.withQuestion(questionIndex, updatedQuestion)
   }
 
+  withCorrectAnswer(
+    questionIndex: number,
+    newCorrectIndex: number
+  ): Quiz {
+    const question = this.questions[questionIndex];
+
+    const updatedQuestion = {
+      ...question,
+      answers: question.answers.map((existing, i) => 
+        i === newCorrectIndex 
+        ? {...existing, correct: true} 
+        : {...existing, correct: false}
+      )
+    }
+
+    return this.withQuestion(questionIndex, updatedQuestion)
+  }
+
   get id() {
     return this.data.id;
   }

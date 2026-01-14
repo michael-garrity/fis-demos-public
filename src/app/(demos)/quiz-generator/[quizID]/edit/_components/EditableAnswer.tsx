@@ -6,26 +6,27 @@ import {
   CardBody,
   Input,
   // Textarea,
-  Checkbox
+  Radio
 } from "@heroui/react";
 import { Answer } from "@/types";
 
 type EditableAnswerProps = {
     answer: Answer,
+    index: number,
     handleAnswerChange: <K extends keyof Answer>(field: K, value: Answer[K]) => void
 }
 
 export default function EditableAnswer({
   answer,
+  index,
   handleAnswerChange
 }: EditableAnswerProps) {
   return (
   <Card className={`flex flex-row border-gray-200 bg-white`}>
     <CardHeader className="w-min">
-      <Checkbox
-        isSelected={answer.correct}
-        onValueChange={(value) => handleAnswerChange("correct", value)}
-      ></Checkbox>
+      <Radio
+        value={String(index)}
+      />
     </CardHeader>
     <CardBody className="w-full flex gap-1">
       <Input label="Answer" value={answer.text} onValueChange={(value) => handleAnswerChange("text", value)} />

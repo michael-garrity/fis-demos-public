@@ -29,6 +29,7 @@ export default function QuizTeacherView() {
     error,
     handleQuestionChange,
     handleAnswerChange,
+    handleCorrectAnswerChange,
     handleTopLevelChange,
     isFetching,
     isModified,
@@ -144,6 +145,7 @@ export default function QuizTeacherView() {
               question={question}
               handleQuestionChange={handleQuestionChange(index)}
               handleAnswerChange={handleAnswerChange(index)}
+              handleCorrectAnswerChange={handleCorrectAnswerChange(index)}
               key={index}
             />
           )}
