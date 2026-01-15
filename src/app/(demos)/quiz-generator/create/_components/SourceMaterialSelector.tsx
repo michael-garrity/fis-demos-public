@@ -1,7 +1,7 @@
 import { SourceMaterial } from "@/features/source-materials"
 import { SourceMaterialForm } from "@/types"
 import { Select, SelectItem, Textarea } from "@heroui/react"
-import { Book } from "lucide-react"
+import { Book, BookText } from "lucide-react"
 
 type props = {
   sources: SourceMaterial[] | undefined
@@ -16,6 +16,8 @@ export default function SourceMaterialSelector({sources, loading, value, onChang
       ? ["custom"] 
     : value?.id ? [value.id]
     : undefined
+
+  const isCustom = value?.type === "custom"
 
   return (
     <>
@@ -39,7 +41,7 @@ export default function SourceMaterialSelector({sources, loading, value, onChang
             }
           }
         }
-        startContent={<Book size={18} />}
+        startContent={isCustom ? <BookText size={18} /> : <Book size={18} />}
         isDisabled={loading}
         fullWidth
         required
@@ -50,7 +52,7 @@ export default function SourceMaterialSelector({sources, loading, value, onChang
               {source.title}
             </SelectItem>
           ))}
-          <SelectItem key="custom">
+          <SelectItem key="custom" startContent={<BookText size={18} />}>
             Custom Lesson
           </SelectItem>
         </>
