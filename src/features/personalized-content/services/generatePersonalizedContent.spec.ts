@@ -10,6 +10,10 @@ describe("generatePersonalizedContent", () => {
     learnerProfileId: "learner-1",
     sourceMaterial: "lesson-1",
     customization: "Test customization",
+    customSource: {
+      title: "",
+      markdown: "",
+    },
   };
 
   const mockResponseData: PersonalizedContentRow = {

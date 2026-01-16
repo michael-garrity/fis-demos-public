@@ -5,6 +5,7 @@ import { useLearnerProfiles } from "@demos/_store/useLearnerProfiles";
 import { useSourceMaterials } from "@/features/source-materials";
 import { PersonalizedContentFormState } from "@/types";
 import { ViewSourceModal } from "../../_components/ViewSourceModal";
+import { SourceSelector } from "../../_components/SourceSelector";
 import {
   Card,
   Input,
@@ -14,7 +15,7 @@ import {
   Button,
   Spinner,
 } from "@heroui/react";
-import { User, Send, Eye } from "lucide-react";
+import { User, Send, } from "lucide-react";
 import React, { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 
@@ -25,6 +26,10 @@ export default function PersonalizedContentForm() {
     sourceMaterial: "",
     learnerProfileId: "",
     customization: "",
+    customSource: {
+      title: "",
+      markdown: "",
+    },
   });
 
   const [isViewSourceModalOpen, setIsViewSourceModalOpen] = useState(false);
@@ -58,7 +63,18 @@ export default function PersonalizedContentForm() {
       title,
       learnerProfileId,
       sourceMaterial,
+      customSource,
     } = formData;
+
+    if (sourceMaterial === "custom") {
+      return (
+        title.trim().length > 0 &&
+        customSource.title.trim().length > 0 &&
+        customSource.markdown.trim().length > 0 &&
+        learnerProfileId !== ""
+      );
+    }
+
     return (
       title.trim().length > 0 &&
       sourceMaterial !== "" &&
@@ -67,7 +83,12 @@ export default function PersonalizedContentForm() {
   }, [formData]);
 
   const selectedSourceMaterial = useMemo(() => {
-    if (!formData.sourceMaterial || !sourceMaterials) return null;
+    if (
+      !formData.sourceMaterial ||
+      formData.sourceMaterial === "custom" ||
+      !sourceMaterials
+    )
+      return null;
 
     return sourceMaterials.find(
       (l) => l.id.toString() === formData.sourceMaterial
@@ -83,9 +104,16 @@ export default function PersonalizedContentForm() {
       (p) => p.id === formData.learnerProfileId
     );
 
-    const sourceMaterial = sourceMaterials?.find(
-      (l) => l.id.toString() === formData.sourceMaterial
-    );
+    const sourceMaterial =
+      formData.sourceMaterial === "custom"
+        ? {
+            title: formData.customSource.title,
+            markdown: formData.customSource.markdown,
+          }
+        : sourceMaterials?.find(
+            (l) => l.id.toString() === formData.sourceMaterial
+          );
+
 
     if (isFormValid && !isSubmitting) {
       // Structure data for API submission
@@ -102,7 +130,7 @@ export default function PersonalizedContentForm() {
         content: createdPersonalizedContent.content,
         title: formData.title,
         description: createdPersonalizedContent.description,
-        creation_meta: { learner_profile: learnerProfile, source_material: sourceMaterial?.toJSON() },
+        creation_meta: { learner_profile: learnerProfile, source_material: sourceMaterial },
       });
 
       router.push(`/personalized-content/${savedPersonalizedContent.id}/edit`);
@@ -130,46 +158,20 @@ export default function PersonalizedContentForm() {
           />
 
           <div className="flex flex-col gap-2 mb-12">
-            {/* 2. Source Lesson Selection */}
-            <Select
-              data-testid="personalized-content-create-source-material"
-              label="Source Material"
-              name="sourceMaterial"
-              placeholder={
-                sourceMaterialsLoading
-                  ? "Loading source materials..."
-                  : "Select existing source material"
+            {/* 2. SOURCE MATERIAL SELECTION */}
+            <SourceSelector
+              sources={sourceMaterials ?? []}
+              value={formData.sourceMaterial}
+              customSource={formData.customSource}
+              isLoading={sourceMaterialsLoading}
+              onSourceChange={(value) =>
+                setFormData((prev) => ({ ...prev, sourceMaterial: value }))
               }
-              labelPlacement="outside"
-              onSelectionChange={(key) =>
-                handleSelectChange("sourceMaterial", key.currentKey)
+              onCustomChange={(custom) =>
+                setFormData((prev) => ({ ...prev, customSource: custom }))
               }
-              isDisabled={sourceMaterialsLoading}
-              fullWidth
-              required
-            >
-              <>
-                {sourceMaterials?.map((sourceMaterial) => (
-                  <SelectItem key={sourceMaterial.id.toString()}>
-                    {sourceMaterial.title}
-                  </SelectItem>
-                ))}
-              </>
-            </Select>
-
-            {/* VIEW SOURCE BUTTON */}
-            {selectedSourceMaterial && (
-              <div className="flex justify-end">
-                <Button
-                  size="sm"
-                  variant="flat"
-                  startContent={<Eye size={16} />}
-                  onClick={() => setIsViewSourceModalOpen(true)}
-                >
-                  View Source
-                </Button>
-              </div>
-            )}
+              onViewSource={() => setIsViewSourceModalOpen(true)}
+            />
           </div>
 
           {/* 3. LEARNER PROFILE SELECTION */}

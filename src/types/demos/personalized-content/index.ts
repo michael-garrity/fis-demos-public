@@ -7,4 +7,8 @@ export interface PersonalizedContentRecord extends BaseListRecord {
 export interface PersonalizedContentFormState extends PersonalizedContentRecord {
   sourceMaterial: string;
   customization: string;
+  customSource: {
+    title: string;
+    markdown: string;
+  };
 }
