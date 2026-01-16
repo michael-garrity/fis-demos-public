@@ -183,11 +183,7 @@ export default function LessonPlanEditPage() {
         >
           Cancel
         </Button>
-        <Button
-          color="primary"
-          onPress={saveChanges}
-          isDisabled={!isModified || isPending}
-        >
+        <Button color="primary" onPress={saveChanges} isDisabled={isPending}>
           {isPending ? "Saving..." : "Save Changes"}
         </Button>
       </div>

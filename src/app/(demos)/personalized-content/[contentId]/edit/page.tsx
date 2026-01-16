@@ -98,13 +98,13 @@ export default function PeronsalizedContentEditView() {
               }
             />
             <div className="border-t pt-6 mt-6">
-                {/* Editable Content Markdown */}
-                <h2 className="text-2xl font-bold text-gray-800 mb-4">
-                    Personalized Content Breakdown
-                </h2>
+              {/* Editable Content Markdown */}
+              <h2 className="text-2xl font-bold text-gray-800 mb-4">
+                Personalized Content Breakdown
+              </h2>
 
               <Card className="shadow-sm h-full">
-                <CardBody className="space-y-3 pt-2 border-t border-gray-100">  
+                <CardBody className="space-y-3 pt-2 border-t border-gray-100">
                   <div>
                     <MarkdownPreview
                       label="Personalized Content"
@@ -144,11 +144,7 @@ export default function PeronsalizedContentEditView() {
         >
           Cancel
         </Button>
-        <Button
-          color="primary"
-          onPress={saveChanges}
-          isDisabled={!isModified || isPending}
-        >
+        <Button color="primary" onPress={saveChanges} isDisabled={isPending}>
           {isPending ? "Saving..." : "Save Changes"}
         </Button>
       </div>
