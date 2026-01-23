@@ -3,6 +3,13 @@ insert into learner_profiles
 (label, age, reading_level, experience, interests)
 values
 (
+    'Adult Learner', 29, 13,
+    $experience$
+Has a mechanical engineering degree and has some coding experience from coding bootcamps.
+$experience$,
+    array['3D printing', 'Mountain biking', 'Pottery']
+),
+(
     '7th grader', 12, 5,
     $experience$
 Has completed introductory STEM activities and basic robotics challenges.
