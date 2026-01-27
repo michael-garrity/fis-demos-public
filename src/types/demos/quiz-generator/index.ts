@@ -1,5 +1,5 @@
 import { LearnerProfile } from "@/lib/learner-profiles";
-import { Database, SourceMaterial, SourceMaterialForm } from "@/types";
+import { Database, SourceMaterial } from "@/types";
 
 export type QuizDB = Database["public"]["Tables"]["quizzes"]
 export type QuizRow = QuizDB["Row"]
@@ -12,7 +12,7 @@ export interface QuizFormState {
   customization: string;
   numberOfQuestions: string;
   learnerProfileId: string;
-  sourceMaterial: SourceMaterialForm
+  sourceMaterial: SourceMaterial
 }
 
 export interface QuizGenerationState {

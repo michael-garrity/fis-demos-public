@@ -8,7 +8,7 @@ export class QuizCreatePage {
   readonly titleField: Locator;
   readonly descriptionField: Locator;
   readonly numberOfQuestionsField: Locator;
-  readonly sourceLessonSelector: Locator;
+  readonly sourceMaterialSelector: Locator;
   readonly learnerProfileSelect: Locator;
   readonly customizationField: Locator;
 
@@ -25,10 +25,10 @@ export class QuizCreatePage {
     this.descriptionField = page.getByTestId("quiz-create-description");
     this.numberOfQuestionsField = page.getByLabel("Number of Questions");
 
-    this.sourceLessonSelector = page.getByTestId("quiz-create-lesson-selector");
+    this.sourceMaterialSelector = page.getByTestId("source-material-selector");
     this.learnerProfileSelect = page.getByTestId("quiz-create-learner-profile");
 
-    this.customizationField = page.getByLabel("Customization");
+    this.customizationField = page.getByTestId("quiz-create-customization");
 
     // --- Locator for Submit Button ---
     this.submitButton = page.getByTestId("quiz-create-submit");
@@ -46,7 +46,7 @@ export class QuizCreatePage {
    * Fills the form with valid data necessary for submission.
    * NOTE: Assumes Learner Profiles are loaded, selects the first one.
    */
-  async fillRequiredFields(data?: {
+  async fillRequiredNonSourceFields(data?: {
     title?: string;
     description?: string;
     durationUnit?: "minutes" | "hours";
@@ -62,16 +62,6 @@ export class QuizCreatePage {
       data?.description ?? "A quiz on end-to-end testing strategies."
     );
 
-    // 2. Select Source Lesson (Selects the first available option)
-    await this.sourceLessonSelector.click();
-
-    const sourceList = this.page.getByRole("listbox").first();
-    await expect(sourceList).toBeVisible();
-
-    const firstSourceOption = sourceList.getByRole("option").first();
-    await expect(firstSourceOption).toBeVisible();
-    await firstSourceOption.click();
-
     // 3. Select Learner Profile (Selects the first available option)
     await this.learnerProfileSelect.click();
 
@@ -81,6 +71,19 @@ export class QuizCreatePage {
     const firstOption = profileList.getByRole("option").first();
     await firstOption.waitFor({ state: "visible" });
     await firstOption.click({ force: true });
+  }
 
+  async selectSource() {
+    await expect(this.sourceMaterialSelector).not.toBeDisabled();
+    await this.sourceMaterialSelector.click();
+    
+    const sourceList = this.page.getByRole("listbox").first();
+
+    // Select first non-custom option
+    const firstExistingMaterial = sourceList
+      .getByRole("option")
+      .first();
+    await firstExistingMaterial.waitFor({ state: "visible" });
+    await firstExistingMaterial.click({ force: true });
   }
 }

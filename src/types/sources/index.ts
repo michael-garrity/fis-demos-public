@@ -1,11 +1,4 @@
-import { BaseListRecord } from "../list";
-
-export interface SourceMaterial extends BaseListRecord {
+export interface SourceMaterial {
   title: string;
-  content: string;
+  markdown: string;
 }
-
-export type SourceMaterialForm = 
-    | {type: "source", id: string, content: string | undefined}
-    | {type: "custom", id: undefined, content: string}
-    | undefined;

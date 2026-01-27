@@ -14,9 +14,9 @@ import {
 import { ListOrdered, User, Send } from "lucide-react";
 import React, { useState, useMemo } from "react";
 import { useSaveQuiz, useGenerateQuizQuestions } from "../_store";
-import SourceMaterialSelector from "./_components/SourceMaterialSelector";
 import { useRouter } from "next/navigation";
-import { useSourceMaterials } from "@/features/source-materials";
+import { SourceSelector } from "../../_components/SourceSelector";
+import { ViewSourceModal } from "../../_components/ViewSourceModal";
 import DemoNavigationPanel from "../../_components/DemoNavigationPanel";
 
 export default function QuizForm() {
@@ -25,11 +25,15 @@ export default function QuizForm() {
     description: "",
     numberOfQuestions: "1",
     learnerProfileId: "",
-    sourceMaterial: undefined,
+    sourceMaterial: {
+      title: "",
+      markdown: ""
+    },
     customization: "",
   });
 
-  const { data: sources, isLoading: sourcesLoading } = useSourceMaterials();
+  const [isViewSourceModalOpen, setIsViewSourceModalOpen] = useState(false);
+
   const { data: profiles, isLoading: profilesLoading } = useLearnerProfiles();
   const { mutateAsync: saveQuiz, isPending: isSubmitting } = useSaveQuiz();
   const { mutateAsync: generateQuizQuestions, isPending: isGenerating } =
@@ -67,7 +71,8 @@ export default function QuizForm() {
       Number(numberOfQuestions) > 0 &&
       // Check that durationValue is a positive number
       learnerProfileId !== "" &&
-      sourceMaterial !== undefined
+      sourceMaterial.title.trim().length > 0 &&
+      sourceMaterial.markdown.trim().length > 0
     );
   }, [formData]);
 
@@ -78,29 +83,7 @@ export default function QuizForm() {
         (p) => p.id === formData.learnerProfileId
       );
 
-      let sourceMaterial: SourceMaterial | undefined;
-
-      if (formData.sourceMaterial) {
-        const selected = sources?.find(
-          (source) => source.id === formData.sourceMaterial?.id
-        );
-
-        if (selected) {
-          sourceMaterial = {
-            id: selected.id,
-            title: selected.title,
-            content: selected.markdown,
-          };
-        }
-      }
-
-      if (sourceMaterial === undefined) {
-        sourceMaterial = {
-          id: "custom",
-          title: "Custom Lesson",
-          content: formData.sourceMaterial?.content ?? "",
-        };
-      }
+      const sourceMaterial: SourceMaterial = formData.sourceMaterial
 
       if (learnerProfile === undefined) return;
       if (sourceMaterial === undefined) return;
@@ -168,14 +151,12 @@ export default function QuizForm() {
               rows={4}
             />
 
-            <SourceMaterialSelector
-              sources={sources}
-              loading={sourcesLoading}
-              value={formData.sourceMaterial}
-              onChange={(source) =>
-                handleSelectChange("sourceMaterial", source)
-              }
-            />
+          <SourceSelector
+            onSourceChange={(source) => 
+              handleSelectChange("sourceMaterial", source)
+            }
+            onViewSource={() => setIsViewSourceModalOpen(true)}
+          />
 
             {/* 5. LEARNER PROFILE SELECTION */}
             <div className="flex gap-4">
@@ -237,6 +218,8 @@ export default function QuizForm() {
               labelPlacement="outside"
               fullWidth
               rows={4}
+
+            data-testid="quiz-create-customization"
             />
 
             {/* SUBMIT BUTTON */}
@@ -245,16 +228,15 @@ export default function QuizForm() {
               type="submit"
               color="primary"
               fullWidth
-              isDisabled={!isFormValid || isSubmitting}
+              isDisabled={!isFormValid || isGenerating || isSubmitting}
               startContent={
-                isSubmitting ? (
+                isGenerating || isSubmitting ? (
                   <Spinner size="sm" color="white" />
                 ) : (
                   <Send size={18} />
                 )
               }
-              onSubmit={handleSubmit}
-            >
+              >
               {isGenerating
                 ? "Generating Questions..."
                 : isSubmitting
@@ -263,6 +245,12 @@ export default function QuizForm() {
             </Button>
           </form>
         </Card>
+      <ViewSourceModal
+        isOpen={isViewSourceModalOpen}
+        onClose={() => setIsViewSourceModalOpen(false)}
+        title="Source Material"
+        markdown={formData.sourceMaterial.markdown ?? ""}
+      />
       </div>
     </>
   );

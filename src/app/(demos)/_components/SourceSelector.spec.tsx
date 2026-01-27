@@ -7,20 +7,23 @@ const mockSources = [
   { id: "2", title: "Physics Intro" },
 ];
 
+vi.mock("@/features/source-materials", () => ({
+  useSourceMaterials: () => ({
+    data: mockSources, 
+    isLoading: false
+  }),
+}));
+
 const defaultProps = {
-  sources: mockSources,
-  value: "",
-  customSource: {
-    title: "",
-    markdown: "",
-  },
   onSourceChange: vi.fn(),
-  onCustomChange: vi.fn(),
   onViewSource: vi.fn(),
-  isLoading: false,
 };
 
 describe("SourceSelector", () => {
+  beforeEach(() => {
+    defaultProps.onSourceChange.mockReset()
+  })
+
   it("renders correctly and matches snapshot", () => {
     const { container } = render(<SourceSelector {...defaultProps} />);
     expect(container).toMatchSnapshot();
@@ -47,21 +50,22 @@ describe("SourceSelector", () => {
 
 
   it("shows View Source button only when a non-custom source is selected", () => {
-    const { rerender } = render(
+    render(
       <SourceSelector
         {...defaultProps}
-        value="1"
       />
     );
 
+    const trigger = screen.getByRole("button", { name: /source material/i });
+    fireEvent.click(trigger);
+    const firstItem = screen.getByRole("option", {name: "Physics Intro"})
+    fireEvent.click(firstItem)
+    
     expect(screen.getByText(/view source/i)).toBeInTheDocument();
 
-    rerender(
-      <SourceSelector
-        {...defaultProps}
-        value="custom"
-      />
-    );
+    fireEvent.click(trigger);
+    const custom = screen.getByRole("option", {name: "Custom"})
+    fireEvent.click(custom)
 
     expect(screen.queryByText(/view source/i)).not.toBeInTheDocument();
   });
@@ -70,9 +74,12 @@ describe("SourceSelector", () => {
     render(
       <SourceSelector
         {...defaultProps}
-        value="custom"
       />
     );
+    const trigger = screen.getByRole("button", { name: /source material/i });
+    fireEvent.click(trigger);
+    const custom = screen.getByRole("option", {name: "Custom"})
+    fireEvent.click(custom)
 
     expect(
       screen.getByLabelText(/custom source title/i)
@@ -82,13 +89,16 @@ describe("SourceSelector", () => {
     ).toBeInTheDocument();
   });
 
-  it("calls onCustomChange when typing in custom inputs", () => {
+  it("calls onSourceChange when typing in custom inputs", () => {
     render(
       <SourceSelector
         {...defaultProps}
-        value="custom"
       />
     );
+    const trigger = screen.getByRole("button", { name: /source material/i });
+    fireEvent.click(trigger);
+    const custom = screen.getByRole("option", {name: "Custom"})
+    fireEvent.click(custom)
 
     const titleInput = screen.getByLabelText(/custom source title/i);
     const contentInput = screen.getByLabelText(/custom source content/i);
@@ -96,9 +106,9 @@ describe("SourceSelector", () => {
     fireEvent.change(titleInput, { target: { value: "My Custom Title" } });
     fireEvent.change(contentInput, { target: { value: "# Markdown Content" } });
 
-    expect(defaultProps.onCustomChange).toHaveBeenCalledTimes(2);
-    expect(defaultProps.onCustomChange).toHaveBeenLastCalledWith({
-      title: "",
+    expect(defaultProps.onSourceChange).toHaveBeenCalledTimes(3);
+    expect(defaultProps.onSourceChange).toHaveBeenLastCalledWith({
+      title: "My Custom Title",
       markdown: "# Markdown Content",
     });
   });
@@ -107,9 +117,13 @@ describe("SourceSelector", () => {
     render(
       <SourceSelector
         {...defaultProps}
-        value="1"
       />
     );
+
+    const trigger = screen.getByRole("button", { name: /source material/i });
+    fireEvent.click(trigger);
+    const firstItem = screen.getByRole("option", { name: mockSources[1].title })
+    fireEvent.click(firstItem)
 
     fireEvent.click(screen.getByText(/view source/i));
     expect(defaultProps.onViewSource).toHaveBeenCalledTimes(1);
@@ -121,11 +135,16 @@ describe("SourceSelector", () => {
     const trigger = screen.getByRole("button", { name: /source material/i });
     fireEvent.click(trigger);
 
-    const option = screen.getByRole("option", { name: "Physics Intro" });
+    const source = mockSources[1]
+
+    const option = screen.getByRole("option", { name: source.title });
     fireEvent.click(option);
 
 
-    expect(defaultProps.onSourceChange).toHaveBeenCalledWith("2");
-  });
+    expect(defaultProps.onSourceChange).toHaveBeenCalledWith({
+      title: source.title,
+      markdown: ""
+    });
+    });
 });
 

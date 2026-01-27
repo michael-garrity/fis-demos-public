@@ -8,9 +8,8 @@ describe("createQuiz", () => {
   const mockQuiz = factory.build("quiz", {id: crypto.randomUUID()})
   const mockLearner = factory.build("learnerProfile");
   const mockSourceMaterial: SourceMaterial = {
-        id: "",
         title: "",
-        content: ""
+        markdown: ""
   }
 
   const mockForm: QuizGenerationState = {

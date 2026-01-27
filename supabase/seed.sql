@@ -248,7 +248,7 @@ $description$,
 {
   "source_material": {
     "title": "What is an atom?",
-    "content": "Atoms are the building blocks of matter. Everything around you — the air, water, your body — is made of atoms. Scientists discovered that atoms are incredibly small and consist of even smaller parts: **protons**, **neutrons**, and **electrons**.\n- **Protons** have a positive charge and sit in the center, called the **nucleus**.\n- **Neutrons** have no charge and are also in the nucleus.\n- **Electrons** have a negative charge and orbit around the nucleus.\nLearning about atoms helps us understand chemistry, biology, and physics.\nFor example, how water molecules form, how chemical reactions occur, and why different materials behave differently all depend on atoms."
+    "markdown": "Atoms are the building blocks of matter. Everything around you — the air, water, your body — is made of atoms. Scientists discovered that atoms are incredibly small and consist of even smaller parts: **protons**, **neutrons**, and **electrons**.\n- **Protons** have a positive charge and sit in the center, called the **nucleus**.\n- **Neutrons** have no charge and are also in the nucleus.\n- **Electrons** have a negative charge and orbit around the nucleus.\nLearning about atoms helps us understand chemistry, biology, and physics.\nFor example, how water molecules form, how chemical reactions occur, and why different materials behave differently all depend on atoms."
   },
   "learner_profile": {
     "label": "7th grader",
@@ -340,7 +340,7 @@ $description$,
 {
   "source_material": {
     "title": "What is an atom?",
-    "content": "Atoms are the building blocks of matter. Everything around you — the air, water, your body — is made of atoms. Scientists discovered that atoms are incredibly small and consist of even smaller parts: **protons**, **neutrons**, and **electrons**.\n- **Protons** have a positive charge and sit in the center, called the **nucleus**.\n- **Neutrons** have no charge and are also in the nucleus.\n- **Electrons** have a negative charge and orbit around the nucleus.\nLearning about atoms helps us understand chemistry, biology, and physics.\nFor example, how water molecules form, how chemical reactions occur, and why different materials behave differently all depend on atoms."
+    "markdown": "Atoms are the building blocks of matter. Everything around you — the air, water, your body — is made of atoms. Scientists discovered that atoms are incredibly small and consist of even smaller parts: **protons**, **neutrons**, and **electrons**.\n- **Protons** have a positive charge and sit in the center, called the **nucleus**.\n- **Neutrons** have no charge and are also in the nucleus.\n- **Electrons** have a negative charge and orbit around the nucleus.\nLearning about atoms helps us understand chemistry, biology, and physics.\nFor example, how water molecules form, how chemical reactions occur, and why different materials behave differently all depend on atoms."
   },
   "learner_profile": {
     "label": "7th grader",

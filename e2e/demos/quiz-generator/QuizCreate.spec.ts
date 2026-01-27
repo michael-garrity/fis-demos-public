@@ -12,7 +12,8 @@ test.describe("Creation of a new Quiz", () => {
     quizCreatePage,
   }) => {
     // Fill all required fields using the helper function
-    await quizCreatePage.fillRequiredFields();
+    await quizCreatePage.fillRequiredNonSourceFields();
+    await quizCreatePage.selectSource();
 
     // The submit button should now be enabled
     await expect(quizCreatePage.submitButton).toBeEnabled();

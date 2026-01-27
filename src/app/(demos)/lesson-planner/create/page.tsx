@@ -6,26 +6,24 @@ import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
   Card,
-  Input,
-  Textarea,
   Select,
   SelectItem,
   Button,
   Spinner,
 } from "@heroui/react";
-import { BookOpen, User, Send } from "lucide-react";
+import { User, Send } from "lucide-react";
 import {
   useLessonPlanGenerate,
   useLessonPlanSave,
 } from "@/features/lesson-planner";
-import { useSourceMaterials } from "@/features/source-materials";
+import { SourceMaterial } from "@/types";
+import { SourceSelector } from "../../_components/SourceSelector";
+import { ViewSourceModal } from "../../_components/ViewSourceModal";
 import DemoNavigationPanel from "../../_components/DemoNavigationPanel";
 
 interface FormData {
   id: string;
-  sourceMaterialId: string;
-  sourceMaterialTitle: string;
-  sourceMaterialContent: string;
+  sourceMaterial: SourceMaterial;
   learnerProfileId: string;
 }
 
@@ -34,71 +32,35 @@ export default function LessonPlanForm() {
 
   const [formData, setFormData] = useState<FormData>({
     id: "3",
-    sourceMaterialId: "",
-    sourceMaterialTitle: "",
-    sourceMaterialContent: "",
+    sourceMaterial: {
+      title: "",
+      markdown: "",
+    },
     learnerProfileId: "",
   });
 
+  const [isViewSourceModalOpen, setIsViewSourceModalOpen] = useState(false);
+
   const { data: profiles, isLoading: profilesLoading } = useLearnerProfiles();
-  const { data: sourceMaterials, isLoading: sourcesLoading } =
-    useSourceMaterials();
 
   const { mutateAsync: generateLessonPlan, isPending: isSubmitting } =
     useLessonPlanGenerate();
   const { mutateAsync: saveLessonPlan } = useLessonPlanSave();
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-
   // Handler for both learnerprofile and sourcematerials
-  const handleSelectChange = (name: string, value: string | undefined) => {
-    const selectedValue = value?.toString() ?? "";
-
-    // if custom, allow user to put in their own source material
-    if (name === "sourceMaterialId") {
-      if (selectedValue === "custom") {
-        setFormData((prev) => ({
-          ...prev,
-          sourceMaterialId: "custom",
-          sourceMaterialTitle: "",
-          sourceMaterialContent: "",
-        }));
-        return;
-      }
-
-      const selectedMaterial = sourceMaterials?.find(
-        (m) => m.id.toString() === selectedValue
-      );
-
-      if (selectedMaterial) {
-        setFormData((prev) => ({
-          ...prev,
-          sourceMaterialId: selectedValue,
-          sourceMaterialTitle: selectedMaterial.title,
-          sourceMaterialContent: selectedMaterial.markdown.trim(),
-        }));
-        return;
-      }
-    }
-
-    // Default behavior (learnerProfileId and future selects)
+  const handleSelectChange = <T extends keyof FormData>(name: T, value: FormData[T]) => {
     setFormData((prev) => ({
       ...prev,
-      [name]: selectedValue,
+      [name]: value,
     }));
   };
 
   const isFormValid = useMemo(() => {
-    const { sourceMaterialTitle, sourceMaterialContent, learnerProfileId } =
+    const { sourceMaterial, learnerProfileId } =
       formData;
     return (
-      sourceMaterialTitle.trim().length > 0 &&
-      sourceMaterialContent.trim().length > 0 &&
+      sourceMaterial.title.trim().length > 0 &&
+      sourceMaterial.markdown.trim().length > 0 &&
       learnerProfileId !== ""
     );
   }, [formData]);
@@ -108,6 +70,9 @@ export default function LessonPlanForm() {
     const learnerProfile = profiles?.find(
       (p) => p.id === formData.learnerProfileId
     );
+
+    const sourceMaterial = formData.sourceMaterial
+
     if (isFormValid && !isSubmitting && learnerProfile) {
       // Structure data for API submission - transform learnerProfile to match LessonPlanRecord structure
       const learnerProfileData: LessonPlanRecord["creation_meta"]["learner_profile"] =
@@ -120,13 +85,13 @@ export default function LessonPlanForm() {
           interests: learnerProfile.interests,
         };
 
-      const submissionData = {
+      const submissionData: Pick<LessonPlanRecord, "creation_meta"> = {
         creation_meta: {
           learner_profile: learnerProfileData,
           source_material: {
-            title: formData.sourceMaterialTitle,
-            content: formData.sourceMaterialContent,
-          },
+            title: sourceMaterial.title,
+            content: sourceMaterial.markdown
+          }
         },
       };
 
@@ -158,65 +123,14 @@ export default function LessonPlanForm() {
               <h2 className="text-xl font-semibold text-gray-800 mb-2">
                 Source Material
               </h2>
-              <Select
-                data-testid="lesson-plan-select-source-material"
-                label="Source Material"
-                labelPlacement="outside"
-                selectedKeys={[formData.sourceMaterialId]}
-                placeholder={
-                  sourcesLoading
-                    ? "Loading source materials..."
-                    : "Select source material"
-                }
-                onSelectionChange={(key) =>
-                  handleSelectChange("sourceMaterialId", key.currentKey)
-                }
-                isDisabled={sourcesLoading}
-                fullWidth
-              >
-                <>
-                  <SelectItem key="custom">Custom</SelectItem>
-
-                  {sourceMaterials?.map((material) => (
-                    <SelectItem key={material.id.toString()}>
-                      {material.title}
-                    </SelectItem>
-                  ))}
-                </>
-              </Select>
-              {formData.sourceMaterialId === "custom" && (
-                <>
-                  <Input
-                    data-testid="lesson-plan-create-source-material-title"
-                    className="pt-2"
-                    label="Title"
-                    name="sourceMaterialTitle"
-                    placeholder="e.g., Python Programming Basics Chapter 3"
-                    value={formData.sourceMaterialTitle}
-                    onChange={handleChange}
-                    labelPlacement="outside"
-                    startContent={<BookOpen size={18} />}
-                    fullWidth
-                    required
-                  />
-                  <Textarea
-                    data-testid="lesson-plan-create-source-material-content"
-                    label="Source Material"
-                    name="sourceMaterialContent"
-                    placeholder="Paste or type the source material content that will be used to generate the lesson plan."
-                    value={formData.sourceMaterialContent}
-                    onChange={handleChange}
-                    labelPlacement="outside"
-                    fullWidth
-                    required
-                    rows={6}
-                  />
-                </>
-              )}
+              <SourceSelector 
+                onSourceChange={(source) => handleSelectChange("sourceMaterial", source)}
+                onViewSource={() => setIsViewSourceModalOpen(true)}
+              />
             </div>
 
-            {/* DIVIDER */}
-            <div className="border-t border-gray-200"></div>
+                {/* DIVIDER */}
+                <div className="border-t border-gray-200"></div>
 
             {/* LEARNER PROFILE SECTION */}
             <div className="space-y-4">
@@ -234,7 +148,7 @@ export default function LessonPlanForm() {
                 }
                 labelPlacement="outside"
                 onSelectionChange={(key) =>
-                  handleSelectChange("learnerProfileId", key.currentKey)
+                  handleSelectChange("learnerProfileId", key.currentKey ?? "")
                 }
                 startContent={<User size={18} />}
                 isDisabled={profilesLoading}
@@ -275,6 +189,12 @@ export default function LessonPlanForm() {
           </form>
         </Card>
       </div>
+      <ViewSourceModal
+          isOpen={isViewSourceModalOpen}
+          onClose={() => setIsViewSourceModalOpen(false)}
+          title="Source Material"
+          markdown={formData.sourceMaterial.markdown ?? ""}
+        />
     </>
   );
 }

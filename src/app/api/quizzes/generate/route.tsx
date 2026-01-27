@@ -13,7 +13,7 @@ export async function POST(req: NextRequest) {
       Title: ${body.title}
       Description: ${body.description}
       Customization notes: ${body.customization}
-      Source Material: ${body.sourceMaterial?.content}
+      Source Material: ${body.sourceMaterial.markdown}
       User: ${body.learnerProfile}
     `;
 

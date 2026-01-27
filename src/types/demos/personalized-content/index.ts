@@ -5,9 +5,8 @@ export interface PersonalizedContentRecord extends BaseListRecord {
   learnerProfileId: string;
 }
 export interface PersonalizedContentFormState extends PersonalizedContentRecord {
-  sourceMaterial: string;
   customization: string;
-  customSource: {
+  sourceMaterial: {
     title: string;
     markdown: string;
   };

@@ -19,14 +19,14 @@ export class LessonPlanCreatePage {
     });
 
     this.sourceMaterialSelect = page.getByTestId(
-      "lesson-plan-select-source-material"
+      "source-material-selector"
     );
 
     this.sourceMaterialTitleField = page.getByTestId(
-      "lesson-plan-create-source-material-title"
+      "custom-source-title"
     );
     this.sourceMaterialContentField = page.getByTestId(
-      "lesson-plan-create-source-material-content"
+      "custom-source-content"
     );
 
     this.learnerProfileSelect = page.getByTestId(
@@ -68,7 +68,7 @@ export class LessonPlanCreatePage {
     await this.sourceMaterialSelect.click();
     await this.page
       .getByRole("listbox")
-      .getByRole("option", { name: "Custom" })
+      .getByTestId("select-custom-material")
       .click();
 
     await expect(this.sourceMaterialTitleField).toBeVisible();
@@ -100,13 +100,14 @@ export class LessonPlanCreatePage {
 
     // Source material
     await this.sourceMaterialSelect.click();
+    
+    const sourceList = this.page.getByRole("listbox").first();
 
     // Select first non-custom option
-    const firstExistingMaterial = this.page
+    const firstExistingMaterial = sourceList
       .getByRole("option")
-      .filter({ hasText: /^(?!Custom$).+/ })
       .first();
-
+    await firstExistingMaterial.waitFor({ state: "visible" });
     await firstExistingMaterial.click();
 
     // Ensure textboxes are NOT visible

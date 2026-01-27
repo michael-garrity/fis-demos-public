@@ -27,10 +27,9 @@ export default function PersonalizedContentForm() {
   const [formData, setFormData] = useState<PersonalizedContentFormState>({
     id: "1",
     title: "",
-    sourceMaterial: "",
     learnerProfileId: "",
     customization: "",
-    customSource: {
+    sourceMaterial: {
       title: "",
       markdown: "",
     },
@@ -39,8 +38,6 @@ export default function PersonalizedContentForm() {
   const [isViewSourceModalOpen, setIsViewSourceModalOpen] = useState(false);
 
   const { data: profiles, isLoading: profilesLoading } = useLearnerProfiles();
-  const { data: sourceMaterials, isLoading: sourceMaterialsLoading } =
-    useSourceMaterials();
   const { mutateAsync: createPersonalizedContent, isPending: isSubmitting } =
     useGeneratePersonalizedContent();
 
@@ -64,36 +61,21 @@ export default function PersonalizedContentForm() {
   };
 
   const isFormValid = useMemo(() => {
-    const { title, learnerProfileId, sourceMaterial, customSource } = formData;
-
-    if (sourceMaterial === "custom") {
-      return (
-        title.trim().length > 0 &&
-        customSource.title.trim().length > 0 &&
-        customSource.markdown.trim().length > 0 &&
-        learnerProfileId !== ""
-      );
-    }
+    const {
+      title,
+      learnerProfileId,
+      sourceMaterial,
+    } = formData;
 
     return (
       title.trim().length > 0 &&
-      sourceMaterial !== "" &&
+      sourceMaterial.title.trim().length > 0 &&
+      sourceMaterial.markdown.trim().length > 0 &&
       learnerProfileId !== ""
     );
   }, [formData]);
 
-  const selectedSourceMaterial = useMemo(() => {
-    if (
-      !formData.sourceMaterial ||
-      formData.sourceMaterial === "custom" ||
-      !sourceMaterials
-    )
-      return null;
 
-    return sourceMaterials.find(
-      (l) => l.id.toString() === formData.sourceMaterial
-    );
-  }, [formData.sourceMaterial, sourceMaterials]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -107,21 +89,13 @@ export default function PersonalizedContentForm() {
       throw new Error("Learner profile is required to generate personalized content.");
     }
 
-    const sourceMaterial =
-      formData.sourceMaterial === "custom"
-        ? {
-            title: formData.customSource.title,
-            markdown: formData.customSource.markdown,
-          }
-        : sourceMaterials?.find(
-            (l) => l.id.toString() === formData.sourceMaterial
-          );
+    const sourceMaterial = formData.sourceMaterial;
 
     if (isFormValid && !isSubmitting) {
       // Structure data for API submission
       const submissionData: PersonalizedContentGenerationRequest = {
         title: formData.title,
-        sourceMaterial: sourceMaterial?.markdown ?? "",
+        sourceMaterial: sourceMaterial.markdown,
         learnerProfile: {
           label: learnerProfile.label,
           age: learnerProfile.age,
@@ -173,22 +147,15 @@ export default function PersonalizedContentForm() {
               required
             />
 
-            <div className="flex flex-col gap-2 mb-12">
-              {/* 2. SOURCE MATERIAL SELECTION */}
-              <SourceSelector
-                sources={sourceMaterials ?? []}
-                value={formData.sourceMaterial}
-                customSource={formData.customSource}
-                isLoading={sourceMaterialsLoading}
-                onSourceChange={(value) =>
-                  setFormData((prev) => ({ ...prev, sourceMaterial: value }))
-                }
-                onCustomChange={(custom) =>
-                  setFormData((prev) => ({ ...prev, customSource: custom }))
-                }
-                onViewSource={() => setIsViewSourceModalOpen(true)}
-              />
-            </div>
+          <div className="flex flex-col gap-2 mb-12">
+            {/* 2. SOURCE MATERIAL SELECTION */}
+            <SourceSelector
+              onSourceChange={(value) =>
+                setFormData((prev) => ({ ...prev, sourceMaterial: value }))
+              }
+              onViewSource={() => setIsViewSourceModalOpen(true)}
+            />
+          </div>
 
             {/* 3. LEARNER PROFILE SELECTION */}
             <Select
@@ -255,7 +222,7 @@ export default function PersonalizedContentForm() {
           isOpen={isViewSourceModalOpen}
           onClose={() => setIsViewSourceModalOpen(false)}
           title="Source Material"
-          markdown={selectedSourceMaterial?.markdown ?? ""}
+          markdown={formData.sourceMaterial.markdown ?? ""}
         />
       </div>
     </>
