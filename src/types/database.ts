@@ -136,6 +136,33 @@ export type Database = {
         };
         Relationships: [];
       };
+      lessons: {
+        Row: {
+          content: string;
+          created_at: string;
+          creation_meta: Json;
+          id: string;
+          title: string;
+          updated_at: string;
+        };
+        Insert: {
+          content: string;
+          created_at?: string;
+          creation_meta?: Json;
+          id?: string;
+          title: string;
+          updated_at?: string;
+        };
+        Update: {
+          content?: string;
+          created_at?: string;
+          creation_meta?: Json;
+          id?: string;
+          title?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
       personalized_contents: {
         Row: {
           content: string;
