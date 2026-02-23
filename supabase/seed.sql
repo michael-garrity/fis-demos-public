@@ -437,3 +437,85 @@ $creation_meta$,
   Why is understanding atoms important for science?
   $reflection$
 );
+
+-- Seed lessons
+insert into lessons
+(title, content, creation_meta)
+values
+(
+    'Introduction to Atoms for 7th Graders',
+    $content$
+Atoms are the smallest building blocks of matter. Everything around you—air, water, plants, animals, and your own body—is made of atoms. They are extremely small, but they make up everything you can see and touch.
+
+Each atom is made of even smaller parts:
+• Protons have a positive (+) charge and are found in the center of the atom, called the nucleus.
+• Neutrons have no charge and are also in the nucleus.
+• Electrons have a negative (–) charge and move around the nucleus.
+
+Atoms can join together to form molecules. For example, water is made from atoms of hydrogen and oxygen bonded together. The way atoms are arranged and interact explains why different materials behave differently.
+
+Learning about atoms helps us understand chemistry, biology, and physics—from how chemical reactions happen to how living things are built from tiny parts.
+$content$,
+    $creation_meta$
+{
+  "learner_profile": {
+    "label": "7th grader",
+    "age": 12,
+    "reading_level": 5,
+    "experience": "Has completed introductory STEM activities and basic robotics challenges.",
+    "interests": ["Robotics", "Graphic novels", "Animals"]
+  }
+}
+$creation_meta$
+),
+(
+    'The Water Cycle Explained',
+    $content$
+Water is always moving around the Earth in a process called the water cycle. It has four main stages:
+
+1. Evaporation: Water turns into vapor and rises into the sky when the sun heats it up.
+2. Condensation: As water vapor rises higher, the air gets cooler and the vapor turns back into tiny water droplets, forming clouds.
+3. Precipitation: When clouds get too heavy with water droplets, water falls back to Earth as rain, snow, or hail.
+4. Collection: Water gathers in rivers, lakes, and oceans. Some soaks into the ground to become groundwater.
+
+Then the cycle starts all over again! The water you drink today might have been drunk by a dinosaur millions of years ago.
+
+The water cycle ensures that fresh water is constantly renewed. Understanding this cycle helps students see why water conservation is important.
+$content$,
+    $creation_meta$
+{
+  "learner_profile": {
+    "label": "4th grader",
+    "age": 9,
+    "reading_level": 3,
+    "experience": "Has explored early elementary science units and enjoys hands-on learning projects.",
+    "interests": ["Dinosaurs", "Drawing", "Minecraft"]
+  }
+}
+$creation_meta$
+),
+(
+    'Advanced Data Visualization with Seaborn',
+    $content$
+Seaborn is a powerful Python data visualization library built on top of Matplotlib. It provides a high-level interface for creating attractive and informative statistical graphics with minimal code.
+
+Key features include:
+• Beautiful default styles and color palettes
+• Built-in statistical functions for regression, distribution, and categorical plots
+• Seamless integration with Pandas DataFrames
+• Easy creation of complex visualizations like heatmaps and cluster maps
+
+Seaborn makes it easy to create professional-quality visualizations that would require much more code in Matplotlib alone.
+$content$,
+    $creation_meta$
+{
+  "learner_profile": {
+    "label": "Adult Learner",
+    "age": 29,
+    "reading_level": 13,
+    "experience": "Has a mechanical engineering degree and has some coding experience from coding bootcamps.",
+    "interests": ["3D printing", "Mountain biking", "Pottery"]
+  }
+}
+$creation_meta$
+);
