@@ -3,7 +3,7 @@ import { Locator, Page } from "@playwright/test";
 export class LessonGeneratorListPage {
   readonly heading: Locator;
 
-  readonly loadingText: Locator;
+  readonly skeletonWrapper: Locator;
   readonly recordsContainer: Locator;
   readonly allCards: Locator;
   readonly emptyStateText: Locator;
@@ -18,7 +18,7 @@ export class LessonGeneratorListPage {
   constructor(readonly page: Page) {
     this.heading = page.getByRole("heading", { name: "Generated Lessons" });
 
-    this.loadingText = page.getByText("Loading...");
+    this.skeletonWrapper = page.getByTestId("list-skeleton-wrapper");
     this.recordsContainer = page.getByTestId("record-list-container");
     this.allCards = page.getByTestId("list-item-card");
     this.emptyStateText = page.getByText(
