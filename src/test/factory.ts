@@ -99,6 +99,20 @@ const factories = {
     };
   },
 
+  lesson(): Tables<"lessons"> {
+    const now = new Date().toISOString();
+    return {
+      id: crypto.randomUUID(),
+      created_at: now,
+      updated_at: now,
+      creation_meta: {
+        learner_profile: build("learnerProfile"),
+      },
+      title: titleize(faker.lorem.words(3)),
+      content: faker.lorem.paragraphs(2),
+    };
+  },
+
   question(): Question {
     return {
       question: faker.lorem.sentence(),
