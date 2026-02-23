@@ -14,7 +14,7 @@ import { CourseOutlineCreatePage } from "./pages/demos/course-outline/courseOutl
 import { LessonPlanPage } from "./pages/demos/lesson-plan/lessonPlan.pom";
 import { LessonPlanCreatePage } from "./pages/demos/lesson-plan/lessonPlanCreate.pom";
 import { QuizCreatePage } from "./pages/demos/quiz-generator/quizCreate.pom";
-import { LessonGeneratorListPage } from "./pages/demos/lesson-generator/lessonGeneratorList.pom";
+import { LessonGeneratorListPage } from "./pages/demos/lessons/lessonGeneratorList.pom";
 
 type CustomFixtures = {
   // Dashboard

@@ -29,7 +29,7 @@ export default function LessonGeneratorDemoPage() {
           </h1>
           <Button
             as={Link}
-            href="/lesson-generator/create"
+            href="/lessons/create"
             color="primary"
             data-testid="create-new-button"
           >

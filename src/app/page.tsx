@@ -42,7 +42,7 @@ export default function Home() {
             imageSource="/lesson-plan-thumbnail.png"
             title="Lesson Generator"
             description={`Generate personalized lessons tailored to specific learner profiles.`}
-            href="/lesson-generator"
+            href="/lessons"
           ></DemoCard>
         </div>
       </DashboardSection>

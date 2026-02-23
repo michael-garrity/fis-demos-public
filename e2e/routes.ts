@@ -4,7 +4,7 @@ export const ROUTES = {
   courseOutline: "/course-outline",
   personalizedContent: "/personalized-content",
   lessonPlan: "/lesson-planner",
-  lessonGenerator: "/lesson-generator",
+  lessonGenerator: "/lessons",
   learnerProfiles: "/learner-profiles",
   account: "/account",
 };

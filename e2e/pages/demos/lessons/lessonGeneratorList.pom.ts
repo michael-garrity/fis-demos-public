@@ -42,7 +42,7 @@ export class LessonGeneratorListPage {
   }
 
   async goto() {
-    await this.page.goto("/lesson-generator");
+    await this.page.goto("/lessons");
   }
 
   async waitForListToResolve() {
