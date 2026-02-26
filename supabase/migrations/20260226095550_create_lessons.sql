@@ -1,8 +1,8 @@
 create table lessons (
     id uuid default gen_random_uuid() not null primary key,
     title text not null,
-    content text not null,
-    creation_meta jsonb not null default '{}',
+    content jsonb not null default '{}'::jsonb,
+    creation_meta jsonb not null default '{}'::jsonb,
     created_at timestamptz not null default now(),
     updated_at timestamptz not null default now()
 );

@@ -138,7 +138,7 @@ export type Database = {
       };
       lessons: {
         Row: {
-          content: string;
+          content: Json;
           created_at: string;
           creation_meta: Json;
           id: string;
@@ -146,7 +146,7 @@ export type Database = {
           updated_at: string;
         };
         Insert: {
-          content: string;
+          content?: Json;
           created_at?: string;
           creation_meta?: Json;
           id?: string;
@@ -154,7 +154,7 @@ export type Database = {
           updated_at?: string;
         };
         Update: {
-          content?: string;
+          content?: Json;
           created_at?: string;
           creation_meta?: Json;
           id?: string;

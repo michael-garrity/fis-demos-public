@@ -1,7 +1,9 @@
 "use client";
 
-import { Button, Chip } from "@heroui/react";
+import { Button } from "@heroui/react";
 import { Eye } from "lucide-react";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 import { LearnerProfileChip } from "@/lib/learner-profiles";
 import { Lesson } from "../_models";
@@ -12,7 +14,7 @@ interface LessonListRecordProps {
 
 export default function LessonListRecord({ record }: LessonListRecordProps) {
   return (
-    <div className="">
+    <div className="w-full">
       <h2
         data-testid="lesson-list-record-title"
         className="text-2xl font-semibold"
@@ -20,14 +22,16 @@ export default function LessonListRecord({ record }: LessonListRecordProps) {
         {record.title}
       </h2>
 
-      <p
+      <div
         data-testid="lesson-list-record-content"
-        className="mb-4 text-sm text-gray-600 text-justify"
+        className="mb-4 prose prose-base max-w-none prose-headings:font-bold prose-h2:mt-6 prose-h3:mt-4 text-gray-600"
       >
-        {record.content}
-      </p>
+        <ReactMarkdown remarkPlugins={[remarkGfm]}>
+          {record.introduction}
+        </ReactMarkdown>
+      </div>
 
-      <div className="flex justify-between">
+      <div className="flex justify-between w-full">
         <div className="flex gap-4 items-center">
           <LearnerProfileChip
             data-testid="lesson-list-learner-chip"

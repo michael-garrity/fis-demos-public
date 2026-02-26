@@ -2,9 +2,9 @@ import * as Sentry from "@sentry/nextjs";
 import { NextResponse } from "next/server";
 import { getClient } from "@/lib/supabase";
 
-const supabase = getClient();
-
 export async function GET() {
+  const supabase = getClient();
+
   const { data, error } = await supabase.from("lessons").select("*");
 
   if (error) {

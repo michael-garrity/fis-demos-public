@@ -10,6 +10,29 @@ interface CreationMeta {
   [key: string]: unknown;
 }
 
+type LessonSectionKey =
+  | "introduction"
+  | "context"
+  | "example"
+  | "practice"
+  | "assessment"
+  | "reflection";
+
+interface LessonSection {
+  title?: string;
+  markdown?: string;
+}
+
+interface StructuredLessonContent {
+  sections?: Partial<Record<LessonSectionKey, LessonSection>>;
+}
+
+interface ParsedLessonSection {
+  key: LessonSectionKey;
+  title: string;
+  markdown: string;
+}
+
 export class Lesson {
   constructor(private data: LessonRow) {}
 
@@ -43,8 +66,86 @@ export class Lesson {
     return this.data.title;
   }
 
+  private toStringValue(value: unknown): string {
+    if (typeof value === "string") return value;
+    if (value === null || value === undefined) return "";
+
+    if (typeof value === "object") {
+      try {
+        return JSON.stringify(value);
+      } catch {
+        return "";
+      }
+    }
+
+    return String(value);
+  }
+
+  private get rawContent(): unknown {
+    return this.data.content as unknown;
+  }
+
   get content() {
-    return this.data.content;
+    return this.toStringValue(this.rawContent);
+  }
+
+  private get structuredContent(): StructuredLessonContent | null {
+    const raw = this.rawContent;
+
+    if (raw && typeof raw === "object") {
+      return raw as StructuredLessonContent;
+    }
+
+    try {
+      const parsed = JSON.parse(this.content) as StructuredLessonContent;
+      return typeof parsed === "object" && parsed !== null ? parsed : null;
+    } catch {
+      return null;
+    }
+  }
+
+  private getSectionMarkdown(key: LessonSectionKey) {
+    const markdown = this.structuredContent?.sections?.[key]?.markdown;
+    return this.toStringValue(markdown).trim();
+  }
+
+  get introduction() {
+    return this.getSectionMarkdown("introduction") || this.content;
+  }
+
+  get context() {
+    return this.getSectionMarkdown("context");
+  }
+
+  get example() {
+    return this.getSectionMarkdown("example");
+  }
+
+  get practice() {
+    return this.getSectionMarkdown("practice");
+  }
+
+  get assessment() {
+    return this.getSectionMarkdown("assessment");
+  }
+
+  get reflection() {
+    return this.getSectionMarkdown("reflection");
+  }
+
+  get lessonSections(): ParsedLessonSection[] {
+    return [
+      {
+        key: "introduction",
+        title: "Introduction",
+        markdown: this.introduction,
+      },
+      { key: "context", title: "Context", markdown: this.context },
+      { key: "example", title: "Example", markdown: this.example },
+      { key: "practice", title: "Practice", markdown: this.practice },
+      { key: "assessment", title: "Assessment", markdown: this.assessment },
+      { key: "reflection", title: "Reflection", markdown: this.reflection },
+    ];
   }
 
   get createdAt() {
