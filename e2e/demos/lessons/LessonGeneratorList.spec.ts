@@ -54,6 +54,33 @@ test.describe("List of generated lessons", () => {
     await expect(lessonGeneratorListPage.exampleRecordViewButton).toBeVisible();
   });
 
+  test("should navigate to lesson detail page from view button", async ({
+    page,
+    lessonGeneratorListPage,
+  }) => {
+    await lessonGeneratorListPage.waitForListToResolve();
+
+    const href =
+      await lessonGeneratorListPage.exampleRecordViewButton.getAttribute(
+        "href",
+      );
+    expect(href).toMatch(/^\/lessons\/.+/);
+
+    const expectedTitle =
+      (
+        await lessonGeneratorListPage.exampleRecordTitle.textContent()
+      )?.trim() ?? "";
+
+    await Promise.all([
+      page.waitForURL(new RegExp(`${href}$`)),
+      lessonGeneratorListPage.exampleRecordViewButton.click(),
+    ]);
+
+    await expect(
+      page.getByRole("heading", { level: 1, name: expectedTitle }),
+    ).toBeVisible({ timeout: 15000 });
+  });
+
   test("should resolve loading state on refresh", async ({
     page,
     lessonGeneratorListPage,

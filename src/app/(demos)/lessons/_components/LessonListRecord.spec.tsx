@@ -2,7 +2,7 @@ import "@testing-library/jest-dom";
 import LessonListRecord from "./LessonListRecord";
 import { Lesson } from "../_models";
 import { LearnerProfile } from "@/lib/learner-profiles";
-import { describe, test, expect, vi, Mock } from "vitest";
+import { describe, test, expect, vi } from "vitest";
 import { factory } from "@/test";
 import { render, screen } from "@testing-library/react";
 
@@ -44,7 +44,7 @@ describe("LessonListRecord", () => {
     render(<LessonListRecord record={record} />);
     const contentElement = screen.getByTestId("lesson-list-record-content");
     expect(contentElement.textContent).toContain(
-      record.content.substring(0, 50),
+      record.introduction.substring(0, 50),
     );
   });
 
@@ -57,6 +57,8 @@ describe("LessonListRecord", () => {
 
   test("should render view button", () => {
     render(<LessonListRecord record={record} />);
-    expect(screen.getByTestId("lesson-list-button-view")).toBeInTheDocument();
+    const viewButton = screen.getByTestId("lesson-list-button-view");
+    expect(viewButton).toBeInTheDocument();
+    expect(viewButton).toHaveAttribute("href", `/lessons/${record.id}`);
   });
 });

@@ -46,7 +46,7 @@ export default function LessonListRecord({ record }: LessonListRecordProps) {
             color="primary"
             startContent={<Eye />}
             as="a"
-            href="#"
+            href={`/lessons/${record.id}`}
           >
             View
           </Button>
