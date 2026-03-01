@@ -28,6 +28,17 @@ describe("Lesson", () => {
       expect(lesson.content).toBe(mockRow.content);
     });
 
+    it("returns structured section fields", () => {
+      const lesson = new Lesson(mockRow);
+      expect(lesson.introduction).toBeTruthy();
+      expect(lesson.context).toBeTruthy();
+      expect(lesson.example).toBeTruthy();
+      expect(lesson.practice).toBeTruthy();
+      expect(lesson.assessment).toBeTruthy();
+      expect(lesson.reflection).toBeTruthy();
+      expect(lesson.lessonSections).toHaveLength(6);
+    });
+
     it("returns the createdAt as Date", () => {
       const lesson = new Lesson(mockRow);
       expect(lesson.createdAt).toBeInstanceOf(Date);
@@ -80,6 +91,46 @@ describe("Lesson", () => {
       const updated = lesson.with("content", "New Content");
       expect(updated.content).toBe("New Content");
       expect(updated.id).toBe(lesson.id);
+    });
+  });
+
+  describe("legacy content fallback", () => {
+    it("uses raw content as introduction when content is plain text", () => {
+      const rawContent = "Legacy lesson content";
+      const legacyRow = {
+        ...mockRow,
+        content: rawContent,
+      } as LessonRow;
+
+      const lesson = new Lesson(legacyRow);
+
+      expect(lesson.introduction).toBe(rawContent);
+      expect(lesson.context).toBe("");
+      expect(lesson.example).toBe("");
+      expect(lesson.practice).toBe("");
+      expect(lesson.assessment).toBe("");
+      expect(lesson.reflection).toBe("");
+    });
+
+    it("handles object content and still returns markdown strings", () => {
+      const objectContent = {
+        sections: {
+          introduction: {
+            title: "Introduction",
+            markdown: "Intro from object payload",
+          },
+        },
+      };
+      const objectRow = {
+        ...mockRow,
+        content: objectContent,
+      } as unknown as LessonRow;
+
+      const lesson = new Lesson(objectRow);
+
+      expect(typeof lesson.introduction).toBe("string");
+      expect(lesson.introduction).toBe("Intro from object payload");
+      expect(typeof lesson.content).toBe("string");
     });
   });
 });

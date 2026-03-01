@@ -101,6 +101,14 @@ const factories = {
 
   lesson(): Tables<"lessons"> {
     const now = new Date().toISOString();
+    const sectionText = {
+      introduction: faker.lorem.paragraph(),
+      context: faker.lorem.paragraph(),
+      example: faker.lorem.paragraph(),
+      practice: faker.lorem.paragraph(),
+      assessment: faker.lorem.paragraph(),
+      reflection: faker.lorem.paragraph(),
+    };
     return {
       id: crypto.randomUUID(),
       created_at: now,
@@ -109,7 +117,34 @@ const factories = {
         learner_profile: build("learnerProfile"),
       },
       title: titleize(faker.lorem.words(3)),
-      content: faker.lorem.paragraphs(2),
+      content: JSON.stringify({
+        sections: {
+          introduction: {
+            title: "Introduction",
+            markdown: sectionText.introduction,
+          },
+          context: {
+            title: "Context",
+            markdown: sectionText.context,
+          },
+          example: {
+            title: "Example",
+            markdown: sectionText.example,
+          },
+          practice: {
+            title: "Practice",
+            markdown: sectionText.practice,
+          },
+          assessment: {
+            title: "Assessment",
+            markdown: sectionText.assessment,
+          },
+          reflection: {
+            title: "Reflection",
+            markdown: sectionText.reflection,
+          },
+        },
+      }),
     };
   },
 
